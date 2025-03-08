@@ -1,0 +1,343 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.col-3, .col-9 {
+    padding: 10px;
+}
+
+.col-3 {
+    width: 25%;
+}
+
+.col-9 {
+    width: 75%;
+}
+
+.sidebar {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.sidebar a:hover {
+    background-color: #f0f2f5;
+}
+
+.create-post {
+    margin-bottom: 20px;
+}
+
+.create-button {
+    background-color: #1877f2;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.create-button:hover {
+    background-color: #165dbb;
+}
+
+
+.create-reel {
+    width: 120px;
+    height: 210px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f2f5;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-reel:hover {
+    background-color: #e4e6eb; /* Màu nền khi hover */
+}
+
+.create-reel-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.story-avatar-container {
+    margin-bottom: 10px;
+}
+
+.story-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 3px solid #1877f2;
+    object-fit: cover;
+}
+
+.story-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.story-create-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #1877f2;
+    border-radius: 50%;
+    margin-top: 10px;
+}
+
+.plus-icon {
+    font-size: 24px;
+    color: white;
+}
+
+
+
+.stories-section {
+    margin-bottom: 20px;
+}
+
+.reel-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px; /* Tạo khoảng cách giữa các story */
+    overflow: hidden;
+    position: relative;
+}
+
+.reel-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    overflow: hidden;
+    scroll-behavior: smooth;
+}
+
+.reel-item {
+    width: 120px;
+    height: 210px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+
+    /* Viền nhỏ bao quanh */
+    border: 2px solid rgba(255, 255, 255, 0.5);
+
+    /* Shadow trắng vào bên trong */
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
+
+    /* Đảm bảo viền và shadow không bị ảnh hưởng bởi hover */
+    &:hover {
+        transform: scale(1.05);
+        border-color: rgba(255, 255, 255, 0.8); /* Tăng độ đậm của viền khi hover */
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.5); /* Tăng độ đậm của shadow khi hover */
+    }
+}
+
+.reel-item:hover {
+    transform: scale(1.05);
+}
+
+.story-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 3px solid #1877f2; /* Viền xanh giống Facebook */
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: white;
+    object-fit: cover;
+}
+
+.story-username {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+}
+
+
+.reel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+    z-index: 10;
+}
+
+.reel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.reel-btn.prev {
+    left: 5px;
+}
+
+.reel-btn.next {
+    right: 5px;
+}
+
+
+.post {
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    margin: 0;
+    font-size: 14px;
+}
+
+.post-time {
+    font-size: 12px;
+    color: #666;
+}
+
+.post-content {
+    margin-bottom: 10px;
+}
+
+.post-text {
+    margin: 0;
+    font-size: 14px;
+}
+
+.post-media {
+    margin-bottom: 10px;
+}
+
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.post-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    color: #1877f2;
+}
+
+.friends-list {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.friends-list h3 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+.friends-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.friends-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.friends-list img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
