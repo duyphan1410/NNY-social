@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const MAX_IMAGES = 5;
     const MAX_VIDEOS = 3;
 
-    function updatePreview(container, files, type) {
+    function updatePreview(container, files, type, inputElement) {
         container.innerHTML = '';
 
         files.forEach((file, index) => {
@@ -26,12 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
             removeBtn.style.borderRadius = "50%";
 
             removeBtn.onclick = function () {
-                if (type === 'image') {
-                    selectedImages.splice(index, 1);
-                } else {
-                    selectedVideos.splice(index, 1);
-                }
-                updatePreview(container, type === 'image' ? selectedImages : selectedVideos, type);
+                console.log(`🗑 Xóa ${type}:`, files[index].name);
+                files.splice(index, 1);
+                syncFiles(inputElement, files);
+                updatePreview(container, files, type, inputElement);
             };
 
             if (type === 'image') {
@@ -55,10 +53,20 @@ document.addEventListener('DOMContentLoaded', function () {
             wrapper.appendChild(removeBtn);
             container.appendChild(wrapper);
         });
+
+        console.log(`📸 Tổng số ${type} đã chọn:`, files.length);
     }
 
-    document.getElementById('images').addEventListener('change', function(event) {
+    function syncFiles(inputElement, files) {
+        let dataTransfer = new DataTransfer();
+        files.forEach(file => dataTransfer.items.add(file));
+        inputElement.files = dataTransfer.files;
+        console.log(`🔄 Đồng bộ input ${inputElement.id} - Số file:`, inputElement.files.length);
+    }
+
+    document.getElementById('images').addEventListener('change', function (event) {
         let files = Array.from(event.target.files);
+        console.log("📤 Chọn ảnh:", files.map(f => f.name));
 
         if (selectedImages.length + files.length > MAX_IMAGES) {
             alert(`Bạn chỉ có thể chọn tối đa ${MAX_IMAGES} ảnh.`);
@@ -66,11 +74,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         selectedImages = selectedImages.concat(files);
-        updatePreview(document.getElementById('image-preview'), selectedImages, 'image');
+        syncFiles(event.target, selectedImages);
+        updatePreview(document.getElementById('image-preview'), selectedImages, 'image', event.target);
     });
 
-    document.getElementById('videos').addEventListener('change', function(event) {
+    document.getElementById('videos').addEventListener('change', function (event) {
         let files = Array.from(event.target.files);
+        console.log("📤 Chọn video:", files.map(f => f.name));
 
         if (selectedVideos.length + files.length > MAX_VIDEOS) {
             alert(`Bạn chỉ có thể chọn tối đa ${MAX_VIDEOS} video.`);
@@ -78,19 +88,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         selectedVideos = selectedVideos.concat(files);
-        updatePreview(document.getElementById('video-preview'), selectedVideos, 'video');
+        syncFiles(event.target, selectedVideos);
+        updatePreview(document.getElementById('video-preview'), selectedVideos, 'video', event.target);
     });
 
     document.querySelector('form').addEventListener('submit', function (event) {
-        let imageInput = document.getElementById('images');
-        let videoInput = document.getElementById('videos');
+        syncFiles(document.getElementById('images'), selectedImages);
+        syncFiles(document.getElementById('videos'), selectedVideos);
 
-        let imageDataTransfer = new DataTransfer();
-        selectedImages.forEach(file => imageDataTransfer.items.add(file));
-        imageInput.files = imageDataTransfer.files;
-
-        let videoDataTransfer = new DataTransfer();
-        selectedVideos.forEach(file => videoDataTransfer.items.add(file));
-        videoInput.files = videoDataTransfer.files;
+        console.log("🚀 Đang gửi form...");
+        console.log("📸 Số lượng ảnh gửi đi:", document.getElementById('images').files.length);
+        console.log("🎥 Số lượng video gửi đi:", document.getElementById('videos').files.length);
     });
 });

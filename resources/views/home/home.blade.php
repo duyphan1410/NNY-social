@@ -6,7 +6,8 @@
     <title>Trang chủ</title>
     <!-- Kết nối file -->
     @vite(['resources/css/home.css'])
-    <script src="{{ asset('js/home.js') }}" defer></script>
+    @vite(['resources/js/home.js'])
+
 
 </head>
 <body>
@@ -88,7 +89,7 @@
                                     <div class="user-info">
                                         <img class="post-avatar" src="{{ $post->user->avatar_url ?? 'default-avatar.jpg' }}" alt="{{ $post->user->name }}">
                                         <div class="user-details">
-                                            <h4 class="user-name">{{ $post->user->name }}</h4>
+                                            <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
                                             <span class="post-time">{{ $post->created_at->diffForHumans() }}</span>
                                         </div>
                                     </div>

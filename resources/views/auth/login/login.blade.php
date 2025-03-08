@@ -9,7 +9,7 @@
 
         <div class="right-side">
             <div class="logo">
-                <img height="32" src="{{ asset('build/assets/img/logo.png') }}" alt="Logo">
+                <img height="32" src="{{ asset('img/logo.png') }}" alt="Logo">
             </div>
 
             <p class="welcome-text">Welcome to NNY, your social netword to<br>meaningful connections</p>

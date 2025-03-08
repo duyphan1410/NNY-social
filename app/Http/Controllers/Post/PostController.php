@@ -36,10 +36,15 @@ class PostController extends Controller
 
             // Xử lý upload ảnh
             if ($request->hasFile('images')) {
-                $imageController = new ImageController();
-                $$imageUrls = $imageController->uploadMultiple($request);
+                \Log::info('🔥 Số lượng file images nhận được:', ['count' => count($request->file('images'))]);
 
-                if (empty($imageUrls)) {
+                $imageController = new ImageController();
+                $imageUrls = $imageController->uploadMultiple($request->file('images'));
+
+                \Log::info('✅ Số lượng URL trả về từ uploadMultiple:', ['count' => is_array($imageUrls) ? count($imageUrls) : 0, 'urls' => $imageUrls]);
+
+                if (empty($imageUrls) || !is_array($imageUrls)) {
+                    \Log::error('❌ Không upload được ảnh nào.');
                     return redirect()->back()->with('error', 'Lỗi: Không upload được ảnh nào.');
                 }
 
@@ -48,8 +53,12 @@ class PostController extends Controller
                         'post_id'   => $post->id,
                         'image_url' => $url
                     ]);
+                    \Log::info('🖼 Ảnh đã được lưu vào database:', ['post_id' => $post->id, 'image_url' => $url]);
                 }
+
+                \Log::info('📌 Tổng số ảnh đã lưu vào database:', ['count' => count($imageUrls)]);
             }
+
 
 
             // Xử lý upload video
