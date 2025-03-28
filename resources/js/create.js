@@ -16,14 +16,16 @@ document.addEventListener('DOMContentLoaded', function () {
             let removeBtn = document.createElement('button');
             removeBtn.innerHTML = '×';
             removeBtn.style.position = "absolute";
-            removeBtn.style.top = "-5px";
-            removeBtn.style.right = "-5px";
+            removeBtn.style.top = "5px";
+            removeBtn.style.right = "5px";
             removeBtn.style.background = "red";
             removeBtn.style.color = "white";
             removeBtn.style.border = "none";
             removeBtn.style.cursor = "pointer";
-            removeBtn.style.padding = "2px 5px";
+            removeBtn.style.padding = "5px 10px";
             removeBtn.style.borderRadius = "50%";
+            removeBtn.style.fontSize = "16px";
+            removeBtn.style.zIndex = "10"; // Đảm bảo nằm trên ảnh
 
             removeBtn.onclick = function () {
                 console.log(`🗑 Xóa ${type}:`, files[index].name);
@@ -40,6 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 img.style.objectFit = 'cover';
                 img.style.border = "1px solid #ddd";
                 img.style.borderRadius = "5px";
+                img.style.display = "block";
+
                 wrapper.appendChild(img);
             } else {
                 let video = document.createElement('video');
@@ -47,15 +51,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 video.controls = true;
                 video.style.width = '200px';
                 video.style.height = 'auto';
+
                 wrapper.appendChild(video);
             }
 
             wrapper.appendChild(removeBtn);
             container.appendChild(wrapper);
         });
-
-        console.log(`📸 Tổng số ${type} đã chọn:`, files.length);
     }
+
 
     function syncFiles(inputElement, files) {
         let dataTransfer = new DataTransfer();
@@ -80,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('videos').addEventListener('change', function (event) {
         let files = Array.from(event.target.files);
-        console.log("📤 Chọn video:", files.map(f => f.name));
 
         if (selectedVideos.length + files.length > MAX_VIDEOS) {
             alert(`Bạn chỉ có thể chọn tối đa ${MAX_VIDEOS} video.`);
@@ -96,8 +99,5 @@ document.addEventListener('DOMContentLoaded', function () {
         syncFiles(document.getElementById('images'), selectedImages);
         syncFiles(document.getElementById('videos'), selectedVideos);
 
-        console.log("🚀 Đang gửi form...");
-        console.log("📸 Số lượng ảnh gửi đi:", document.getElementById('images').files.length);
-        console.log("🎥 Số lượng video gửi đi:", document.getElementById('videos').files.length);
     });
 });

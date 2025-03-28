@@ -22,6 +22,10 @@
             @csrf
             @method('PUT')
 
+            <input type="hidden" name="remove_images" id="remove_images">
+            <input type="hidden" name="remove_videos" id="remove_videos">
+
+
             <div class="form-group">
                 <label for="content">Nội Dung Bài Đăng</label>
                 <textarea
@@ -41,18 +45,22 @@
 
             <div class="form-group">
                 <label>Ảnh Hiện Tại</label>
+
                 <div class="current-images" id="image-preview">
                     @foreach($post->images as $image)
-                        <div id="current-image-{{ $image->id }}">
+                        <div id="current-image-{{ $image->id }}" style="position: relative; display: inline-block; margin: 5px;">
                             <img src="{{ $image->image_url }}" style="width: 100px; height: auto;">
-                            <button type="button" class="remove-current-image" data-id="{{ $image->id }}">×</button>
+                            <button type="button" class="remove-current-image" data-id="{{ $image->id }}"
+                                    style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; cursor: pointer; padding: 5px 10px; border-radius: 50%; font-size: 16px; z-index: 10;">
+                                ×
+                            </button>
                         </div>
                     @endforeach
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="images">Thêm Ảnh Mới</label>
+                <label for="images">Thêm Mới Ảnh</label>
                 <input
                     type="file"
                     name="images[]"
@@ -67,18 +75,21 @@
                 <label>Video Hiện Tại</label>
                 <div class="current-videos" id="video-preview">
                     @foreach($post->videos as $video)
-                        <div id="current-video-{{ $video->id }}">
-                            <video controls style="width: 200px;">
+                        <div id="current-video-{{ $video->id }}" style="position: relative; display: inline-block; margin: 5px;">
+                            <video controls style="width: 200px;" style="width: 100px; height: auto;">
                                 <source src="{{ $video->video_url }}" type="video/mp4">
                             </video>
-                            <button type="button" class="remove-current-video" data-id="{{ $video->id }}">×</button>
+                            <button type="button" class="remove-current-video" data-id="{{ $video->id }}"
+                                    style="position: absolute; top: 5px; right: 5px; background: red; color: white; border: none; cursor: pointer; padding: 5px 10px; border-radius: 50%; font-size: 16px; z-index: 10;">
+                                ×
+                            </button>
                         </div>
                     @endforeach
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="videos">Thêm Video Mới</label>
+                <label for="videos">Thêm Mới Video </label>
                 <input
                     type="file"
                     name="videos[]"

@@ -8,6 +8,9 @@ use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\PostVideo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Cloudinary\Api\Upload\UploadApi;
 use Cloudinary\Configuration\Configuration;
 
@@ -37,11 +40,8 @@ class PostController extends Controller
             // Xử lý upload ảnh
             if ($request->hasFile('images')) {
 
-
                 $imageController = new ImageController();
                 $imageUrls = $imageController->uploadMultiple($request->file('images'));
-
-
 
                 if (empty($imageUrls) || !is_array($imageUrls)) {
 
@@ -53,13 +53,8 @@ class PostController extends Controller
                         'post_id'   => $post->id,
                         'image_url' => $url
                     ]);
-
                 }
-
-
             }
-
-
 
             // Xử lý upload video
             if ($request->hasFile('videos')) {
@@ -92,24 +87,67 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        try {
-            // Kiểm tra quyền
-            if (auth()->id() !== $post->user_id) {
-                abort(403, 'Bạn không có quyền chỉnh sửa bài đăng này');
-            }
+//        dd($request->all());
 
-            // Validate
+        if (!$post || !$post->exists) {
+            return redirect()->back()->with('error', 'Bài đăng không tồn tại');
+        }
+
+        DB::beginTransaction(); // Đảm bảo ko lỗi giữa chừng
+
+        try {
+            // Validate dữ liệu đầu vào
             $validatedData = $request->validate([
-                'content'  => 'required|max:2000',
-                'images.*' => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
-                'videos.*' => 'mimes:mp4,avi,mov|max:20480'
+                'content'       => 'required|max:2000',
+                'images.*'      => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
+                'videos.*'      => 'mimes:mp4,avi,mov|max:20480',
+                'remove_images' => 'nullable|string', // Thêm nullable
+                'remove_videos' => 'nullable|string',  // Mảng chứa ID video cần xóa
             ]);
 
-            // Cập nhật nội dung
+            // CẬP NHẬT
             $post->content = $validatedData['content'];
             $post->save();
 
-            // Upload ảnh mới
+            $removeImages = json_decode($request->remove_images, true) ?? [];
+            $removeVideos = json_decode($request->remove_videos, true) ?? [];
+
+
+            // XÓA ẢNH nếu có
+            if (!empty($removeImages)) {
+                foreach ($removeImages as $imageId) {
+                    $image = PostImage::find($imageId);
+                    if ($image) {
+                        $publicId = pathinfo($image->image_url, PATHINFO_FILENAME);
+
+                        // Xóa ảnh trên Cloudinary
+                        if (!$this->deleteFromCloudinary($publicId, 'image')) {
+                            \Log::error("Không thể xóa ảnh trên Cloudinary: $publicId");
+                        }
+
+                        // Xóa trong database
+                        $image->delete();
+                    }
+                }
+            }
+
+            // XÓA VIDEO CŨ nếu có
+            if (!empty($removeVideos)) {
+                foreach ($removeVideos as $videoId) {
+                    $video = PostVideo::find($videoId);
+                    if ($video) {
+                        $publicId = pathinfo($video->video_url, PATHINFO_FILENAME);
+
+                        if (!$this->deleteFromCloudinary($publicId, 'video')) {
+                            \Log::error("Không thể xóa video trên Cloudinary: $publicId");
+                        }
+
+                        $video->delete();
+                    }
+                }
+            }
+
+            // THÊM ẢNH MỚI
             if ($request->hasFile('images')) {
                 $imageController = new ImageController();
                 $imageUrls = $imageController->uploadMultiple($request->file('images'));
@@ -122,7 +160,7 @@ class PostController extends Controller
                 }
             }
 
-            // Upload video mới
+            // THÊM VIDEO MỚI
             if ($request->hasFile('videos')) {
                 $videoUrls = $this->uploadMedia($request->file('videos'), 'post_videos', 'video');
                 foreach ($videoUrls as $url) {
@@ -133,12 +171,17 @@ class PostController extends Controller
                 }
             }
 
+            DB::commit(); // Hoàn tất transaction
+
             return redirect()->route('post.show', $post)->with('success', 'Bài đăng đã được cập nhật');
         } catch (\Exception $e) {
+            DB::rollBack(); // Hoàn tác nếu có lỗi
+            \Log::error("Lỗi khi cập nhật bài đăng: " . $e->getMessage());
             return redirect()->back()->with('error', 'Lỗi khi cập nhật bài đăng: ' . $e->getMessage());
         }
     }
 
+    //Hàm upload ảnh/video lên Cloudinary
     private function uploadMedia($files, $folder, $resourceType = 'image')
     {
         Configuration::instance([
@@ -164,5 +207,47 @@ class PostController extends Controller
         }
 
         return $urls;
+    }
+
+    //Hàm xóa ảnh/video trên Cloudinary
+    private function deleteFromCloudinary($url)
+    {
+        // Lấy thông tin cấu hình từ .env
+        $apiKey = config('cloudinary.api_key');
+        $apiSecret = config('cloudinary.api_secret');
+        $cloudName = config('cloudinary.cloud_name');
+
+        // Lấy public_id từ URL
+        preg_match('/\/upload\/v\d+\/(.+)\.\w+$/', $url, $matches);
+        $publicId = $matches[1] ?? null;
+
+        if (!$publicId) {
+            Log::error("Không lấy được public_id từ URL: $url");
+            return false;
+        }
+
+        $resourceType = str_contains($url, '/video/upload/') ? 'video' : 'image';
+
+        // Tạo chữ ký bảo mật
+        $timestamp = time();
+        $signature = sha1("public_id={$publicId}&timestamp={$timestamp}" . $apiSecret);
+
+        // Gửi request xóa đến Cloudinary
+        $url = "https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/destroy";
+        $response = Http::asForm()->post($url, [
+            'public_id' => $publicId,
+            'api_key'   => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+            'invalidate' => true, // Xóa cache trên CDN
+        ]);
+
+        if ($response->successful()) {
+            Log::info("Đã xóa thành công: {$publicId}");
+            return true;
+        } else {
+            Log::error("Lỗi khi xóa {$publicId}: " . $response->body());
+            return false;
+        }
     }
 }

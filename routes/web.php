@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
         // Hiển thị form chỉnh sửa bài đăng
         Route::get('/{id}/edit', [PostController::class, 'edit'])->name('edit');
         // Cập nhật bài đăng
-        Route::put('/{id}', [PostController::class, 'update'])->name('update');
+        Route::put('/{post}', [PostController::class, 'update'])->name('update');
         // Xóa bài đăng
         Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy');
     });
