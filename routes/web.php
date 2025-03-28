@@ -32,13 +32,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PostController::class, 'store'])->name('store');
 
         // Hiển thị chi tiết bài đăng
-        Route::get('/{post}', [PostController::class, 'show'])->name('show');
+        Route::get('/{id}/detail', [PostController::class, 'show'])->name('show');
         // Hiển thị form chỉnh sửa bài đăng
-        Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
+        Route::get('/{id}/edit', [PostController::class, 'edit'])->name('edit');
         // Cập nhật bài đăng
-        Route::put('/{post}', [PostController::class, 'update'])->name('update');
+        Route::put('/{id}', [PostController::class, 'update'])->name('update');
         // Xóa bài đăng
-        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy');
     });
 });
 

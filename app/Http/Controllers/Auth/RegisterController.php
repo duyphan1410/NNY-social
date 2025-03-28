@@ -27,9 +27,9 @@ class RegisterController extends Controller
             'username' => ['required', 'string', 'min:8', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'avatar' => ['nullable', 'image', 'max:2048'], // Avatar không bắt buộc
         ]);
     }
-
     protected function create(array $data)
     {
         return User::create([
@@ -38,6 +38,7 @@ class RegisterController extends Controller
             'username' => $data['username'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'avatar' => 'https://res.cloudinary.com/dwvt3snha/image/upload/v1743073158/post_images/nem5i8act9bl7bypckmm.webp',
         ]);
     }
 }

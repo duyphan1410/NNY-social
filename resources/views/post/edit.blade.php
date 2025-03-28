@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+    <!-- Kết nối file -->
+    @vite(['resources/css/edit.css'])
+    @vite(['resources/js/edit.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+</head>
+<body>
 @extends('layouts.app')
 
 @section('content')
@@ -27,9 +41,12 @@
 
             <div class="form-group">
                 <label>Ảnh Hiện Tại</label>
-                <div class="current-images">
+                <div class="current-images" id="image-preview">
                     @foreach($post->images as $image)
-                        <img src="{{ $image->image_url }}" alt="Current Image" style="max-width: 200px;">
+                        <div id="current-image-{{ $image->id }}">
+                            <img src="{{ $image->image_url }}" style="width: 100px; height: auto;">
+                            <button type="button" class="remove-current-image" data-id="{{ $image->id }}">×</button>
+                        </div>
                     @endforeach
                 </div>
             </div>
@@ -48,11 +65,14 @@
 
             <div class="form-group">
                 <label>Video Hiện Tại</label>
-                <div class="current-videos">
+                <div class="current-videos" id="video-preview">
                     @foreach($post->videos as $video)
-                        <video controls style="max-width: 200px;">
-                            <source src="{{ $video->video_url }}" type="video/mp4">
-                        </video>
+                        <div id="current-video-{{ $video->id }}">
+                            <video controls style="width: 200px;">
+                                <source src="{{ $video->video_url }}" type="video/mp4">
+                            </video>
+                            <button type="button" class="remove-current-video" data-id="{{ $video->id }}">×</button>
+                        </div>
                     @endforeach
                 </div>
             </div>

@@ -35,7 +35,7 @@ body {
     backdrop-filter: blur(10px);
 }
 
-.navbar .container {
+.navbar .ctn {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
@@ -76,7 +76,6 @@ body {
 main {
     padding-top: 70px;
     min-height: calc(100vh - 70px);
-    display: flex;
     align-items: center;
     justify-content: center;
 }

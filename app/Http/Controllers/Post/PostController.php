@@ -24,7 +24,7 @@ class PostController extends Controller
             // Validate dữ liệu đầu vào
             $validatedData = $request->validate([
                 'content'   => 'required|max:2000',
-                'images.*'  => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+                'images.*'  => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
                 'videos.*'  => 'mimes:mp4,avi,mov|max:20480'
             ]);
 
@@ -36,15 +36,15 @@ class PostController extends Controller
 
             // Xử lý upload ảnh
             if ($request->hasFile('images')) {
-                \Log::info('🔥 Số lượng file images nhận được:', ['count' => count($request->file('images'))]);
+
 
                 $imageController = new ImageController();
                 $imageUrls = $imageController->uploadMultiple($request->file('images'));
 
-                \Log::info('✅ Số lượng URL trả về từ uploadMultiple:', ['count' => is_array($imageUrls) ? count($imageUrls) : 0, 'urls' => $imageUrls]);
+
 
                 if (empty($imageUrls) || !is_array($imageUrls)) {
-                    \Log::error('❌ Không upload được ảnh nào.');
+
                     return redirect()->back()->with('error', 'Lỗi: Không upload được ảnh nào.');
                 }
 
@@ -53,10 +53,10 @@ class PostController extends Controller
                         'post_id'   => $post->id,
                         'image_url' => $url
                     ]);
-                    \Log::info('🖼 Ảnh đã được lưu vào database:', ['post_id' => $post->id, 'image_url' => $url]);
+
                 }
 
-                \Log::info('📌 Tổng số ảnh đã lưu vào database:', ['count' => count($imageUrls)]);
+
             }
 
 
@@ -78,19 +78,15 @@ class PostController extends Controller
         }
     }
 
-    public function show(Post $post)
+    public function show($id)
     {
-        $post->load('images', 'videos', 'user');
+        $post = Post::with(['images', 'videos', 'user'])->findOrFail($id);
         return view('post.show', compact('post'));
     }
 
-    public function edit(Post $post)
+    public function edit($id)
     {
-        if (auth()->id() !== $post->user_id) {
-            abort(403, 'Bạn không có quyền chỉnh sửa bài đăng này');
-        }
-
-        $post->load('images', 'videos');
+        $post = Post::with(['images', 'videos', 'user'])->findOrFail($id);
         return view('post.edit', compact('post'));
     }
 
@@ -105,7 +101,7 @@ class PostController extends Controller
             // Validate
             $validatedData = $request->validate([
                 'content'  => 'required|max:2000',
-                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+                'images.*' => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
                 'videos.*' => 'mimes:mp4,avi,mov|max:20480'
             ]);
 
