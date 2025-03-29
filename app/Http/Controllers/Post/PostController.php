@@ -118,7 +118,7 @@ class PostController extends Controller
                 foreach ($removeImages as $imageId) {
                     $image = PostImage::find($imageId);
                     if ($image) {
-                        $publicId = pathinfo($image->image_url, PATHINFO_FILENAME);
+                        $publicId = "post_images/" . pathinfo($image->image_url, PATHINFO_FILENAME);
 
                         // Xóa ảnh trên Cloudinary
                         if (!$this->deleteFromCloudinary($publicId, 'image')) {
@@ -136,7 +136,7 @@ class PostController extends Controller
                 foreach ($removeVideos as $videoId) {
                     $video = PostVideo::find($videoId);
                     if ($video) {
-                        $publicId = pathinfo($video->video_url, PATHINFO_FILENAME);
+                        $publicId = "post_videos/" . pathinfo($video->video_url, PATHINFO_FILENAME);
 
                         if (!$this->deleteFromCloudinary($publicId, 'video')) {
                             \Log::error("Không thể xóa video trên Cloudinary: $publicId");
@@ -181,6 +181,41 @@ class PostController extends Controller
         }
     }
 
+    public function destroy(Post $post)
+    {
+        try {
+            // Xóa tất cả ảnh của bài viết
+            foreach ($post->images as $image) {
+                $publicId = "post_images/" . pathinfo($image->image_url, PATHINFO_FILENAME);
+
+                if (!$this->deleteFromCloudinary($publicId, 'image')) {
+                    \Log::error("Không thể xóa ảnh trên Cloudinary: $publicId");
+                }
+                $image->delete();
+            }
+
+            // Xóa tất cả video của bài viết
+            foreach ($post->videos as $video) {
+                $publicId = "post_videos/" .pathinfo($video->video_url, PATHINFO_FILENAME);
+                if (!$this->deleteFromCloudinary($publicId, 'video')) {
+                    \Log::error("Không thể xóa video trên Cloudinary: $publicId");
+                }
+
+                $video->delete();
+            }
+
+            // Xóa bài viết
+            $post->delete();
+
+            return redirect()->route('home')->with('success', 'Bài viết đã bị xóa.');
+        } catch (\Exception $e) {
+            \Log::error("Lỗi khi xóa bài viết: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Lỗi khi xóa bài viết.');
+        }
+    }
+
+
+
     //Hàm upload ảnh/video lên Cloudinary
     private function uploadMedia($files, $folder, $resourceType = 'image')
     {
@@ -210,44 +245,42 @@ class PostController extends Controller
     }
 
     //Hàm xóa ảnh/video trên Cloudinary
-    private function deleteFromCloudinary($url)
+    private function deleteFromCloudinary($publicId, $resourceType = 'video')
     {
-        // Lấy thông tin cấu hình từ .env
         $apiKey = config('cloudinary.api_key');
         $apiSecret = config('cloudinary.api_secret');
         $cloudName = config('cloudinary.cloud_name');
-
-        // Lấy public_id từ URL
-        preg_match('/\/upload\/v\d+\/(.+)\.\w+$/', $url, $matches);
-        $publicId = $matches[1] ?? null;
-
-        if (!$publicId) {
-            Log::error("Không lấy được public_id từ URL: $url");
-            return false;
-        }
-
-        $resourceType = str_contains($url, '/video/upload/') ? 'video' : 'image';
-
-        // Tạo chữ ký bảo mật
         $timestamp = time();
-        $signature = sha1("public_id={$publicId}&timestamp={$timestamp}" . $apiSecret);
 
-        // Gửi request xóa đến Cloudinary
-        $url = "https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/destroy";
-        $response = Http::asForm()->post($url, [
+        // Tạo signature đúng cách (bao gồm public_id)
+        $signatureParams = [
             'public_id' => $publicId,
-            'api_key'   => $apiKey,
+            'timestamp' => $timestamp
+        ];
+
+        // Sắp xếp và tạo chuỗi signature
+        ksort($signatureParams);
+        $signatureString = '';
+        foreach ($signatureParams as $key => $value) {
+            $signatureString .= $key . '=' . $value . '&';
+        }
+        $signatureString = rtrim($signatureString, '&');
+        $signature = sha1($signatureString . $apiSecret);
+
+        // URL API destroy
+        $url = "https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/destroy";
+
+        // Sử dụng phương thức POST thay vì DELETE
+        $response = Http::post($url, [
+            'public_id' => $publicId,
+            'api_key' => $apiKey,
             'timestamp' => $timestamp,
-            'signature' => $signature,
-            'invalidate' => true, // Xóa cache trên CDN
+            'signature' => $signature
         ]);
 
-        if ($response->successful()) {
-            Log::info("Đã xóa thành công: {$publicId}");
-            return true;
-        } else {
-            Log::error("Lỗi khi xóa {$publicId}: " . $response->body());
-            return false;
-        }
+        Log::info("Xóa tài nguyên từ Cloudinary: " . $publicId);
+        Log::info("Kết quả: " . json_encode($response->json()));
+
+        return $response->successful();
     }
 }

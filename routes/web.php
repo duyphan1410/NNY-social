@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Friends\FriendController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Reel\ReelController;
@@ -21,7 +22,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
-//Route::get('/home', [PostController::class, 'index'])->name('home')
 
 //Router Post
 Route::middleware('auth')->group(function () {
@@ -38,10 +38,11 @@ Route::middleware('auth')->group(function () {
         // Cập nhật bài đăng
         Route::put('/{post}', [PostController::class, 'update'])->name('update');
         // Xóa bài đăng
-        Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy');
+        Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+
     });
 });
-
+//Router Reel
 Route::middleware('auth')->group(function () {
     Route::prefix('reel')->name('reel.')->group(function () {
         // Tạo reel mới
@@ -49,6 +50,28 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [ReelController::class, 'store'])->name('store');
     });
 });
+// Router Friend
+Route::middleware('auth')->group(function () {
+    Route::prefix('friend')->name('friend.')->group(function () {
+        Route::get('/', [FriendController::class, 'index'])->name('index');
+        //Thêm bạn
+        Route::post('/request', [FriendController::class, 'sendRequest'])->name('request');
+        //Hủy kết bạn
+        Route::post('/cancel-request', [FriendController::class, 'cancelRequest'])->name('cancelRequest');
+        //Chấp nhận
+        Route::post('/accept', [FriendController::class, 'acceptRequest'])->name('accept');
+        //Từ chối
+        Route::post('/reject', [FriendController::class, 'rejectRequest'])->name('reject');
+        //Xóa bạn
+        Route::post('/unfriend', [FriendController::class, 'unfriend'])->name('unfriend');
+        //Tạo ds
+        Route::get('/list', [FriendController::class, 'listFriends'])->name('list');
+        //Tìm kiếm (bạn)
+        Route::get('/search', [FriendController::class, 'search'])->name('search');
+
+    });
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard'); // Cần chỉ rõ thư mục

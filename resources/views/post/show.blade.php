@@ -41,7 +41,7 @@
                                 <form action="{{ route('post.destroy', $post->id) }}" method="POST" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                    <button type="submit">
                                         <i class="fas fa-trash"></i> Xóa
                                     </button>
                                 </form>

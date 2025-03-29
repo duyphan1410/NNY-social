@@ -1,26 +1,29 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ</title>
-    <!-- Kết nối file -->
-    @vite(['resources/css/home.css'])
-    @vite(['resources/js/home.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-
-</head>
-<body>
 @extends('layouts.app')
 
+@section('title', 'Trang chủ')
+
+@push('styles')
+    @vite(['resources/css/home.css'])
+@endpush
+
+@push('scripts')
+    @vite(['resources/js/home.js'])
+@endpush
+
 @section('content')
+        @if(session('friend_accepted_' . Auth::id()))
+            <p style="color: green;">{{ session('friend_accepted_' . Auth::id()) }}</p>
+        @endif
+
+        @if(session('friend_rejected_' . Auth::id()))
+            <p style="color: red;">{{ session('friend_rejected_' . Auth::id()) }}</p>
+        @endif
         <div class="container">
 
             <div class="col-3 sidebar">
                 <a href="#">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
-                <a href="#">Tìm bạn bè</a>
-                <a href="#">Kỷ niệm</a>
+                <a href="{{ route('friend.search') }}">Tìm bạn bè</a>
+                <a href="{{ route('friend.index') }}">Bạn bè</a>
                 <a href="#">Đà lạt</a>
                 <a href="#">Video</a>
                 <a href="#">Marketplace</a>
@@ -106,10 +109,10 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <form action="{{ route('post.destroy', $post->id) }}" method="POST" class="delete-form">
+                                                        <form action="{{ route('post.destroy', $post) }}" method="POST" class="delete-form">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                            <button type="submit">
                                                                 <i class="fas fa-trash"></i> Xóa
                                                             </button>
                                                         </form>
@@ -243,21 +246,13 @@
             <div class="col-3 friends-list">
                 <h3>Danh sách bạn bè</h3>
                 <ul>
-                    <li>
-                        <img src="#" alt="Ảnh đại diện 1">
-                        Bạn bè 1
-                    </li>
-                    <li>
-                        <img src="#" alt="Ảnh đại diện 2">
-                        Bạn bè 2
-                    </li>
-                    <li>
-                        <img src="#" alt="Ảnh đại diện 3">
-                        Bạn bè 3
-                    </li>
+                    @foreach($friends as $friend)
+                        <li>
+                            <p>{{ optional($friend)->first_name ?? 'Người dùng không tồn tại' }} {{ optional($friend)->last_name ?? '' }}</p>
+                        </li>
+                    @endforeach
                 </ul>
             </div>
     </div>
 @endsection
-</body>
-</html>
+

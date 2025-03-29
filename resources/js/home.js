@@ -46,3 +46,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".delete-form").forEach(form => {
+        form.addEventListener("submit", function (event) {
+            let confirmDelete = confirm("Bạn có chắc chắn muốn xóa?");
+            if (!confirmDelete) {
+                event.preventDefault(); // Ngăn form gửi nếu chọn Hủy
+            }
+        });
+    });
+});
