@@ -18,7 +18,10 @@ class FriendController extends Controller
         $friends = Friend::where('user_id', Auth::id())
             ->orWhere('friend_id', Auth::id())
             ->with(['user', 'friend'])
-            ->get();
+            ->get()
+            ->map(function ($friend) {
+                return $friend->user_id === Auth::id() ? $friend->friend : $friend->user;
+            });
 
         // Lấy danh sách lời mời kết bạn đang chờ (những người gửi lời mời đến mình)
         $pendingRequests = FriendRequest::where('receiver_id', Auth::id())

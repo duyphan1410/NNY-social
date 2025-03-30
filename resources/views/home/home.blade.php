@@ -248,7 +248,10 @@
                 <ul>
                     @foreach($friends as $friend)
                         <li>
-                            <p>{{ optional($friend)->first_name ?? 'Người dùng không tồn tại' }} {{ optional($friend)->last_name ?? '' }}</p>
+                            <div class="friend-info">
+                                <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                <span>{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                            </div>
                         </li>
                     @endforeach
                 </ul>
