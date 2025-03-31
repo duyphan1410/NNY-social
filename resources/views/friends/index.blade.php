@@ -10,6 +10,10 @@
         <div class="friends-list">
             <h2>Danh sách bạn bè</h2>
 
+            @if(session('success_unfriend'))
+                <p class="alert alert-success">{{ session('success_unfriend') }}</p>
+            @endif
+
             @if($friends->isEmpty())
                 <p class="empty-text">Bạn chưa có bạn bè nào.</p>
             @else

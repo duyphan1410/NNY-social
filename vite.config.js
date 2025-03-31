@@ -5,14 +5,22 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/js/app.js',
+                //css
                 'resources/css/app.css',
-                'resources/js/home.js',
-                'resources/css/home.css',
-                'resources/js/create.js',
                 'resources/css/create.css',
-                'resources/js/detail.js',
                 'resources/css/detail.css',
+                'resources/css/edit.css',
+                'resources/css/friends.css',
+                'resources/css/home.css',
+                //js
+                'resources/js/app.js',
+                'resources/js/bootstrap.js',
+                'resources/js/create.js',
+                'resources/js/detail.js',
+                'resources/js/edit.js',
+                'resources/js/home.js',
+                // 'resources/js/reel.js',
+                // 'resources/css/reel.css',
                 'resources/sass/app.scss', // Đảm bảo file SCSS này tồn tại
             ],
             refresh: true,

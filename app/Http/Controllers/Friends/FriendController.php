@@ -125,14 +125,32 @@ class FriendController extends Controller
     {
         $friendId = $request->input('friend_id');
 
-        Friend::where(function ($query) use ($friendId) {
-            $query->where('user_id', Auth::id())->where('friend_id', $friendId);
-        })->orWhere(function ($query) use ($friendId) {
-            $query->where('user_id', $friendId)->where('friend_id', Auth::id());
-        })->delete();
+        // Kiểm tra dữ liệu đầu vào
+        if (!$friendId || !is_numeric($friendId)) {
+            return redirect()->back()->with('error', 'ID bạn bè không hợp lệ');
+        }
 
-        return response()->json(['message' => 'Đã hủy kết bạn']);
+        $userId = Auth::id();
+
+        // Kiểm tra xem có phải bạn bè không trước khi xóa
+        $friendship = Friend::whereIn('user_id', [$userId, $friendId])
+            ->whereIn('friend_id', [$userId, $friendId])
+            ->first();
+
+        if (!$friendship) {
+            return redirect()->back()->with('error', 'Không tìm thấy bạn bè');
+        }
+
+        // Lấy tên
+        $friend = User::find($friendId);
+        $friendName = $friend ? $friend->name : 'người dùng này';
+
+        // Xóa quan hệ bạn bè
+        $friendship->delete();
+
+        return redirect()->back()->with('success_unfriend', "Đã hủy kết bạn với {$friendName} thành công");
     }
+
 
     // Lấy danh sách bạn bè
     public function listFriends()

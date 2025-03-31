@@ -67,15 +67,6 @@
                                          alt="Story" onerror="this.src='default-placeholder.jpg'">
                                 </div>
                             @empty
-                                <div class="reel-item">
-                                    <div class="story-avatar-container">
-                                        <img class="story-avatar" src="" alt="User">
-                                    </div>
-                                    <span class="story-name">Your Story</span>
-                                    <div class="story-content story-create-content">
-                                        <span class="plus-icon">+</span>
-                                    </div>
-                                </div>
                             @endforelse
                         </div>
                         <button class="reel-btn prev" onclick="scrollReel(-1)">&#8249;</button>
