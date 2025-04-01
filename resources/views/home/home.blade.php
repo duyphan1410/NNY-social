@@ -103,16 +103,17 @@
                                                         <form action="{{ route('post.destroy', $post) }}" method="POST" class="delete-form">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit">
+                                                            <button type="submit" class="delete-btn">
                                                                 <i class="fas fa-trash"></i> Xóa
                                                             </button>
+
                                                         </form>
                                                     </li>
-                                                    <li>
-                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">
-                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết
-                                                        </button>
-                                                    </li>
+{{--                                                    <li>--}}
+{{--                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
+{{--                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
+{{--                                                        </button>--}}
+{{--                                                    </li>--}}
                                                 @else
                                                     <li>
                                                         <button class="report-post-btn" data-post-id="{{ $post->id }}">

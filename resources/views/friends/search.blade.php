@@ -13,7 +13,7 @@
                 <p class="alert alert-success">{{ session('success') }}</p>
             @endif
             @if(session('error'))
-                <p class="alert alert-error">{{ session('error') }}</p>
+                <p class="alert alert-error">{!! session('error') !!}</p>
             @endif
             <form action="{{ route('friend.search') }}" method="GET" class="search-box">
                 <input type="text" name="query" placeholder="Nhập thông tin muốn tìm... " required>

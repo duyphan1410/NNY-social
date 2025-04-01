@@ -37,6 +37,7 @@ class FriendController extends Controller
     public function sendRequest(Request $request)
     {
         $receiverId = $request->input('receiver_id');
+        $senderId = Auth::id();
 
         // Kiểm tra người nhận có tồn tại không
         $receiver = User::find($receiverId);
@@ -55,6 +56,18 @@ class FriendController extends Controller
 
         if ($isFriend) {
             return redirect()->back()->with('error', 'Bạn đã là bạn bè.');
+        }
+
+        // Kiểm tra xem đã có lời mời nào giữa 2 người chưa
+        $existingRequest = FriendRequest::where(function ($query) use ($senderId, $receiverId) {
+            $query->where('sender_id', $senderId)->where('receiver_id', $receiverId);
+        })->orWhere(function ($query) use ($senderId, $receiverId) {
+            $query->where('sender_id', $receiverId)->where('receiver_id', $senderId);
+        })->first();
+
+        if ($existingRequest && $existingRequest->receiver_id == $senderId) {
+            // Kiểm tra nếu lời mời là từ người nhận đến người gửi
+            return redirect()->back()->with('error', 'Người này đã gửi lời mời kết bạn cho bạn. <br> Hãy kiểm tra và chấp nhận.');
         }
 
         // Gửi lời mời kết bạn
@@ -147,6 +160,14 @@ class FriendController extends Controller
 
         // Xóa quan hệ bạn bè
         $friendship->delete();
+
+        FriendRequest::where(function ($query) use ($userId, $friendId) {
+            $query->where('sender_id', $userId)
+                ->where('receiver_id', $friendId);
+        })->orWhere(function ($query) use ($userId, $friendId) {
+            $query->where('sender_id', $friendId)
+                ->where('receiver_id', $userId);
+        })->delete();
 
         return redirect()->back()->with('success_unfriend', "Đã hủy kết bạn với {$friendName} thành công");
     }

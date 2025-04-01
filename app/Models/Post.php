@@ -11,6 +11,7 @@ class Post extends Model
     protected $table = 'posts';
 
     protected $fillable = ['user_id', 'content'];
+    protected $withCount = ['likes', 'comments'];
 
     // Relationship với User
     public function user()
@@ -59,5 +60,11 @@ class Post extends Model
     public function getCommentsCountAttribute()
     {
         return $this->comments()->count();
+    }
+
+    public function scopeWithEngagement($query)
+    {
+        return $query->withCount(['likes', 'comments'])
+            ->with(['user', 'images', 'videos']);
     }
 }

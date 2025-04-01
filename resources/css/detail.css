@@ -123,17 +123,16 @@ a {
     gap: 8px;
 }
 
-.dropdown-menu li a,
-.dropdown-menu li button {
-    background: none;
-    border: none;
-    font-size: 14px;
-    color: #333;
-    display: flex;
-    align-items: center;
+.dropdown-menu li button,
+.dropdown-menu li a {
+    display: block;
     width: 100%;
     text-align: left;
-    padding: 5px 0;
+    padding: 8px 12px;
+}
+
+.dropdown-menu li {
+    padding: 0; /* Loại bỏ padding mặc định của li */
 }
 
 .dropdown-menu li:hover {
@@ -143,6 +142,21 @@ a {
 /* Khi dropdown được mở */
 .dropdown.active .dropdown-menu {
     display: block;
+}
+
+.delete-form {
+    margin: 0; /* Loại bỏ margin mặc định của form */
+    width: 100%;
+}
+
+.delete-form .delete-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: 8px 12px;
+    font: 16px Inter,sans-serif;
 }
 
 /* Nội dung bài đăng */
