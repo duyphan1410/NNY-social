@@ -34,24 +34,27 @@ class HomeController extends Controller
                 ->push(Auth::id());
 
             // Lấy bài viết
-            $posts = Post::whereIn('user_id', $friendIds)
-                ->with(['user', 'images', 'videos', 'comments.user'])
-                ->withCount(['likes', 'comments'])
+            $posts = Post::withEngagement()
+                ->whereIn('user_id', $friendIds)
                 ->withExists(['likes as user_has_liked' => function ($query) {
                     $query->where('user_id', auth()->id());
                 }])
                 ->get()
                 ->sortByDesc(function ($post) {
-                    // Công thức tính điểm ưu tiên
                     $engagementScore = ($post->likes_count * 1) + ($post->comments_count * 2);
                     $freshnessScore = 1 / (1 + now()->diffInHours($post->created_at));
-
-                    // Người dùng thân thiết (ví dụ: tương tác nhiều) có thể nhân hệ số
-                    $relationshipWeight = 1;
-
-                    return ($engagementScore + $freshnessScore) * $relationshipWeight;
+                    return $engagementScore + $freshnessScore;
                 })
                 ->take(50);
+
+
+            if (Auth::check()) {
+                $userId = Auth::id();
+
+                foreach ($posts as $post) {
+                    $post->user_has_liked = $post->isLikedByUser($userId);
+                }
+            }
 
             // Lấy reels (giữ nguyên)
             $reels = Reel::with('user')

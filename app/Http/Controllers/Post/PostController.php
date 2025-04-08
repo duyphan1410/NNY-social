@@ -283,4 +283,27 @@ class PostController extends Controller
 
         return $response->successful();
     }
+
+    public function shareForm($id)
+    {
+        $originalPost = Post::with('user')->findOrFail($id);
+        return view('post.share', compact('originalPost'));
+    }
+
+    public function share(Request $request, $id)
+    {
+        $originalPost = Post::findOrFail($id);
+
+        $sharedPost = new Post([
+            'user_id' => auth()->id(),
+            'content' => $request->input('content'),
+            'shared_post_id' => $originalPost->id,
+        ]);
+
+        $sharedPost->save();
+
+        return redirect()->route('home')->with('success', 'Chia sẻ bài viết thành công!');
+    }
+
+
 }

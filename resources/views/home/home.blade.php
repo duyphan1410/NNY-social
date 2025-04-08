@@ -35,7 +35,7 @@
 
                 {{--Creat post--}}
                 <div class="create-post">
-                    <a href="{{ route('post.create') }}" class="create-button">New post</a>
+                    <a href="{{ route('post.create') }}" class="create-button">Tạo bài đăng</a>
                 </div>
                 <!-- Stories Section -->
                 <section class="stories-section">
@@ -78,152 +78,151 @@
                 <section class="post-section">
                     <div class="feed">
                         @forelse ($posts as $post)
-                                <div class="post">
-                                    <!-- Header: User info and timestamp -->
-                                    <div class="post-header">
-                                        <div class="user-info">
-                                            <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
-                                            <div class="user-details">
-                                                <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
-                                                <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
+                            <div class="post">
+                                <div class="post-header">
+                                    <div class="user-info">
+                                        <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
+                                        <div class="user-details">
+                                            <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
+                                            <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
+                                        </div>
+                                    </div>
+                                    <div class="post-options dropdown">
+                                        <button class="dropdown-btn">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @if(auth()->check() && auth()->id() == $post->user_id)
+                                                <li>
+                                                    <a href="{{ route('post.edit', ['id' => $post->id]) }}">
+                                                        <i class="fas fa-edit"></i> Chỉnh sửa
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('post.destroy', $post) }}" method="POST" class="delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="delete-btn">
+                                                            <i class="fas fa-trash"></i> Xóa
+                                                        </button>
+
+                                                    </form>
+                                                </li>
+                                                {{--                                                    <li>--}}
+                                                {{--                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
+                                                {{--                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
+                                                {{--                                                        </button>--}}
+                                                {{--                                                    </li>--}}
+                                            @else
+                                                <li>
+                                                    <button class="report-post-btn" data-post-id="{{ $post->id }}">
+                                                        <i class="fas fa-flag"></i> Báo cáo
+                                                    </button>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="post-content">
+                                    <p class="post-text">{{ $post->content }}</p>
+                                </div>
+
+                                @if ($post->sharedPost)
+                                    <div class="shared-post">
+                                        <div class="post-header">
+                                            <div class="user-info">
+                                                <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
+                                                <div class="user-details">
+                                                    <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
+                                                    <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="post-options dropdown">
-                                            <button class="dropdown-btn">
-                                                <i class="fas fa-ellipsis-h"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @if(auth()->check() && auth()->id() == $post->user_id)
-                                                    <li>
-                                                        <a href="{{ route('post.edit', ['id' => $post->id]) }}">
-                                                            <i class="fas fa-edit"></i> Chỉnh sửa
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{{ route('post.destroy', $post) }}" method="POST" class="delete-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="delete-btn">
-                                                                <i class="fas fa-trash"></i> Xóa
-                                                            </button>
-
-                                                        </form>
-                                                    </li>
-{{--                                                    <li>--}}
-{{--                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
-{{--                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
-{{--                                                        </button>--}}
-{{--                                                    </li>--}}
-                                                @else
-                                                    <li>
-                                                        <button class="report-post-btn" data-post-id="{{ $post->id }}">
-                                                            <i class="fas fa-flag"></i> Báo cáo
-                                                        </button>
-                                                    </li>
-                                                @endif
-                                            </ul>
+                                        <div class="post-content">
+                                            <p class="post-text">{{ $post->sharedPost->content }}</p>
                                         </div>
-                                    </div>
-                                    <!-- Post content -->
-                                    <div class="post-content">
-                                        <p class="post-text">{{ $post->content }}</p>
-                                    </div>
+                                        @php
+                                            $sharedMedia = collect([]);
+                                            if ($post->sharedPost->images) {
+                                                $sharedMedia = $sharedMedia->merge($post->sharedPost->images);
+                                            }
+                                            if ($post->sharedPost->videos) {
+                                                $sharedMedia = $sharedMedia->merge($post->sharedPost->videos);
+                                            }
+                                            $sharedMediaCount = $sharedMedia->count();
+                                            $sharedMediaClass = $sharedMediaCount == 1 ? 'single' : ($sharedMediaCount == 2 ? 'two' : ($sharedMediaCount == 3 ? 'three' : 'four'));
+                                        @endphp
 
-                                    <!-- Post media (Images & Videos combined) -->
+                                        @if ($sharedMediaCount > 0)
+                                            <div class="post-media {{ $sharedMediaClass }}">
+                                                @foreach ($sharedMedia as $item)
+                                                    @if (isset($item->image_url))
+                                                        <img class="post-image" src="{{ $item->image_url }}" alt="Shared Post Image">
+                                                    @elseif (isset($item->video_url))
+                                                        <video class="post-video" controls>
+                                                            <source src="{{ $item->video_url }}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
                                     @php
-                                        $media = collect([]);
+                                        $originalMedia = collect([]);
                                         if ($post->images) {
-                                            $media = $media->merge($post->images);
+                                            $originalMedia = $originalMedia->merge($post->images);
                                         }
                                         if ($post->videos) {
-                                            $media = $media->merge($post->videos);
+                                            $originalMedia = $originalMedia->merge($post->videos);
                                         }
-                                        $mediaCount = $media->count();
-                                        $mediaClass = $mediaCount == 1 ? 'single' : ($mediaCount == 2 ? 'two' : ($mediaCount == 3 ? 'three' : 'four'));
+                                        $originalMediaCount = $originalMedia->count();
+                                        $originalMediaClass = $originalMediaCount == 1 ? 'single' : ($originalMediaCount == 2 ? 'two' : ($originalMediaCount == 3 ? 'three' : 'four'));
                                     @endphp
 
-                                    @if ($mediaCount > 0)
-                                        <div class="post-media {{ $mediaClass }}">
-                                            @foreach ($media as $item)
-                                                @if (isset($item->image_url))  {{-- Nếu là hình ảnh --}}
-                                                <img class="post-image" src="{{ $item->image_url }}" alt="Post Image">
-                                                @elseif (isset($item->video_url))  {{-- Nếu là video --}}
-                                                <video class="post-video" controls>
-                                                    <source src="{{ $item->video_url }}" type="video/mp4">
-                                                    Your browser does not support the video tag.
-                                                </video>
+                                    @if ($originalMediaCount > 0)
+                                        <div class="post-media {{ $originalMediaClass }}">
+                                            @foreach ($originalMedia as $item)
+                                                @if (isset($item->image_url))
+                                                    <img class="post-image" src="{{ $item->image_url }}" alt="Original Post Image">
+                                                @elseif (isset($item->video_url))
+                                                    <video class="post-video" controls>
+                                                        <source src="{{ $item->video_url }}" type="video/mp4">
+                                                        Your browser does not support the video tag.
+                                                    </video>
                                                 @endif
                                             @endforeach
                                         </div>
                                     @endif
+                                @endif
 
-
-                                    <!-- Post interactions: Like count and comment count -->
-                                    <div class="post-stats">
-                                         <div class="like-count">
-                                            <i class="fas fa-heart"></i>
-                                            <span>{{ $post->likes_count ?? 0 }}</span>
-                                        </div>
-                                        <div class="comment-count">
-                                            <span>{{ $post->comments_count ?? 0 }} bình luận</span>
-                                        </div>
+                                <div class="post-stats">
+                                    <div class="comment-count">
+                                        <span>{{ $post->comments_count ?? 0 }} bình luận</span>
                                     </div>
-
-                                    <!-- Post actions: Like, Comment, Share -->
-                                    <div class="post-actions">
-                                        <button class="action-btn like-btn {{ $post->user_has_liked ? 'active' : '' }}" data-post-id="{{ $post->id }}">
-                                            <i class="fas fa-heart"></i>
-                                            <span>Thích</span>
-                                        </button>
-                                        <button class="action-btn comment-btn" data-post-id="{{ $post->id }}">
-                                            <i class="fas fa-comment"></i>
-                                            <span>Bình luận</span>
-                                        </button>
-                                        <button class="action-btn share-btn" data-post-id="{{ $post->id }}">
-                                            <i class="fas fa-share"></i>
-                                            <span>Chia sẻ</span>
-                                        </button>
-                                    </div>
-
-                                    <!-- Comments section -->
-    {{--                                <div class="post-comments">--}}
-    {{--                                    @if ($post->comments && count($post->comments) > 0)--}}
-    {{--                                        @foreach ($post->comments->take(3) as $comment)--}}
-    {{--                                            <div class="comment">--}}
-    {{--                                                <img class="comment-avatar" src="{{ $comment->user->avatar }}" alt="{{ $comment->user->name }}">--}}
-    {{--                                                <div class="comment-content">--}}
-    {{--                                                    <div class="comment-user">{{ $comment->user->name }}</div>--}}
-    {{--                                                    <div class="comment-text">{{ $comment->content }}</div>--}}
-    {{--                                                    <div class="comment-actions">--}}
-    {{--                                                        <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>--}}
-    {{--                                                        <button class="comment-like-btn">Thích</button>--}}
-    {{--                                                        <button class="comment-reply-btn">Trả lời</button>--}}
-    {{--                                                    </div>--}}
-    {{--                                                </div>--}}
-    {{--                                            </div>--}}
-    {{--                                        @endforeach--}}
-
-    {{--                                        @if (count($post->comments) > 3)--}}
-    {{--                                            <button class="view-more-comments" data-post-id="{{ $post->id }}">--}}
-    {{--                                                Xem thêm bình luận--}}
-    {{--                                            </button>--}}
-    {{--                                        @endif--}}
-    {{--                                    @endif--}}
-
-    {{--                                    <!-- Comment form -->--}}
-    {{--                                    <div class="comment-form">--}}
-    {{--                                        <img class="comment-form-avatar" src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}">--}}
-    {{--                                        <form action="{{ route('comments.store') }}" method="POST" class="comment-input-container">--}}
-    {{--                                            @csrf--}}
-    {{--                                            <input type="hidden" name="post_id" value="{{ $post->id }}">--}}
-    {{--                                            <input type="text" name="content" class="comment-input" placeholder="Viết bình luận...">--}}
-    {{--                                            <button type="submit" class="comment-submit">--}}
-    {{--                                                <i class="fas fa-paper-plane"></i>--}}
-    {{--                                            </button>--}}
-    {{--                                        </form>--}}
-    {{--                                    </div>--}}
-    {{--                                </div>--}}
                                 </div>
+
+                                <div class="post-actions">
+                                    <button class="action-btn like-btn {{ $post->user_has_liked ? 'active' : '' }}" data-post-id="{{ $post->id }}">
+                                    <i class="fas fa-heart"></i>
+                                        <span class="like-count">{{ $post->likes_count }}</span>
+                                        <span>Thích</span>
+                                    </button>
+                                    <span class="like-float" style="display:none;">❤️</span>
+                                    <a href="{{ route('post.show', ['id' => $post->id]) }}"
+                                       class="action-btn comment-btn">
+                                        <i class="fas fa-comment"></i>
+                                        <span>Bình luận</span>
+                                    </a>
+                                    <a href="{{ route('post.share.form', ['id' => $post->id]) }}" class="action-btn share-btn">
+                                        <i class="fas fa-share"></i>
+                                        <span>Chia sẻ</span>
+                                    </a>
+                                </div>
+
+                            </div>
                         @empty
                             <div class="no-posts">
                                 <i class="fas fa-newspaper"></i>

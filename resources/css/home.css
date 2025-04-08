@@ -297,21 +297,6 @@ a {
     border-radius: 8px;
 }
 
-.post-stats {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.post-actions {
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-}
-
 .post-media {
     display: grid;
     gap: 5px;
@@ -435,6 +420,21 @@ a {
     font: 16px Inter,sans-serif;
 }
 
+.post-stats {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.post-actions {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
 .action-btn {
     background: none;
     border: none;
@@ -446,6 +446,79 @@ a {
 .action-btn:hover {
     color: #1877f2;
 }
+
+.like-float {
+    position: absolute;
+    font-size: 24px;
+    color: red;
+    animation: floatUp 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}
+
+
+
+.shared-post {
+    margin-top: 10px; /* Thêm khoảng cách giữa bài đăng của người chia sẻ và bài đăng gốc */
+    border: 1px solid #ddd; /* Thêm border màu xám nhạt */
+    border-radius: 8px; /* Bo tròn góc border */
+    padding: 10px; /* Thêm padding bên trong border để nội dung không bị sát viền */
+    /* Điều chỉnh kích thước (ví dụ: giảm font-size hoặc thêm margin) */
+    font-size: 0.9em; /* Giảm kích thước font chữ */
+}
+
+/* Tùy chọn: Giảm kích thước avatar và tên trong bài đăng gốc được chia sẻ */
+.shared-post .post-header .user-info .post-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+.shared-post .post-header .user-info .user-details .user-name {
+    font-size: 1em;
+}
+
+.shared-post .post-content .post-text {
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Tùy chọn: Giảm kích thước media trong bài đăng gốc được chia sẻ */
+.shared-post .post-media .post-image,
+.shared-post .post-media .post-video {
+    max-height: 250px; /* Giảm chiều cao tối đa của media */
+}
+
+.shared-post .post-media.two .post-image,
+.shared-post .post-media.two .post-video {
+    max-height: 180px;
+}
+
+.shared-post .post-media.three .post-image:first-child,
+.shared-post .post-media.three .post-video:first-child {
+    max-height: 180px;
+}
+
+.shared-post .post-media.three .post-image:not(:first-child),
+.shared-post .post-media.three .post-video:not(:first-child) {
+    max-height: 120px;
+}
+
+.shared-post .post-media.four .post-image,
+.shared-post .post-media.four .post-video {
+    max-height: 120px;
+}
+
 
 .friends-list {
     position: sticky;
@@ -496,3 +569,4 @@ a {
     font-weight: 500;
     color: var(--text-color);
 }
+

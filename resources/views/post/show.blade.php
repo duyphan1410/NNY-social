@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ</title>
-    <!-- Kết nối file -->
-    @vite(['resources/css/detail.css'])
-    @vite(['resources/js/detail.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-
-</head>
-<body>
 @extends('layouts.app')
+
+@push('styles')
+    @vite(['resources/css/home.css'])
+    @vite(['resources/css/detail.css'])
+@endpush
+
+@push('scripts')
+    @vite(['resources/js/home.js'])
+    @vite(['resources/js/detail.js'])
+@endpush
 
 @section('content')
     <div class="container">
@@ -23,7 +19,7 @@
                     <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
                     <div class="user-details">
                         <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
-                        <span class="post-time">{{ $post->created_at->diffForHumans() }}</span>
+                        <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
                     </div>
                 </div>
                 <div class="post-options dropdown">
@@ -33,24 +29,25 @@
                     <ul class="dropdown-menu">
                         @if(auth()->check() && auth()->id() == $post->user_id)
                             <li>
-                                <a href="{{ route('post.edit', $post->id) }}">
+                                <a href="{{ route('post.edit', ['id' => $post->id]) }}">
                                     <i class="fas fa-edit"></i> Chỉnh sửa
                                 </a>
                             </li>
                             <li>
-                                <form action="{{ route('post.destroy', $post->id) }}" method="POST" class="delete-form">
+                                <form action="{{ route('post.destroy', $post) }}" method="POST" class="delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="delete-btn ">
+                                    <button type="submit" class="delete-btn">
                                         <i class="fas fa-trash"></i> Xóa
                                     </button>
+
                                 </form>
                             </li>
-{{--                            <li>--}}
-{{--                                <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
-{{--                                    <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
-{{--                                </button>--}}
-{{--                            </li>--}}
+                            {{--                                                    <li>--}}
+                            {{--                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
+                            {{--                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
+                            {{--                                                        </button>--}}
+                            {{--                                                    </li>--}}
                         @else
                             <li>
                                 <button class="report-post-btn" data-post-id="{{ $post->id }}">
@@ -62,103 +59,127 @@
                 </div>
             </div>
 
-            <!-- Post content -->
             <div class="post-content">
-                <p class="post-text">{{ $post->content }}</p>
-            </div>
+                <p class="post-text">{{ $post->content }}</p> </div>
 
-            <!-- Post media (Images & Videos combined) -->
-            @php
-                $media = collect([]);
-                if ($post->images) {
-                    $media = $media->merge($post->images);
-                }
-                if ($post->videos) {
-                    $media = $media->merge($post->videos);
-                }
-                $mediaCount = $media->count();
-                $mediaClass = $mediaCount == 1 ? 'single' : ($mediaCount == 2 ? 'two' : ($mediaCount == 3 ? 'three' : 'four'));
-            @endphp
+            @if ($post->sharedPost)
+                <div class="shared-post">
+                    <div class="post-header">
+                        <div class="user-info">
+                            <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
+                            <div class="user-details">
+                                <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
+                                <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <p class="post-text">{{ $post->sharedPost->content }}</p>
+                    </div>
+                    @php
+                        $sharedMedia = collect([]);
+                        if ($post->sharedPost->images) {
+                            $sharedMedia = $sharedMedia->merge($post->sharedPost->images);
+                        }
+                        if ($post->sharedPost->videos) {
+                            $sharedMedia = $sharedMedia->merge($post->sharedPost->videos);
+                        }
+                        $sharedMediaCount = $sharedMedia->count();
+                        $sharedMediaClass = $sharedMediaCount == 1 ? 'single' : ($sharedMediaCount == 2 ? 'two' : ($sharedMediaCount == 3 ? 'three' : 'four'));
+                    @endphp
 
-            @if ($mediaCount > 0)
-                <div class="post-media {{ $mediaClass }}">
-                    @foreach ($media as $item)
-                        @if (isset($item->image_url))
-                            <img class="post-image" src="{{ $item->image_url }}" alt="Post Image">
-                        @elseif (isset($item->video_url))
-                            <video class="post-video" controls>
-                                <source src="{{ $item->video_url }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        @endif
-                    @endforeach
+                    @if ($sharedMediaCount > 0)
+                        <div class="post-media {{ $sharedMediaClass }}">
+                            @foreach ($sharedMedia as $item)
+                                @if (isset($item->image_url))
+                                    <img class="post-image" src="{{ $item->image_url }}" alt="Shared Post Image">
+                                @elseif (isset($item->video_url))
+                                    <video class="post-video" controls>
+                                        <source src="{{ $item->video_url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
+            @else
+                @php
+                    $originalMedia = collect([]);
+                    if ($post->images) {
+                        $originalMedia = $originalMedia->merge($post->images);
+                    }
+                    if ($post->videos) {
+                        $originalMedia = $originalMedia->merge($post->videos);
+                    }
+                    $originalMediaCount = $originalMedia->count();
+                    $originalMediaClass = $originalMediaCount == 1 ? 'single' : ($originalMediaCount == 2 ? 'two' : ($originalMediaCount == 3 ? 'three' : 'four'));
+                @endphp
+
+                @if ($originalMediaCount > 0)
+                    <div class="post-media {{ $originalMediaClass }}">
+                        @foreach ($originalMedia as $item)
+                            @if (isset($item->image_url))
+                                <img class="post-image" src="{{ $item->image_url }}" alt="Original Post Image">
+                            @elseif (isset($item->video_url))
+                                <video class="post-video" controls>
+                                    <source src="{{ $item->video_url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             @endif
 
-            <!-- Post interactions -->
             <div class="post-stats">
-                <div class="like-count">
-                    <i class="fas fa-heart"></i>
-                    <span>{{ $post->likes_count ?? 0 }}</span>
-                </div>
                 <div class="comment-count">
                     <span>{{ $post->comments_count ?? 0 }} bình luận</span>
                 </div>
             </div>
 
-            <!-- Post actions -->
             <div class="post-actions">
                 <button class="action-btn like-btn {{ $post->user_has_liked ? 'active' : '' }}" data-post-id="{{ $post->id }}">
                     <i class="fas fa-heart"></i>
+                    <span class="like-count">{{ $post->likes_count }}</span>
                     <span>Thích</span>
                 </button>
+                <span class="like-float" style="display:none;">❤️</span>
                 <button class="action-btn comment-btn" data-post-id="{{ $post->id }}">
                     <i class="fas fa-comment"></i>
                     <span>Bình luận</span>
                 </button>
-                <button class="action-btn share-btn" data-post-id="{{ $post->id }}">
+                <a href="{{ route('post.share.form', ['id' => $post->id]) }}" class="action-btn share-btn">
                     <i class="fas fa-share"></i>
                     <span>Chia sẻ</span>
-                </button>
+                </a>
             </div>
+            <div class="post">
+                <div class="post-comments" id="comments-{{ $post->id }}">
 
-{{--            <!-- Comments section -->--}}
-{{--            <div class="post-comments">--}}
-{{--                @if ($post->comments && count($post->comments) > 0)--}}
-{{--                    @foreach ($post->comments as $comment)--}}
-{{--                        <div class="comment">--}}
-{{--                            <img class="comment-avatar" src="{{ $comment->user->avatar }}" alt="{{ $comment->user->name }}">--}}
-{{--                            <div class="comment-content">--}}
-{{--                                <div class="comment-user">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</div>--}}
-{{--                                <div class="comment-text">{{ $comment->content }}</div>--}}
-{{--                                <div class="comment-actions">--}}
-{{--                                    <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>--}}
-{{--                                    <button class="comment-like-btn">Thích</button>--}}
-{{--                                    <button class="comment-reply-btn">Trả lời</button>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    @endforeach--}}
-{{--                @endif--}}
+                    <div class="comment-list">
+                        @foreach ($post->comments as $comment)
+                            <div class="comment">
+                                <div class="user-info">
+                                    <img class="comment-avatar" src="{{ $comment->user->avatar ?? '/default-avatar.png' }}" alt="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">
+                                    <div class="user-details">
+                                        <span class="comment-author">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</span>
+                                        <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                <p class="comment-content">{{ $comment->content }}</p>
+                            </div>
+                        @endforeach
+                    </div>
 
-{{--                <!-- Comment form -->--}}
-{{--                <div class="comment-form">--}}
-{{--                    <img class="comment-form-avatar" src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}">--}}
-{{--                    <form action="{{ route('comments.store') }}" method="POST" class="comment-input-container">--}}
-{{--                        @csrf--}}
-{{--                        <input type="hidden" name="post_id" value="{{ $post->id }}">--}}
-{{--                        <input type="text" name="content" class="comment-input" placeholder="Viết bình luận...">--}}
-{{--                        <button type="submit" class="comment-submit">--}}
-{{--                            <i class="fas fa-paper-plane"></i>--}}
-{{--                        </button>--}}
-{{--                    </form>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-        </div>
+                    <form method="POST" action="{{ route('post.comment.store', ['id' => $post->id]) }}" class="comment-form">
+                        @csrf
+                        <textarea name="content" rows="2" required placeholder="Viết bình luận..."></textarea>
+                        <button type="submit" class="comment-submit-btn">Gửi</button>
+                    </form>
 
+
+                </div>
+            </div>
     </div>
 @endsection
-
-</body>
-
-</html>

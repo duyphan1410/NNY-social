@@ -10,7 +10,7 @@ class Post extends Model
 {
     protected $table = 'posts';
 
-    protected $fillable = ['user_id', 'content'];
+    protected $fillable = ['user_id', 'content', 'shared_post_id'];
     protected $withCount = ['likes', 'comments'];
 
     // Relationship với User
@@ -43,6 +43,14 @@ class Post extends Model
         return $this->hasMany(Like::class);
     }
 
+
+    //Thêm relationship với Shares
+    public function sharedPost()
+    {
+        return $this->belongsTo(Post::class, 'shared_post_id');
+    }
+
+
     // Kiểm tra xem người dùng hiện tại đã like bài viết chưa
     public function isLikedByUser($userId = null)
     {
@@ -67,4 +75,17 @@ class Post extends Model
         return $query->withCount(['likes', 'comments'])
             ->with(['user', 'images', 'videos']);
     }
+
+    protected $appends = ['user_has_liked'];
+
+    public function getUserHasLikedAttribute()
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+
+        return $this->isLikedByUser(auth()->id());
+    }
+
+
 }

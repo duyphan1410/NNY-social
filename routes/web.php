@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Friends\FriendController;
+use App\Http\Controllers\Post\CommentController;
+use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Reel\ReelController;
@@ -39,6 +41,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/{post}', [PostController::class, 'update'])->name('update');
         // Xóa bài đăng
         Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+        //Share bài đăng
+        Route::post('/{id}/share', [PostController::class, 'share'])->name('share');
+        Route::get('/{id}/share', [PostController::class, 'shareForm'])->name('share.form');
+        //Like và comment
+        Route::post('/{id}/like', [LikeController::class, 'toggleLike'])->name('like');
+        Route::post('/{id}/comment', [CommentController::class, 'store'])->name('comment.store');
+        //Xóa bình luận
+        Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
+
 
     });
 });
@@ -77,6 +88,9 @@ Route::get('/dashboard', function () {
     return view('dashboard.dashboard'); // Cần chỉ rõ thư mục
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::fallback(function () {
+    return response()->json(['message' => 'Route không tồn tại'], 404);
+});
 
 //Route::get('upload-image', function () {
 //    return view('upload-image');

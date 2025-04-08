@@ -41,7 +41,7 @@
                     </form>
                     <a class="nav-link" href="{{ route('logout') }}"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        {{ __('Logout') }}
+                        {{ __('Đăng xuất') }}
                     </a>
                 @endguest
             </div>
