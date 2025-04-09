@@ -25,14 +25,13 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 Route::post('register', [RegisterController::class, 'register']);
 
 
-//Router Post
+//Router bài đăng
 Route::middleware('auth')->group(function () {
     Route::prefix('post')->name('post.')->group(function () {
         // Tạo bài đăng mới
         Route::get('/create', [PostController::class, 'create'])->name('create');
         // Lưu bài đăng mới
         Route::post('/', [PostController::class, 'store'])->name('store');
-
         // Hiển thị chi tiết bài đăng
         Route::get('/{id}/detail', [PostController::class, 'show'])->name('show');
         // Hiển thị form chỉnh sửa bài đăng
@@ -61,7 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [ReelController::class, 'store'])->name('store');
     });
 });
-// Router Friend
+// Router bạn bè
 Route::middleware('auth')->group(function () {
     Route::prefix('friend')->name('friend.')->group(function () {
         Route::get('/', [FriendController::class, 'index'])->name('index');
@@ -83,6 +82,20 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+//Route người dùng
+Route::prefix('profile')->name('profile.')->group(function () {
+
+    // Trang profile của chính mình (yêu cầu đăng nhập)
+    Route::middleware('auth')->group(function () {
+        Route::get('/me', [ProfileController::class, 'myProfile'])->name('me');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/update', [ProfileController::class, 'update'])->name('update');
+    });
+
+    // Trang profile của người khác
+    Route::get('/{id}', [ProfileController::class, 'show'])->name('show');
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard'); // Cần chỉ rõ thư mục
@@ -92,18 +105,10 @@ Route::fallback(function () {
     return response()->json(['message' => 'Route không tồn tại'], 404);
 });
 
-//Route::get('upload-image', function () {
-//    return view('upload-image');
-//});
-//Route::post('upload-image', [ImageController::class, 'upload'])->name('image.upload');
-//
-//Route::get('upload-video', function () {
-//    return view('upload-video');
-//});
-//Route::post('upload-video', [VideoController::class, 'uploadVideo'])->name('video.upload');
+
+
 
 require __DIR__.'/auth.php';
 
 Auth::routes();
 
-//Route::get('/home', [\App\Http\Controllers\Home\HomeController::class, 'index'])->name('home');

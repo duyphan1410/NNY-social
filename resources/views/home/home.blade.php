@@ -21,7 +21,7 @@
         <div class="container">
 
             <div class="col-3 sidebar">
-                <a href="#">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
+                <a href="{{ route('profile.me') }}">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
                 <a href="{{ route('friend.search') }}">Tìm bạn bè</a>
                 <a href="{{ route('friend.index') }}">Bạn bè</a>
                 <a href="#">Đà lạt</a>
@@ -78,14 +78,22 @@
                 <section class="post-section">
                     <div class="feed">
                         @forelse ($posts as $post)
+                            @php
+                                $isOwner = auth()->check() && auth()->id() === $post->user->id;
+                                $profileRoute = $isOwner
+                                    ? route('profile.me')
+                                    : route('profile.show', $post->user->id);
+                            @endphp
                             <div class="post">
                                 <div class="post-header">
                                     <div class="user-info">
-                                        <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
-                                        <div class="user-details">
-                                            <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
-                                            <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
-                                        </div>
+                                        <a href="{{$profileRoute}}">
+                                            <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
+                                            <div class="user-details">
+                                                <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
+                                                <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="post-options dropdown">
                                         <button class="dropdown-btn">
@@ -129,14 +137,22 @@
                                 </div>
 
                                 @if ($post->sharedPost)
+                                    @php
+                                        $isOwner = auth()->check() && auth()->id() === $post->sharedPost->user->id;
+                                        $profileRoute = $isOwner
+                                            ? route('profile.me')
+                                            : route('profile.show', $post->sharedPost->user->id);
+                                    @endphp
                                     <div class="shared-post">
                                         <div class="post-header">
                                             <div class="user-info">
-                                                <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
-                                                <div class="user-details">
-                                                    <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
-                                                    <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
-                                                </div>
+                                                <a href="{{ $profileRoute }}">
+                                                    <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
+                                                    <div class="user-details">
+                                                        <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
+                                                        <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
+                                                    </div>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="post-content">
@@ -240,8 +256,10 @@
                     @foreach($friends as $friend)
                         <li>
                             <div class="friend-info">
-                                <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                <span>{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                                <a href="{{ route('profile.show', $friend->id) }}">
+                                    <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                    <span class="friend-name">{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                                </a>
                             </div>
                         </li>
                     @endforeach

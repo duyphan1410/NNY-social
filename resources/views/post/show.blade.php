@@ -14,13 +14,21 @@
     <div class="container">
         <div class="post col-9">
             <!-- Header: User info and timestamp -->
+            @php
+                $isOwner = auth()->check() && auth()->id() === $post->user->id;
+                $profileRoute = $isOwner
+                    ? route('profile.me')
+                    : route('profile.show', $post->user->id);
+            @endphp
             <div class="post-header">
                 <div class="user-info">
-                    <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
-                    <div class="user-details">
-                        <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
-                        <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
-                    </div>
+                    <a href="{{ $profileRoute }}">
+                        <img class="post-avatar" src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}">
+                        <div class="user-details">
+                            <h4 class="user-name">{{ $post->user->first_name }} {{ $post->user->last_name }}</h4>
+                            <a href="{{ route('post.show', ['id' => $post->id]) }}"><span class="post-time">{{ $post->created_at->diffForHumans() }}</span></a>
+                        </div>
+                    </a>
                 </div>
                 <div class="post-options dropdown">
                     <button class="dropdown-btn">
@@ -63,14 +71,22 @@
                 <p class="post-text">{{ $post->content }}</p> </div>
 
             @if ($post->sharedPost)
+                @php
+                    $isOwner = auth()->check() && auth()->id() === $post->sharedPost->user->id;
+                    $profileRoute = $isOwner
+                        ? route('profile.me')
+                        : route('profile.show', $post->sharedPost->user->id);
+                @endphp
                 <div class="shared-post">
                     <div class="post-header">
                         <div class="user-info">
-                            <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
-                            <div class="user-details">
-                                <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
-                                <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
-                            </div>
+                            <a href="{{ $profileRoute }}">
+                                <img class="post-avatar" src="{{ $post->sharedPost->user->avatar }}" alt="{{ $post->sharedPost->user->name }}">
+                                <div class="user-details">
+                                    <h4 class="user-name">{{ $post->sharedPost->user->first_name }} {{ $post->sharedPost->user->last_name }}</h4>
+                                    <a href="{{ route('post.show', ['id' => $post->sharedPost->id]) }}"><span class="post-time">{{ $post->sharedPost->created_at->diffForHumans() }}</span></a>
+                                </div>
+                            </a>
                         </div>
                     </div>
                     <div class="post-content">
@@ -159,13 +175,21 @@
 
                     <div class="comment-list">
                         @foreach ($post->comments as $comment)
+                            @php
+                                $isOwner = auth()->check() && auth()->id() === $comment->user->id;
+                                $profileRoute = $isOwner
+                                    ? route('profile.me')
+                                    : route('profile.show', $comment->user->id);
+                            @endphp
                             <div class="comment">
                                 <div class="user-info">
-                                    <img class="comment-avatar" src="{{ $comment->user->avatar ?? '/default-avatar.png' }}" alt="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">
-                                    <div class="user-details">
-                                        <span class="comment-author">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</span>
-                                        <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
-                                    </div>
+                                    <a href="{{ $profileRoute }}">
+                                        <img class="comment-avatar" src="{{ $comment->user->avatar ?? '/default-avatar.png' }}" alt="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">
+                                        <div class="user-details">
+                                            <span class="comment-author">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</span>
+                                            <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                        </div>
+                                    </a>
                                 </div>
                                 <p class="comment-content">{{ $comment->content }}</p>
                             </div>

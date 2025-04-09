@@ -543,14 +543,14 @@ a {
     margin: 0;
 }
 
-.friends-list li {
+.friends-list li  {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.friend-info {
+.friend-info  a{
     display: flex;
     align-items: center;
     gap: 10px;
@@ -562,9 +562,10 @@ a {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--primary-color);
+    margin-right: 5px;
 }
 
-.friends-list span {
+.friend-name {
     font-size: 1rem;
     font-weight: 500;
     color: var(--text-color);
