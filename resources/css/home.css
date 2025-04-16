@@ -12,6 +12,10 @@ body {
     margin: 0 auto;
 }
 
+.bg-light-yellow{
+    background-color: #f5f5dc ;
+}
+
 a {
     text-decoration: none;
     color: inherit;

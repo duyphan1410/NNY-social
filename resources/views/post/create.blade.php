@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo Bài Đăng Mới</title>
-    <!-- Kết nối file -->
-    @vite(['resources/css/create.css', 'resources/js/create.js'])
-</head>
-<body>
 @extends('layouts.app')
+
+@push('styles')
+    @vite(['resources/css/create.css'])
+@endpush
+
+@push('scripts')
+    @vite(['resources/js/create.js'])
+@endpush
 
 @section('content')
     <div class="container mt-5">
@@ -76,6 +74,3 @@
         </form>
     </div>
 @endsection
-
-</body>
-</html>

@@ -172,7 +172,6 @@
             </div>
             <div class="post">
                 <div class="post-comments" id="comments-{{ $post->id }}">
-
                     <div class="comment-list">
                         @foreach ($post->comments as $comment)
                             @php
@@ -201,8 +200,6 @@
                         <textarea name="content" rows="2" required placeholder="Viết bình luận..."></textarea>
                         <button type="submit" class="comment-submit-btn">Gửi</button>
                     </form>
-
-
                 </div>
             </div>
     </div>

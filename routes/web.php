@@ -93,7 +93,9 @@ Route::prefix('profile')->name('profile.')->group(function () {
     });
 
     // Trang profile của người khác
-    Route::get('/{id}', [ProfileController::class, 'show'])->name('show');
+    Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
+    Route::get('/{user}/about', [ProfileController::class, 'about'])->name('about');
+    Route::get('/{user}/album', [ProfileController::class, 'album'])->name('album');
 });
 
 

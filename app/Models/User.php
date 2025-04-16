@@ -113,4 +113,19 @@ class User extends Authenticatable
         return $this->hasOne(UserDetail::class);
     }
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function allImages()
+    {
+        return $this->posts()->with('images')->get()->pluck('images')->flatten();
+    }
+
+    public function allVideos()
+    {
+        return $this->posts()->with('videos')->get()->pluck('videos')->flatten();
+    }
+
 }
