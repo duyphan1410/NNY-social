@@ -38,6 +38,21 @@
                     <a href="{{ route('profile.me') }}" class="font-semibold text-blue-600 user-profile-link">
                         <span class="nav-link">Chào, {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
                     </a>
+                    <div class="relative">
+                        <button id="notification-btn" class="relative">
+                            <i class="fa fa-bell"></i>
+                            <span id="notification-count" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1 hidden">0</span>
+                        </button>
+
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-50">
+                            <!-- Thông báo sẽ được render tại đây -->
+                            <ul id="notification-list">
+                                <li class="text-center p-2 text-gray-400">Không có thông báo nào</li>
+                            </ul>
+                            <button id="mark-all-read" class="w-full text-blue-600 hover:underline p-2 border-t">Đánh dấu tất cả đã đọc</button>
+                        </div>
+                    </div>
+
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>

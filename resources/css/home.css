@@ -538,7 +538,6 @@ a {
 }
 
 .feed {
-    display: flex;
     justify-content: center; /* Căn giữa theo chiều ngang */
     align-items: center; /* Căn giữa theo chiều dọc */
     min-height: 250px;
