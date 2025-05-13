@@ -4,31 +4,34 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Cloudinary\Api\Upload\UploadApi;
+use Illuminate\Support\Facades\Log;
 use Cloudinary\Configuration\Configuration;
 
 class ImageController extends Controller
 {
-    public function uploadMultiple($request)
+    protected $uploadApi;
+
+    public function __construct()
+    {
+        Configuration::instance([
+            'cloud' => [
+                'cloud_name' => config('cloudinary.cloud_name'),
+                'api_key'    => config('cloudinary.api_key'),
+                'api_secret' => config('cloudinary.api_secret'),
+            ],
+        ]);
+        $this->uploadApi = new UploadApi();
+    }
+
+    public function uploadMultiple($files)
     {
         try {
-            // Cấu hình Cloudinary
-            Configuration::instance([
-                'cloud' => [
-                    'cloud_name' => config('cloudinary.cloud_name'),
-                    'api_key'    => config('cloudinary.api_key'),
-                    'api_secret' => config('cloudinary.api_secret'),
-                ],
-            ]);
-
-
-            $uploadApi = new UploadApi();
+            Log::info('Starting uploadMultiple', ['files' => $files]);
             $imageUrls = [];
-
-            // Lặp qua từng file ảnh
-            foreach ($request as $image) {
-                $uploadResponse = $uploadApi->upload($image->getRealPath(), [
-                    'folder' => 'post_images', // Thư mục trên Cloudinary
-                    'format' => 'webp', // Chuyển sang WEBP
+            foreach ($files as $image) {
+                $uploadResponse = $this->uploadApi->upload($image->getRealPath(), [
+                    'folder' => 'post_images',
+                    'format' => 'webp',
                     'transformation' => [
                         'width' => 1024,
                         'height' => 1024,
@@ -36,16 +39,62 @@ class ImageController extends Controller
                         'quality' => 'auto:good'
                     ]
                 ]);
-
-                // Lưu URL vào mảng
                 $imageUrls[] = $uploadResponse['secure_url'];
+                Log::info('Upload successful (multiple)', ['url' => end($imageUrls), 'originalName' => $image->getClientOriginalName()]);
             }
-
-            return $imageUrls; // Trả về danh sách URL ảnh
-
+            Log::info('uploadMultiple returning URLs:', ['imageUrls' => $imageUrls]);
+            return $imageUrls;
         } catch (\Exception $e) {
-            \Log::error('Lỗi upload: ' . $e->getMessage());
+            \Log::error('Error in uploadMultiple:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return [];
+        }
+    }
+
+    public function uploadAvatar($file)
+    {
+        try {
+            Log::info('Starting uploadAvatar', ['file' => $file]);
+            $uploadResponse = $this->uploadApi->upload($file->getRealPath(), [
+                'folder' => 'avatars',
+                'format' => 'webp',
+                'transformation' => [
+                    'width' => 500,
+                    'height' => 500,
+                    'crop' => 'fill',
+                    'gravity' => 'face',
+                    'quality' => 'auto:good'
+                ]
+            ]);
+            $imageUrl = $uploadResponse['secure_url'];
+            Log::info('Upload successful (avatar):', ['url' => $imageUrl, 'originalName' => $file->getClientOriginalName()]);
+            return [$imageUrl]; // Trả về một mảng chứa URL duy nhất để nhất quán
+        } catch (\Exception $e) {
+            \Log::error('Error in uploadAvatar:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return [];
+        }
+    }
+
+    public function uploadCover($file)
+    {
+        try {
+            Log::info('Starting uploadCover', ['file' => $file]);
+            $uploadResponse = $this->uploadApi->upload($file->getRealPath(), [
+                'folder' => 'cover_photos', // Thư mục riêng cho ảnh bìa
+                'format' => 'webp',
+                'transformation' => [
+                    'width' => 1920, // Kích thước phổ biến cho ảnh bìa
+                    'height' => 400,
+                    'crop' => 'fill',
+                    'gravity' => 'auto',
+                    'quality' => 'auto:good'
+                ]
+            ]);
+            $coverUrl = $uploadResponse['secure_url'];
+            Log::info('Upload successful (cover):', ['url' => $coverUrl, 'originalName' => $file->getClientOriginalName()]);
+            return $coverUrl;
+        } catch (\Exception $e) {
+            \Log::error('Error in uploadCover:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return null; // Hoặc xử lý lỗi khác
         }
     }
 }

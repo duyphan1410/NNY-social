@@ -21,8 +21,10 @@
                     @foreach($friends as $friend)
                         <li>
                             <div class="friend-info">
-                                <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                <span>{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                                <a href="{{ route('profile.show', $friend->id) }}">
+                                    <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                    <span>{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                                </a>
                             </div>
                             <form action="{{ route('friend.unfriend') }}" method="POST">
                                 @csrf
@@ -54,8 +56,10 @@
                     @foreach($pendingRequests as $request)
                         <li>
                             <div class="friend-info">
-                                <img src="{{ $request->sender->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                <span>{{ $request->sender->first_name }} {{ $request->sender->last_name }}</span>
+                                <a href="{{ route('profile.show', $friend->id) }}">
+                                    <img src="{{ $request->sender->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                    <span>{{ $request->sender->first_name }} {{ $request->sender->last_name }}</span>
+                                </a>
                             </div>
                             <div class="friend-actions">
                                 <form action="{{ route('friend.accept') }}" method="POST">

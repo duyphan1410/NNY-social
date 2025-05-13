@@ -128,4 +128,10 @@ class User extends Authenticatable
         return $this->posts()->with('videos')->get()->pluck('videos')->flatten();
     }
 
+    public function likedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id')
+            ->withTimestamps();
+    }
+
 }

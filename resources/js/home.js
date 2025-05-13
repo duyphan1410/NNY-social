@@ -135,4 +135,50 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+//JS cho xuất hiện modal danh sách người đã like post
+document.addEventListener('DOMContentLoaded', function() {
+    const viewLikesButtons = document.querySelectorAll('.view-likes-btn');
+    const likesModal = document.getElementById('likes-modal');
+    const likesList = document.getElementById('likes-list');
+    const closeButton = document.querySelector('.close-button');
 
+    viewLikesButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            const baseUrl = window.location.origin + '/social-network/public';
+            fetch(`${baseUrl}/post/${postId}/likes`) // Gọi API để lấy danh sách người thích
+                .then(response => response.json())
+                .then(data => {
+                    likesList.innerHTML = ''; // Xóa danh sách cũ
+                    if (data.length > 0) {
+                        data.forEach(user => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = user.first_name + ' ' + user.last_name; // Hoặc thông tin người dùng khác
+                            likesList.appendChild(listItem);
+                        });
+                        likesModal.style.display = 'flex'; // Hiển thị modal
+                    } else {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = 'Chưa có ai thích bài viết này.';
+                        likesList.appendChild(listItem);
+                        likesModal.style.display = 'flex';
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi khi tải danh sách người thích:', error);
+                    likesList.innerHTML = 'Có lỗi xảy ra khi tải danh sách.';
+                    likesModal.style.display = 'flex';
+                });
+        });
+    });
+
+    closeButton.addEventListener('click', function() {
+        likesModal.style.display = 'none'; // Ẩn modal
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === likesModal) {
+            likesModal.style.display = 'none'; // Ẩn modal khi nhấp ra ngoài
+        }
+    });
+});

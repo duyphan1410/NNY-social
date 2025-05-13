@@ -7,6 +7,7 @@ use App\Http\Controllers\ImageController;
 use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\PostVideo;
+use App\models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -305,5 +306,13 @@ class PostController extends Controller
         return redirect()->route('home')->with('success', 'Chia sẻ bài viết thành công!');
     }
 
+    public function getLikes(Post $post)
+    {
+        $likingUsers = User::whereHas('likedPosts', function ($query) use ($post) {
+            $query->where('post_id', $post->id);
+        })->select('first_name', 'last_name', 'id')->get(); // Lấy tên và ID của người dùng thích
+
+        return response()->json($likingUsers);
+    }
 
 }

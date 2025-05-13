@@ -10,10 +10,15 @@ body {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
+    border-radius: 5px;
+}
+
+.container.home-empty {
+    min-height: 612px; /* Điều chỉnh giá trị theo ý muốn */
 }
 
 .bg-light-yellow{
-    background-color: #f5f5dc ;
+    background-color: #f5f5f5 ;
 }
 
 a {
@@ -426,10 +431,71 @@ a {
 
 .post-stats {
     display: flex;
-    justify-content: flex-end;
-    font-size: 12px;
+    font-size: 13px;
+    justify-content: space-between;
     color: #666;
-    margin-bottom: 10px;
+    margin: 10px;
+}
+
+.view-likes-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-size: inherit;
+    color: inherit;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Đảm bảo modal ở trên các phần tử khác */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#likes-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#likes-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+#likes-list li:last-child {
+    border-bottom: none;
 }
 
 .post-actions {
@@ -471,7 +537,43 @@ a {
     }
 }
 
+.feed {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    min-height: 250px;
+}
 
+.empty-feed {
+    background-color: #f9f9f9; /* Màu nền nhạt */
+    border: 1px solid #eee; /* Đường viền mỏng */
+    border-radius: 8px; /* Bo góc */
+    padding: 24px; /* Tăng padding một chút */
+    text-align: center;
+    min-height: 250px;
+    width: 100%;
+    display: flex; /* Biến .empty-feed thành Flexbox container */
+    flex-direction: column; /* Sắp xếp các phần tử con theo cột */
+    align-items: center; /* Căn giữa các phần tử con theo chiều ngang */
+    justify-content: center; /* Căn giữa các phần tử con theo chiều dọc */
+}
+
+.empty-feed i.fas {
+    color: #ccc; /* Màu xám nhạt hơn cho icon */
+    font-size: 3em; /* Điều chỉnh kích thước icon */
+    margin-bottom: 12px;
+}
+
+.empty-feed p.text-gray-600 {
+    color: #555; /* Màu xám đậm hơn cho tiêu đề */
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.empty-feed p.text-gray-500 {
+    color: #777; /* Màu xám trung bình cho mô tả */
+    font-size: 0.9rem;
+}
 
 .shared-post {
     margin-top: 10px; /* Thêm khoảng cách giữa bài đăng của người chia sẻ và bài đăng gốc */
@@ -523,7 +625,6 @@ a {
     max-height: 120px;
 }
 
-
 .friends-list {
     position: sticky;
     top: 80px; /* Khoảng cách từ trên xuống, tránh bị che bởi navbar */
@@ -536,9 +637,10 @@ a {
 }
 
 .friends-list h3 {
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Tăng khoảng cách dưới tiêu đề */
     font-size: 1.2rem;
     color: var(--primary-color);
+    text-align: center; /* Căn giữa tiêu đề khi không có bạn bè */
 }
 
 .friends-list ul {
@@ -547,14 +649,30 @@ a {
     margin: 0;
 }
 
-.friends-list li  {
+.friends-list li {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.friend-info  a{
+.friends-list li:last-child {
+    border-bottom: none; /* Loại bỏ border ở item cuối cùng */
+}
+
+.friends-list li.no-friends-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-size: 1rem; /* Điều chỉnh kích thước font */
+    border-bottom: none; /* Loại bỏ border khi không có bạn bè */
+}
+
+.friend-info a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -566,7 +684,7 @@ a {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--primary-color);
-    margin-right: 5px;
+    margin-right: 10px; /* Tăng khoảng cách bên phải avatar */
 }
 
 .friend-name {
@@ -575,3 +693,29 @@ a {
     color: var(--text-color);
 }
 
+.no-friends-icon {
+    font-size: 2.5em; /* Tăng kích thước icon */
+    margin-bottom: 10px;
+    color: #bbb;
+}
+
+.no-friends-action {
+    margin-top: 15px; /* Tăng khoảng cách phía trên nút/link */
+}
+
+.no-friends-action a {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.no-friends-action a:hover {
+    background-color: gray; /* Màu đậm hơn khi hover */
+    color: black;
+    text-underline: none;
+}

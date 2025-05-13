@@ -1,0 +1,49 @@
+/* resources/css/about.css */
+
+.about-container {
+    @apply max-w-5xl mx-auto mt-6;
+}
+
+.about-card {
+    @apply bg-white shadow rounded-lg overflow-hidden;
+}
+
+.about-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-8 py-6;
+}
+
+.about-details-section {
+    @apply space-y-6;
+    grid-column: 1 / -1;
+}
+
+.about-info-card {
+    @apply bg-white shadow rounded-lg p-6;
+}
+
+.about-info-title {
+    @apply text-xl font-semibold mb-4 text-gray-800;
+}
+
+.about-info-paragraph {
+    display: flex;
+    align-items: baseline; /* Hoặc flex-start tùy theo bạn muốn căn chỉnh phần đầu hay chân của text */
+    margin-bottom: 8px; /* Khoảng cách giữa các dòng */
+    width: 100%;
+}
+
+.about-info-label {
+    flex-shrink: 0; /* Ngăn label bị co lại */
+    width: 30%; /* Đặt một chiều rộng cố định cho label (điều chỉnh theo độ dài label dài nhất) */
+    margin-right: 10px; /* Khoảng cách giữa label và value */
+    font-weight: bold; /* In đậm label (tùy chọn) */
+}
+
+.about-info-card .fa-user,
+.about-info-card .fa-map-marker-alt,
+.about-info-card .fa-birthday-cake,
+.about-info-card .fa-venus-mars {
+    color: #777; /* Màu cho icon */
+}
+
+/* Bạn có thể tùy chỉnh thêm các kiểu dáng khác nếu cần */

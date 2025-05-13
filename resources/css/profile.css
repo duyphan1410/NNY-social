@@ -574,3 +574,15 @@
     justify-content: center;
     align-items: center;
 }
+.bio-text a{
+    color: #2563eb;
+}
+.bio-text-expanded {
+    margin-left: 70px !important; /* Loại bỏ margin-left khi xem đầy đủ */
+}
+
+.bio-text-collapsed {
+    margin-left: 55px !important; /* Margin-left khi thu gọn (điều chỉnh theo ý muốn) */
+}
+
+

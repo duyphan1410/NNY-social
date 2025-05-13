@@ -26,8 +26,8 @@ Route::post('register', [RegisterController::class, 'register']);
 
 
 //Router bài đăng
-Route::middleware('auth')->group(function () {
-    Route::prefix('post')->name('post.')->group(function () {
+Route::prefix('post')->name('post.')->group(function () {
+    Route::middleware('auth')->group(function () {
         // Tạo bài đăng mới
         Route::get('/create', [PostController::class, 'create'])->name('create');
         // Lưu bài đăng mới
@@ -48,9 +48,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/comment', [CommentController::class, 'store'])->name('comment.store');
         //Xóa bình luận
         Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
-
-
     });
+    //Ds liked
+    Route::get('/{post}/likes', [PostController::class, 'getLikes'])->name('likes');
 });
 //Router Reel
 Route::middleware('auth')->group(function () {
@@ -90,12 +90,16 @@ Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/me', [ProfileController::class, 'myProfile'])->name('me');
         Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
         Route::put('/update', [ProfileController::class, 'update'])->name('update');
+        Route::post('/avatar/update', [ProfileController::class, 'updateAvatar'])->name('avatar.update');
+        Route::post('/cover/update', [ProfileController::class, 'updateCover'])->name('cover.update');
     });
 
     // Trang profile của người khác
     Route::get('/{user}', [ProfileController::class, 'show'])->name('show');
     Route::get('/{user}/about', [ProfileController::class, 'about'])->name('about');
-    Route::get('/{user}/album', [ProfileController::class, 'album'])->name('album');
+    Route::get('/{user}/photos', [ProfileController::class, 'photos'])->name('photos');
+    Route::get('/{user}/videos', [ProfileController::class, 'videos'])->name('videos');
+
 });
 
 

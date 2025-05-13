@@ -10,8 +10,19 @@ class UserDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'cover', 'bio', 'location', 'birthday', 'gender'
+        'user_id',
+        'cover_img_url', // Đã sửa thành cover_img_url để nhất quán với database (nếu bạn dùng tên đó)
+        'bio',
+        'location',
+        'birthdate', // Đã sửa thành birthdate để nhất quán với tên thường dùng
+        'gender',
+        'website', // Thêm trường website (nếu bạn đã thêm vào schema)
+        'relationship_status',
+        'hobbies',
+        'social_links',
     ];
+
+    protected $dates = ['birthdate']; // Để Laravel tự động xử lý định dạng ngày tháng
 
     public function user()
     {
@@ -27,5 +38,4 @@ class UserDetail extends Model
             default => 'Chưa cập nhật',
         };
     }
-
 }

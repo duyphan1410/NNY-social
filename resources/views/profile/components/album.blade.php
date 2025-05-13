@@ -1,5 +1,5 @@
 <div class="bg-gray-50 p-4 rounded shadow">
-    <h3 class="text-lg font-semibold mb-3">Album ảnh</h3>
+    <h3 class="text-lg font-semibold mb-3">Tất cả ảnh và video đã tải lên</h3>
     @php
         $mergedMedia = collect();
         if($user->posts) {

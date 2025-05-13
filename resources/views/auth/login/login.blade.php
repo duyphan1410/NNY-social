@@ -18,7 +18,7 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Email</label>
                     <input id="email" type="email"
                            class="form-control @error('email') is-invalid @enderror"
                            name="email" value="{{ old('email') }}"
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">Mật khẩu</label>
                     <input id="password" type="password"
                            class="form-control @error('password') is-invalid @enderror"
                            name="password" required autocomplete="current-password">
@@ -41,23 +41,23 @@
                 <div class="remember-forgot">
                     <label class="remember-me">
                         <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <span>Remember Me</span>
+                        <span>Nhớ tài khoản</span>
                     </label>
 
                     @if (Route::has('password.request'))
                         <a class="forgot-link" href="{{ route('password.request') }}">
-                            Forgot Password?
+                            Quên mật khẩu?
                         </a>
                     @endif
                 </div>
 
                 <button type="submit" class="sign-in-button">
-                    Sign In
+                    Đăng nhập
                 </button>
 
                 <p class="sign-up-text">
-                    Don't have an account?
-                    <a href="{{ route('register') }}" class="sign-up-link">Sign Up</a>
+                    Chưa có tài khoản?
+                    <a href="{{ route('register') }}" class="sign-up-link">Đăng ký</a>
                 </p>
             </form>
         </div>

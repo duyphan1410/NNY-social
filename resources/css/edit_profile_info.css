@@ -1,0 +1,144 @@
+.profile-edit-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure it takes at least the full viewport height */
+    background-color: #f4f6f8; /* Light background */
+    padding: 20px;
+}
+
+.profile-edit-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    width: 100%;
+    padding: 30px;
+}
+
+/* Title of the edit section */
+.profile-edit-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Individual form groups (label + input) */
+.form-edit-group {
+    margin-bottom: 20px;
+}
+
+/* Label for form fields */
+.form-edit-label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* Input fields (text, email, date) and select */
+.form-edit-input,
+.form-edit-select,
+.form-edit-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box; /* Ensure padding doesn't increase the element's total width */
+    transition: border-color 0.3s ease;
+}
+
+.form-edit-input:focus,
+.form-edit-select:focus,
+.form-edit-textarea:focus {
+    border-color: #007bff; /* Highlight on focus */
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Textarea for bio */
+.form-edit-textarea {
+    min-height: 100px;
+}
+
+/* Error message display */
+.form-edit-error-message {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.form-edit-error-list {
+    list-style-type: disc;
+    margin-left: 20px;
+    padding-left: 0;
+}
+
+.form-edit-error-list li {
+    margin-bottom: 5px;
+}
+
+/* Save changes button */
+.save-profile-button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.save-profile-button:hover {
+    background-color: #0056b3;
+}
+
+.save-profile-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+
+/* Layout for multiple input fields in a row (if needed) */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row > .form-edit-group {
+    flex: 1; /* Distribute space equally among items */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-edit-card {
+        padding: 20px;
+        margin: 15px;
+    }
+
+    .profile-edit-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .form-edit-input,
+    .form-edit-select,
+    .form-edit-textarea,
+    .form-edit-label,
+    .save-profile-button {
+        font-size: 15px;
+    }
+
+    .form-row {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        gap: 10px;
+    }
+}

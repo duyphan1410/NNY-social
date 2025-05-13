@@ -3,6 +3,7 @@
 @section('title', 'Trang chủ')
 
 @push('styles')
+    @vite(['resources/css/profile.css'])
     @vite(['resources/css/home.css'])
 @endpush
 
@@ -18,7 +19,7 @@
         @if(session('friend_rejected_' . Auth::id()))
             <p style="color: red;">{{ session('friend_rejected_' . Auth::id()) }}</p>
         @endif
-        <div class="container bg-light-yellow">
+        <div class="container bg-light-yellow {{ $posts->isEmpty() ? 'home-empty' : '' }}">
 
             <div class="col-3 sidebar">
                 <a href="{{ route('profile.me') }}">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
@@ -37,7 +38,7 @@
                 <div class="create-post">
                     <a href="{{ route('post.create') }}" class="create-button">Tạo bài đăng</a>
                 </div>
-                <!-- Stories Section -->
+                <!-- Reel Section -->
                 <section class="stories-section">
                     <div class="reel-container">
                         <div class="reel-wrapper">
@@ -80,10 +81,10 @@
                         @forelse ($posts as $post)
                             @include('post.card', ['post' => $post])
                         @empty
-                            <div class="no-posts">
-                                <i class="fas fa-newspaper"></i>
-                                <p>Chưa có bài đăng nào.</p>
-                                <p class="no-posts-subtext">Hãy theo dõi thêm người dùng để xem bài đăng của họ.</p>
+                            <div class="empty-feed bg-white shadow rounded-lg p-6 text-center">
+                                <i class="fas fa-newspaper text-gray-300 text-5xl mb-3"></i>
+                                <p class="text-gray-600">Chưa có bài viết nào</p>
+                                <p class="text-gray-500 text-sm mt-2">Hãy đăng bài viết đầu tiên của bạn!</p>
                             </div>
                         @endforelse
                     </div>
@@ -92,8 +93,8 @@
             <!-- Contacts Section -->
             <div class="col-3 friends-list">
                 <h3>Danh sách bạn bè</h3>
-                <ul>
-                    @foreach($friends as $friend)
+                <ul class="{{ $friends->isEmpty() ? 'no-friends-ul' : '' }}">
+                    @forelse ($friends as $friend)
                         <li>
                             <div class="friend-info">
                                 <a href="{{ route('profile.show', $friend->id) }}">
@@ -102,7 +103,15 @@
                                 </a>
                             </div>
                         </li>
-                    @endforeach
+                    @empty
+                        <li class="no-friends-message">
+                            <i class="fas fa-user-friends no-friends-icon"></i>
+                            <p>Chưa có bạn bè nào.</p>
+                            <p class="no-friends-action">
+                                <a href="{{ route('friend.search') }}" >Tìm bạn bè</a> ngay bây giờ!
+                            </p>
+                        </li>
+                    @endforelse
                 </ul>
             </div>
     </div>

@@ -24,8 +24,10 @@
                     @foreach ($users as $user)
                         <li>
                             <div class="friend-info">
-                                <img src="{{ $user->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                <span>{{ $user->first_name }} {{ $user->last_name }}</span>
+                                <a href="{{ route('profile.show', $user->id) }}" class="friend-link">
+                                    <img src="{{ $user->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                    <span>{{ $user->first_name }} {{ $user->last_name }}</span>
+                                </a>
                             </div>
                             <div>
                                 @if(in_array($user->id, $pendingIds))
@@ -60,8 +62,11 @@
                     @foreach($pendingRequests as $request)
                         <li>
                             <div class="friend-info">
-                                <img src="{{ $request->receiver->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                <span>{{ $request->receiver->first_name }} {{ $request->receiver->last_name }}</span>
+                                <a href="{{ route('profile.show', $request->receiver->id) }}" class="friend-link">
+                                    <img src="{{ $request->receiver->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                    <span>{{ $request->receiver->first_name }} {{ $request->receiver->last_name }}</span>
+                                </a>
+
                             </div>
                             <form action="{{ route('friend.cancelRequest') }}" method="POST">
                                 @csrf

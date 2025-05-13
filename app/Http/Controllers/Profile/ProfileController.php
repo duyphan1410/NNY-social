@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImageController;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Post;
 use App\Models\PostImage;
@@ -12,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -46,6 +48,20 @@ class ProfileController extends Controller
     /**
      * Trang xem ảnh hồ sơ
      */
+    public function photos(User $user): View
+    {
+        $photos = PostImage::whereHas('post', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->get()->map(function ($photos) {
+            return [
+                'type' => 'photo',
+                'url' => $photos->image_url,
+                'created_at' => $photos->post->created_at,
+            ];
+        });
+
+        return view('profile.photos', compact('user', 'photos'));
+    }
     public function album(User $user): View
     {
         $photos = PostImage::whereHas('post', function ($query) use ($user) {
@@ -71,7 +87,9 @@ class ProfileController extends Controller
         // Trộn và sắp xếp theo created_at (từ sớm đến lâu nhất - asc())
         $mergedMedia = $photos->concat($videos)->sortByDesc('created_at');
 
+        // Mặc định: album tổng hợp
         return view('profile.album', compact('user', 'mergedMedia'));
+
     }
 
     /**
@@ -81,7 +99,13 @@ class ProfileController extends Controller
     {
         $videos = PostVideo::whereHas('post', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->latest()->paginate(12);
+        })->get()->map(function ($video) {
+            return [
+                'type' => 'video',
+                'url' => $video->video_url,
+                'created_at' => $video->post->created_at,
+            ];
+        });
 
         return view('profile.videos', compact('user', 'videos'));
     }
@@ -112,9 +136,105 @@ class ProfileController extends Controller
         // Cập nhật user_detail
         $user->detail()->updateOrCreate(
             ['user_id' => $user->id],
-            $request->only(['bio', 'location', 'birthday', 'gender', 'cover']) // tùy form
+            $request->only([
+                'bio',
+                'location',
+                'birthday',
+                'gender',
+                'website',
+                'relationship_status',
+                'hobbies',
+                'social_links',
+            ])
         );
 
         return Redirect::route('profile.me')->with('status', 'profile-updated');
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        Log::info('Testing log in updateAvatar');
+
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('avatar')) {
+            $imageController = new ImageController();
+            Log::info('ImageController initialized');
+            $imageUrls = $imageController->uploadAvatar($request->file('avatar')); // Gọi uploadAvatar
+
+            Log::info('ImageUrls after upload:', ['urls' => $imageUrls]);
+
+            if (empty($imageUrls) || !is_array($imageUrls) || empty($imageUrls[0])) {
+                return redirect()->back()->with('error', 'Lỗi: Không upload được ảnh avatar lên Cloudinary.');
+            }
+
+            $avatarUrl = $imageUrls[0]; // Lấy URL đầu tiên (và duy nhất) của avatar
+
+            // Tạo bài đăng mới
+            $post = new Post();
+            $post->user_id = auth()->id();
+            $post->content = $user->first_name . ' ' . $user->last_name . ' đã đổi ảnh đại diện.';
+            $post->save();
+
+            // Lưu URL avatar vào post_images
+            PostImage::create([
+                'post_id' => $post->id,
+                'image_url' => $avatarUrl,
+            ]);
+
+            // Cập nhật avatar của người dùng
+            $user->avatar = $avatarUrl;
+            $user->save();
+
+            return Redirect::back()->with('success', 'Avatar đã được cập nhật và bài đăng đã được tạo thành công.');
+        }
+
+        return Redirect::back()->with('error', 'Có lỗi xảy ra khi tải lên avatar.');
+    }
+
+    public function updateCover(Request $request)
+    {
+        $request->validate([
+            'cover_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('cover_photo')) {
+            $imageController = new ImageController();
+            $coverUrl = $imageController->uploadCover($request->file('cover_photo'));
+
+            if ($coverUrl) {
+                // Cập nhật thông tin chi tiết người dùng
+                if ($user->detail) {
+                    $user->detail->cover_img_url = $coverUrl;
+                    $user->detail->save();
+
+                    // Tạo bài đăng thông báo sau khi cập nhật thành công
+                    $post = new Post();
+                    $post->user_id = auth()->id();
+                    $post->content = $user->first_name . ' ' . $user->last_name . ' đã đổi ảnh bìa.';
+                    $post->save();
+
+                    // Lưu URL ảnh bìa vào PostImage (tùy chọn)
+                    PostImage::create([
+                        'post_id' => $post->id,
+                        'image_url' => $coverUrl,
+                    ]);
+
+                    return Redirect::back()->with('success', 'Ảnh bìa đã được cập nhật thành công.');
+                } else {
+                    return Redirect::back()->with('error', 'Lỗi: Không tìm thấy thông tin chi tiết người dùng.');
+                }
+            } else {
+                return Redirect::back()->with('error', 'Lỗi: Không upload được ảnh bìa.');
+            }
+        }
+
+        return Redirect::back()->with('error', 'Vui lòng chọn một ảnh bìa để tải lên.');
     }
 }

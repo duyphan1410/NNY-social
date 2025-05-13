@@ -205,7 +205,10 @@ class FriendController extends Controller
 
         // Nếu chưa tìm kiếm, chỉ trả về danh sách lời mời đã gửi
         if (!$query) {
-            return view('friends.search', compact('pendingRequests', 'pendingIds', 'rejectedIds'))->with('users', null);
+            $users = User::where('id', '!=', $userId)
+                ->limit(20) // Giới hạn số lượng người dùng hiển thị khi không tìm kiếm
+                ->get();
+            return view('friends.search', compact('pendingRequests', 'pendingIds', 'rejectedIds', 'users'));
         }
 
         // Tìm kiếm tất cả người dùng khớp với từ khóa

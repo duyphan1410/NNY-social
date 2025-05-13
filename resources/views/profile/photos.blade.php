@@ -22,15 +22,10 @@
                         <div class="bg-white shadow rounded-lg overflow-hidden p-6">
                             <h2 class="text-xl font-semibold mb-4">Ảnh đã tải lên</h2>
                             <div class="album-grid-flex grid grid-cols-3 gap-4">
-                                @forelse ($mergedMedia as $item)
+                                @forelse ($photos as $item)
                                     <div class="album-item-flex">
                                         @if ($item['type'] === 'photo')
                                             <img class="w-full h-48 object-cover rounded-md shadow-sm" src="{{ $item['url'] }}" alt="Original Post Image">
-                                        @elseif ($item['type'] === 'video')
-                                            <video class="w-full h-48 object-cover rounded-md shadow-sm" controls>
-                                                <source src="{{ $item['url'] }}" type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>
                                         @endif
                                     </div>
                                 @empty
@@ -38,7 +33,7 @@
                                 @endforelse
                             </div>
                             <div class="mt-4">
-{{--                                {{ $mergedMedia->links() }}--}}
+                                {{--                                {{ $mergedMedia->links() }}--}}
                             </div>
                         </div>
                     </div>

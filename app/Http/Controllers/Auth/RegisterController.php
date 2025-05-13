@@ -32,7 +32,7 @@ class RegisterController extends Controller
     }
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'username' => $data['username'],
@@ -40,5 +40,19 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'avatar' => 'https://res.cloudinary.com/dwvt3snha/image/upload/v1743073158/post_images/nem5i8act9bl7bypckmm.webp',
         ]);
+
+        // Tạo một user_detail mới và liên kết với user vừa tạo
+        $user->detail()->create([
+            // Các trường bạn muốn gán giá trị mặc định hoặc để null
+            'bio' => null,
+            'location' => null,
+            'website' => null,
+            'gender' => null,
+            'birthdate' => null,
+            'cover_img_url' => null,
+            // Thêm các trường khác của user_detail mà bạn muốn khởi tạo
+        ]);
+
+        return $user;
     }
 }

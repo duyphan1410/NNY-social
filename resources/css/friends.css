@@ -84,12 +84,13 @@ li:last-child {
 }
 
 /* Thông tin bạn bè */
-.friend-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.friend-info a.friend-link {
+    text-decoration: none; /* Loại bỏ gạch chân */
+    display: flex; /* Để căn chỉnh avatar và tên theo hàng ngang */
+    align-items: center; /* Căn chỉnh dọc các item */
+    gap: 10px; /* Tạo khoảng cách giữa avatar và tên */
+    color: inherit; /* Kế thừa màu từ phần tử cha (nếu cần) */
 }
-
 
 /* Nút bấm */
 .friend-btn {
@@ -108,13 +109,14 @@ li:last-child {
     background-color: #4CAF50; /* Sử dụng mã màu cụ thể thay vì biến */
     color: white;
     margin-right: 8px; /* Thêm margin-right để tạo khoảng cách giữa các nút */
-    width: 110px;
+    min-width: 110px;
 }
 
 .reject-btn {
     background-color: #F44336; /* Sử dụng mã màu cụ thể thay vì biến */
     color: white;
-    width: 110px;
+    margin-right: 8px;
+    min-width: 110px;
 }
 
 /* Hiệu ứng hover */

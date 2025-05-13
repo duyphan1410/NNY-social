@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'SocialV') }}</title>
+    <title>{{ config('app.name', 'NNY') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -28,14 +28,14 @@
             <div class="nav-links">
                 @guest
                     @if (Route::has('login'))
-                        <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Đăng nhập') }}</a>
                     @endif
 
                     @if (Route::has('register'))
-                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Đăng ký') }}</a>
                     @endif
                 @else
-                    <a href="{{ route('profile.me') }}" class="font-semibold text-blue-600">
+                    <a href="{{ route('profile.me') }}" class="font-semibold text-blue-600 user-profile-link">
                         <span class="nav-link">Chào, {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</span>
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

@@ -68,6 +68,10 @@ body {
     font-weight: 500;
 }
 
+.user-profile-link {
+    text-decoration: none; /* Loại bỏ gạch chân */
+}
+
 .nav-link:hover {
     background: rgba(65, 113, 214, 0.1);
     color: var(--secondary-color);
