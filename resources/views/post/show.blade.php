@@ -3,11 +3,13 @@
 @push('styles')
     @vite(['resources/css/home.css'])
     @vite(['resources/css/detail.css'])
+    @vite(['resources/css/app.css'])
 @endpush
 
 @push('scripts')
     @vite(['resources/js/home.js'])
     @vite(['resources/js/detail.js'])
+    @vite(['resources/css/app.js'])
 @endpush
 
 @section('content')
@@ -191,6 +193,18 @@
                                     </a>
                                 </div>
                                 <p class="comment-content">{{ $comment->content }}</p>
+                                <div class="comment-actions">
+                                    @if (auth()->check() && !$isOwner)
+                                        <button class="reply-btn" data-author="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">Trả lời</button>
+                                    @endif
+                                    @if ($isOwner)
+                                        <form method="POST" action="{{ route('post.comment.destroy', ['id' => $comment->id]) }}" style="display: inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">Xóa</button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
                     </div>

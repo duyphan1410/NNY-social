@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Post;
 
+use App\Events\NewNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ImageController;
 use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\PostVideo;
 use App\models\User;
+use App\Models\Friend;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +69,27 @@ class PostController extends Controller
                         'video_url' => $url
                     ]);
                 }
+            }
+
+            $postOwner = Auth::user();
+            $fullName = trim($postOwner->first_name . ' ' . $postOwner->last_name);
+            $message = $fullName . ' vừa đăng một bài viết mới.';
+            $postUrl = '/social-network/public/post/' . $post->id . '/detail'; // Sử dụng $post->id
+
+            // Lấy danh sách bạn bè của người đăng bài
+            $friends = Friend::where('user_id', Auth::id())
+                ->orWhere('friend_id', Auth::id())
+                ->with(['user', 'friend'])
+                ->get()
+                ->map(function ($friend) {
+                    return $friend->user_id === Auth::id() ? $friend->friend : $friend->user;
+                });
+            foreach ($friends as $friend) {
+                event(new NewNotificationEvent($friend->id, [
+                    'message' => $message,
+                    'url' => $postUrl,
+                    'type' => 'create_post', // Thêm loại thông báo
+                ]));
             }
 
             return redirect()->route('home')->with('success', 'Bài đăng đã được tạo thành công');

@@ -41,3 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    const replyButtons = document.querySelectorAll('.reply-btn');
+    const commentTextarea = document.querySelector('.comment-form textarea[name="content"]');
+
+    replyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const authorName = this.dataset.author;
+            commentTextarea.value = `@${authorName} `;
+            commentTextarea.focus(); // Tự động focus vào textarea để người dùng nhập tiếp
+        });
+    });
+});

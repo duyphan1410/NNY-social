@@ -99,7 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                        return response.json().then(errData => {
+                            console.error('Lỗi từ server:', errData);
+                            throw new Error(errData.error || "Network response was not ok");
+                        });
                     }
                     return response.json();
                 })
@@ -129,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Có lỗi xảy ra khi gửi like!');
+                    alert('Có lỗi xảy ra: ' + error.message);
                 });
         });
     });

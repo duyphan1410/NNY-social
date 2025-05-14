@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Friends\FriendController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Profile\ProfileController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Reel\ReelController;
 use App\Http\Controllers\Home\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Events\NewNotificationEvent;
 
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\VideoController;
@@ -102,6 +104,22 @@ Route::prefix('profile')->name('profile.')->group(function () {
 
 });
 
+Route::middleware(['auth'])->group(function() {
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
+    // Đánh dấu một thông báo đã đọc
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    // Đánh dấu tất cả thông báo đã đọc
+    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    // Xử lý thông báo
+    Route::post('/notifications/{id}/process', [NotificationController::class, 'processNotification']);
+    // Lấy tất cả thông báo
+    Route::get('/notifications', [NotificationController::class, 'getAllNotifications']);
+    // Xóa một thông báo
+    Route::delete('/notifications/{id}', [NotificationController::class, 'deleteNotification']);
+    // Theo dõi thời gian xem thông báo
+    Route::post('/notifications/track-view', [NotificationController::class, 'trackViewTime']);
+});
+
 
 Route::get('/dashboard', function () {
     return view('dashboard.dashboard'); // Cần chỉ rõ thư mục
@@ -111,7 +129,13 @@ Route::fallback(function () {
     return response()->json(['message' => 'Route không tồn tại'], 404);
 });
 
-
+Route::get('test-broadcast/{user_id}', function($user_id) {
+    event(new \App\Events\NewNotificationEvent($user_id, [
+        'message' => 'Đây là thông báo test!',
+        'url' => '#'
+    ]));
+    return 'Đã gửi thông báo cho user ID: ' . $user_id;
+});
 
 
 require __DIR__.'/auth.php';

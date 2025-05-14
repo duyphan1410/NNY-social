@@ -26,7 +26,7 @@ body {
 /* Navbar Styles */
 .navbar {
     background: rgba(255, 255, 255, 0.95);
-    padding: 1rem 0;
+    padding: 0.5rem 0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: fixed;
     width: 100%;
@@ -59,6 +59,13 @@ body {
     height: 24px;
 }
 
+.nav-links {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px; /* Khoảng cách giữa các liên kết */
+}
+
 .nav-link {
     color: var(--text-color);
     text-decoration: none;
@@ -66,15 +73,25 @@ body {
     border-radius: 6px;
     transition: all 0.3s ease;
     font-weight: 500;
-}
-
-.user-profile-link {
-    text-decoration: none; /* Loại bỏ gạch chân */
+    display: flex;
+    align-items: center; /* Giữ cho icon và text được căn chỉnh */
 }
 
 .nav-link:hover {
     background: rgba(65, 113, 214, 0.1);
     color: var(--secondary-color);
+}
+
+
+.user-profile-link {
+    text-decoration: none; /* Loại bỏ gạch chân */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Khoảng cách giữa icon và tên */
+}
+
+.user-profile-link i {
+    font-size: 18px; /* Icon người dùng */
 }
 
 main {
@@ -273,6 +290,126 @@ main {
     color: var(--secondary-color);
     text-decoration: none;
     font-weight: 600;
+}
+
+#notification-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+/* Dấu chấm đỏ khi có thông báo */
+#notification-count {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #f87171;
+    border-radius: 50%;
+    visibility: hidden;
+}
+
+/* Styles for the notification dropdown */
+#notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 70%; /* Ngay bên dưới nút chuông */
+    right: 15%;
+    margin-top: 0.5rem;
+    width: 500px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+/* Khi có thông báo mới thì hiển thị badge */
+#notification-count.show {
+    visibility: visible;
+}
+
+/* Styles for the notification items */
+#notification-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#notification-list li {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb; /* Light grey */
+    color: #4b5563; /* Gray */
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#notification-list li:hover {
+    background-color: #f3f4f6; /* Light hover effect */
+}
+
+/* Styles for the "Mark all as read" button */
+#mark-all-read {
+    background-color: #f9fafb;
+    padding: 12px;
+    border: 0px solid #e5e7eb;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+#mark-all-read:hover {
+    background-color: #e2e8f0;
+}
+
+/* Optional: for better responsiveness */
+@media (max-width: 768px) {
+    #notification-dropdown {
+        width: 250px;
+    }
+}
+
+.nav-link {
+    margin: 0 0px;
+    display: inline-block;
+}
+
+/* Style cho thông báo chưa đọc */
+.notification-item.unread {
+    background-color: #f0f7ff;
+}
+
+/* Style cho flex container trong notification */
+.notification-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-actions {
+    display: flex;
+    align-items: center;
+}
+
+.notification-message {
+    margin-bottom: 3px;
+}
+
+.notification-time {
+    font-size: 11px;
+    color: #6b7280;
 }
 
 /* Responsive Styles */
