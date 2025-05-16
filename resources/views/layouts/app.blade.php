@@ -10,7 +10,11 @@
     <title>{{ config('app.name', 'NNY') }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -48,17 +52,28 @@
                     <div class="nav-link">
                         <button id="notification-btn" class="nav-link">
                             <i class="fa fa-bell"></i>
-                            <span id="notification-count" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1 hidden">0</span>
+                            <span id="notification-count" class="hidden absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1">
+                                0
+                            </span>
                         </button>
-                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg z-50">
+
+                        <div id="notification-dropdown" class="hidden">
                             <ul id="notification-list">
                                 @forelse(auth()->user()->notifications()->orderBy('created_at', 'desc')->take(5)->get() as $notification)
                                     <li class="notification-item {{ is_null($notification->read_at) ? 'unread' : '' }}" data-id="{{ $notification->id }}">
-                                        <a href="{{ $notification->url }}">
-                                            <div class="notification-message">{{ $notification->message }}</div>
-                                            <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
-                                        </a>
+                                        <div class="notification-container">
+                                            <div class="notification-content">
+                                                <a href="{{ $notification->url }}">
+                                                    <div class="notification-message">{{ $notification->message }}</div>
+                                                    <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+                                                </a>
+                                            </div>
+                                            <div class="notification-actions">
+                                                <button class="action-btn" data-id="{{ $notification->id }}">Xử lý</button>
+                                            </div>
+                                        </div>
                                     </li>
+
                                 @empty
                                     <li class="text-center p-2 text-gray-400">Không có thông báo nào</li>
                                 @endforelse

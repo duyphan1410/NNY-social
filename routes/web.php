@@ -26,6 +26,20 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
+//Route Admin
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.dashboard');
+    Route::post('/users/{id}/toggle-ban', [\App\Http\Controllers\Admin\UserController::class, 'toggleBan'])->name('admin.users.toggleBan');
+
+    // Quản lý bài đăng
+    Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('admin.posts');
+    Route::post('/posts/{id}/toggle-visibility', [\App\Http\Controllers\Admin\PostController::class, 'toggleVisibility'])->name('admin.posts.toggleVisibility');
+    Route::delete('/posts/{id}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('admin.posts.destroy');
+    //Thống kê
+    Route::get('/statistics', [\App\Http\Controllers\Admin\StatisticsController::class, 'index'])->name('admin.statistics');
+});
+
+
 
 //Router bài đăng
 Route::prefix('post')->name('post.')->group(function () {
@@ -54,14 +68,7 @@ Route::prefix('post')->name('post.')->group(function () {
     //Ds liked
     Route::get('/{post}/likes', [PostController::class, 'getLikes'])->name('likes');
 });
-//Router Reel
-Route::middleware('auth')->group(function () {
-    Route::prefix('reel')->name('reel.')->group(function () {
-        // Tạo reel mới
-        Route::get('/create', [ReelController::class, 'create'])->name('create');
-        Route::post('/store', [ReelController::class, 'store'])->name('store');
-    });
-});
+
 // Router bạn bè
 Route::middleware('auth')->group(function () {
     Route::prefix('friend')->name('friend.')->group(function () {
@@ -105,19 +112,14 @@ Route::prefix('profile')->name('profile.')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function() {
+    Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
     Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
-    // Đánh dấu một thông báo đã đọc
-    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-    // Đánh dấu tất cả thông báo đã đọc
-    Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
-    // Xử lý thông báo
-    Route::post('/notifications/{id}/process', [NotificationController::class, 'processNotification']);
     // Lấy tất cả thông báo
     Route::get('/notifications', [NotificationController::class, 'getAllNotifications']);
     // Xóa một thông báo
     Route::delete('/notifications/{id}', [NotificationController::class, 'deleteNotification']);
-    // Theo dõi thời gian xem thông báo
-    Route::post('/notifications/track-view', [NotificationController::class, 'trackViewTime']);
+
 });
 
 
@@ -127,14 +129,6 @@ Route::get('/dashboard', function () {
 
 Route::fallback(function () {
     return response()->json(['message' => 'Route không tồn tại'], 404);
-});
-
-Route::get('test-broadcast/{user_id}', function($user_id) {
-    event(new \App\Events\NewNotificationEvent($user_id, [
-        'message' => 'Đây là thông báo test!',
-        'url' => '#'
-    ]));
-    return 'Đã gửi thông báo cho user ID: ' . $user_id;
 });
 
 

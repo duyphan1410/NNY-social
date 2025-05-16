@@ -32,9 +32,6 @@ window.openShareForm = function(postId) {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelector('.reel-btn.prev').disabled = true;
-});
 
 document.addEventListener("DOMContentLoaded", function () {
     // Xử lý dropdown

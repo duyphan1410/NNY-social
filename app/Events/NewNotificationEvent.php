@@ -27,8 +27,6 @@ class NewNotificationEvent implements ShouldBroadcast
                 'message' => $data['message'],
                 'url' => $data['url'] ?? null,
                 'type' => $data['type'] ?? 'info',
-                'reference_id' => $data['reference_id'] ?? null,
-                'data' => $data, // Lưu toàn bộ dữ liệu
                 'read_at' => null, // Rõ ràng đánh dấu là chưa đọc
             ]);
 

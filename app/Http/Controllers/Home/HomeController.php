@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use App\Models\Post;
-use App\Models\Reel;
 use App\Models\Friend;
 
 class HomeController extends Controller
@@ -78,12 +77,6 @@ class HomeController extends Controller
                 }
             }
 
-            // Lấy reels (giữ nguyên)
-            $reels = Reel::with('user')
-                ->whereIn('user_id', $friendIds) // Chỉ hiện reels của bạn bè
-                ->latest()
-                ->limit(10) // Giới hạn số lượng
-                ->get();
 
             // Lấy danh sách bạn bè (đơn giản hóa)
             $friends = Friend::where('user_id', Auth::id())
@@ -95,7 +88,7 @@ class HomeController extends Controller
                     return $friend->user_id === Auth::id() ? $friend->friend : $friend->user;
                 });
 
-            return view('home.home', compact('posts', 'reels', 'friends'));
+            return view('home.home', compact('posts', 'friends'));
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());

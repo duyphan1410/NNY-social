@@ -43,14 +43,15 @@ class RegisterController extends Controller
 
         // Tạo một user_detail mới và liên kết với user vừa tạo
         $user->detail()->create([
-            // Các trường bạn muốn gán giá trị mặc định hoặc để null
+            'cover_img_url' => null,
             'bio' => null,
             'location' => null,
-            'website' => null,
-            'gender' => null,
             'birthdate' => null,
-            'cover_img_url' => null,
-            // Thêm các trường khác của user_detail mà bạn muốn khởi tạo
+            'gender' => null,
+            'website' => null,
+            'relationship_status' => null,
+            'hobbies' => null,
+            'social_links' => null,
         ]);
 
         return $user;

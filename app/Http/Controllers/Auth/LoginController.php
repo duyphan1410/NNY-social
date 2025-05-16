@@ -20,12 +20,18 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:8',
         ]);
-//        dd($request->only('email', 'password'), User::all());
 
         $credentials = $request->only('email', 'password');
 
         // Thử xác thực thông tin
         if (Auth::attempt($credentials)) {
+
+            $user = Auth::user();
+
+            if ($user->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+
             // Nếu thành công, chuyển hướng đến trang home
             return redirect()->route('home');
         }

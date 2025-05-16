@@ -35,45 +35,64 @@
             <div class="col-9 content">
 
                 {{--Creat post--}}
-                <div class="create-post">
-                    <a href="{{ route('post.create') }}" class="create-button">Tạo bài đăng</a>
+                <div class="quick-post-card">
+                    <div class="quick-post-header">
+                        <img src="{{ auth()->user()->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="quick-post-avatar">
+                        <a href="{{ route('post.create') }}" class="quick-post-input">
+                            Bạn đang nghĩ gì, {{ auth()->user()->first_name }}?
+                        </a>
+                    </div>
+                    <div class="quick-post-actions">
+                        <a href="{{ route('post.create') }}" class="quick-post-action-btn">
+                            <i class="bi bi-image"></i>
+                            <span>Ảnh</span>
+                        </a>
+                        <a href="{{ route('post.create') }}" class="quick-post-action-btn">
+                            <i class="bi bi-link-45deg"></i>
+                            <span>Liên kết</span>
+                        </a>
+                        <a href="{{ route('post.create') }}" class="quick-post-action-btn primary">
+                            <i class="bi bi-pencil-square"></i>
+                            <span>Tạo bài viết</span>
+                        </a>
+                    </div>
                 </div>
                 <!-- Reel Section -->
-                <section class="stories-section">
-                    <div class="reel-container">
-                        <div class="reel-wrapper">
-                            <!-- Nút "Tạo tin" CHƯA CÓ HÌNH -->
-                            <div class="reel-item create-reel">
-                                <a href="{{ route('reel.create') }}" class="create-reel-link">
-                                    <div class="story-avatar-container">
-                                        <img class="story-avatar" src="{{ auth()->user()->avatar }}"
-                                             alt="Your Story" onerror="this.src=''">
-                                    </div>
-                                    <span class="story-name">Tạo tin</span>
-                                    <div class="story-content story-create-content">
-                                        <span class="plus-icon">+</span>
-                                    </div>
-                                </a>
-                            </div>
+{{--                <section class="stories-section">--}}
+{{--                    <div class="reel-container">--}}
+{{--                        <div class="reel-wrapper">--}}
+{{--                            <!-- Nút "Tạo tin" CHƯA CÓ HÌNH -->--}}
+{{--                            <div class="reel-item create-reel">--}}
+{{--                                <a href="{{ route('reel.create') }}" class="create-reel-link">--}}
+{{--                                    <div class="story-avatar-container">--}}
+{{--                                        <img class="story-avatar" src="{{ auth()->user()->avatar }}"--}}
+{{--                                             alt="Your Story" onerror="this.src=''">--}}
+{{--                                    </div>--}}
+{{--                                    <span class="story-name">Tạo tin</span>--}}
+{{--                                    <div class="story-content story-create-content">--}}
+{{--                                        <span class="plus-icon">+</span>--}}
+{{--                                    </div>--}}
+{{--                                </a>--}}
+{{--                            </div>--}}
 
-                            @forelse ($reels as $reel)
-                                <div class="reel-item">
-                                    <div class="story-avatar-container">
-                                        <img class="story-avatar" src="{{ $reel->user->avatar }}"
-                                             alt="{{ $reel->user->first_name }} {{ $reel->user->last_name }}"
-                                             onerror="this.src=''">
-                                    </div>
-                                    <span class="story-name">{{ $reel->user->first_name }}</span>
-                                    <img class="story-content" src="{{ Storage::url($reel->media_url) }}"
-                                         alt="Story" onerror="this.src='default-placeholder.jpg'">
-                                </div>
-                            @empty
-                            @endforelse
-                        </div>
-                        <button class="reel-btn prev" onclick="scrollReel(-1)">&#8249;</button>
-                        <button class="reel-btn next" onclick="scrollReel(1)">&#8250;</button>
-                    </div>
-                </section>
+{{--                            @forelse ($reels as $reel)--}}
+{{--                                <div class="reel-item">--}}
+{{--                                    <div class="story-avatar-container">--}}
+{{--                                        <img class="story-avatar" src="{{ $reel->user->avatar }}"--}}
+{{--                                             alt="{{ $reel->user->first_name }} {{ $reel->user->last_name }}"--}}
+{{--                                             onerror="this.src=''">--}}
+{{--                                    </div>--}}
+{{--                                    <span class="story-name">{{ $reel->user->first_name }}</span>--}}
+{{--                                    <img class="story-content" src="{{ Storage::url($reel->media_url) }}"--}}
+{{--                                         alt="Story" onerror="this.src='default-placeholder.jpg'">--}}
+{{--                                </div>--}}
+{{--                            @empty--}}
+{{--                            @endforelse--}}
+{{--                        </div>--}}
+{{--                        <button class="reel-btn prev" onclick="scrollReel(-1)">&#8249;</button>--}}
+{{--                        <button class="reel-btn next" onclick="scrollReel(1)">&#8250;</button>--}}
+{{--                    </div>--}}
+{{--                </section>--}}
 
                 <!-- Post Section -->
                 <section class="post-section">

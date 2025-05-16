@@ -306,13 +306,16 @@ main {
 /* Dấu chấm đỏ khi có thông báo */
 #notification-count {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 8px;
-    height: 8px;
-    background-color: #f87171;
+    top: -4px;
+    right: -4px;
+    background: red;
+    color: white;
     border-radius: 50%;
-    visibility: hidden;
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+    text-align: center;
+    line-height: 16px;
 }
 
 /* Styles for the notification dropdown */
@@ -327,7 +330,7 @@ main {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     z-index: 50;
-    max-height: 350px;
+    max-height: 360px;
     overflow-y: auto;
 }
 
@@ -364,6 +367,8 @@ main {
     text-align: center;
     font-weight: bold;
     transition: background-color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 #mark-all-read:hover {
@@ -384,7 +389,7 @@ main {
 
 /* Style cho thông báo chưa đọc */
 .notification-item.unread {
-    background-color: #f0f7ff;
+    background-color: #f5f5dc ;
 }
 
 /* Style cho flex container trong notification */

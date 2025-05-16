@@ -9,7 +9,7 @@
 @push('scripts')
     @vite(['resources/js/home.js'])
     @vite(['resources/js/detail.js'])
-    @vite(['resources/css/app.js'])
+    @vite(['resources/js/app.js'])
 @endpush
 
 @section('content')
@@ -151,6 +151,21 @@
             @endif
 
             <div class="post-stats">
+                <div class="like-count">
+                    <button class="view-likes-btn" data-post-id="{{ $post->id }}">
+                        <span>{{ $post->likes_count ?? 0 }} thích</span>
+                    </button>
+                </div>
+
+                <div id="likes-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close-button">&times;</span>
+                        <h3>Những người đã thích</h3>
+                        <ul id="likes-list">
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="comment-count">
                     <span>{{ $post->comments_count ?? 0 }} bình luận</span>
                 </div>

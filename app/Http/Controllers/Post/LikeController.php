@@ -66,7 +66,13 @@ class LikeController extends Controller
             $liked = true;
         }
 
-        \Log::info('Kết thúc toggleLike, trả về: ' . json_encode(['liked' => $liked]));
-        return response()->json(['liked' => $liked]);
+        // Đếm lại số like sau khi đã thêm hoặc xóa
+        $likesCount = Post::find($postId)->likes()->count();
+
+        \Log::info('Kết thúc toggleLike, trả về: ' . json_encode(['liked' => $liked, 'likes_count' => $likesCount]));
+        return response()->json([
+            'liked' => $liked,
+            'likes_count' => $likesCount,
+        ]);
     }
 }
