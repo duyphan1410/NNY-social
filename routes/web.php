@@ -8,7 +8,6 @@ use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
-use App\Http\Controllers\Reel\ReelController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
