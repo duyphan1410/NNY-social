@@ -1,0 +1,162 @@
+/* CSS cho trang quên mật khẩu và đặt lại mật khẩu */
+
+/* Thiết lập chung cho container xác thực */
+.auth-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Thiết lập cho tiêu đề */
+.auth-container h2 {
+    color: #333;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Thiết lập cho form groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+/* Thiết lập cho các input fields */
+.form-control {
+    height: 45px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 0.2rem rgba(74, 108, 247, 0.25);
+    outline: 0;
+}
+
+/* Thiết lập cho input không hợp lệ */
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #dc3545;
+}
+
+/* Thiết lập cho alert thông báo */
+.alert {
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Thiết lập cho nút submit */
+.btn-primary {
+    background-color: #4a6cf7;
+    border-color: #4a6cf7;
+    color: #fff;
+    padding: 12px 0;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #3a5cd8;
+    border-color: #3a5cd8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(74, 108, 247, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Hiệu ứng khi focus vào các trường */
+input:focus {
+    transform: translateY(-1px);
+}
+
+/* Responsive styles */
+@media (max-width: 576px) {
+    .auth-container {
+        margin: 20px auto;
+        padding: 20px;
+        width: 90%;
+    }
+
+    .form-control {
+        height: 40px;
+    }
+
+    .btn-primary {
+        padding: 10px 0;
+    }
+}
+
+/* Thiết lập chung cho container toàn trang */
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Hiệu ứng loading khi submit form */
+.btn-primary.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary.loading:after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Thêm hiệu ứng transition cho form */
+form {
+    transition: all 0.3s ease;
+}

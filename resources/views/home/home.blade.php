@@ -22,15 +22,32 @@
         <div class="container bg-light-yellow {{ $posts->isEmpty() ? 'home-empty' : '' }}">
 
             <div class="col-3 sidebar">
-                <a href="{{ route('profile.me') }}">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
+                <!-- Hồ sơ cá nhân -->
+                <a href="{{ route('profile.me') }}">
+                    {{ Auth::user()->first_name }} {{ Auth::user()->last_name }}
+                </a>
+
+                <!-- Bạn bè -->
                 <a href="{{ route('friend.search') }}">Tìm bạn bè</a>
                 <a href="{{ route('friend.index') }}">Bạn bè</a>
-                <a href="#">Đà lạt</a>
-                <a href="#">Video</a>
-                <a href="#">Marketplace</a>
-                <a href="#">Băng Feed</a>
-                <a href="#">Xem thêm</a>
+
+                <!-- Nội dung cá nhân -->
+                <a href="{{ route('profile.photos', Auth::user()->id) }}">Ảnh</a>
+                <a href="{{ route('profile.videos', Auth::user()->id) }}">Video</a>
+                <a href="{{ route('profile.me', Auth::user()->id) }}">Bài viết của tôi</a>
+
+
+                <!-- Cài đặt -->
+                <a href="{{ route('account.settings') }} ">Cài đặt tài khoản</a>
+                <a href="{{ route('logout') }}"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Đăng xuất
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
             </div>
+
 
             <div class="col-9 content">
 

@@ -10,6 +10,8 @@ use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Reel\ReelController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Events\NewNotificationEvent;
 
@@ -110,6 +112,12 @@ Route::prefix('profile')->name('profile.')->group(function () {
     Route::get('/{user}/videos', [ProfileController::class, 'videos'])->name('videos');
 
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account/settings', [\App\Http\Controllers\Account\SettingsController::class, 'edit'])->name('account.settings');
+    Route::post('/account/settings', [\App\Http\Controllers\Account\SettingsController::class, 'update'])->name('account.settings.update');
+});
+
 
 Route::middleware(['auth'])->group(function() {
     Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
