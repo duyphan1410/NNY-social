@@ -23,9 +23,11 @@
                             <h2 class="text-xl font-semibold mb-4">Ảnh đã tải lên</h2>
                             <div class="album-grid-flex grid grid-cols-3 gap-4">
                                 @forelse ($photos as $item)
-                                    <div class="album-item-flex">
+                                    <div class="post-media-container album-item-flex">
                                         @if ($item['type'] === 'photo')
-                                            <img class="w-full h-48 object-cover rounded-md shadow-sm" src="{{ $item['url'] }}" alt="Original Post Image">
+                                            <div class="media-item image-item">
+                                                <img class="post-image w-full h-48 object-cover rounded-md shadow-sm" src="{{ $item['url'] }}" alt="Original Post Image">
+                                            </div>
                                         @endif
                                     </div>
                                 @empty

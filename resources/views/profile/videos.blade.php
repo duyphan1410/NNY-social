@@ -23,12 +23,14 @@
                             <h2 class="text-xl font-semibold mb-4">Video đã tải lên</h2>
                             <div class="album-grid-flex grid grid-cols-3 gap-4">
                                 @forelse ($videos as $item)
-                                    <div class="album-item-flex">
+                                    <div class="post-media-container album-item-flex">
                                         @if ($item['type'] === 'video')
-                                            <video class="w-full h-48 object-cover rounded-md shadow-sm" controls>
-                                                <source src="{{ $item['url'] }}" type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>
+                                            <div class="media-item video-item">
+                                                <video class="post-video w-full h-48 object-cover rounded-md shadow-sm" controls>
+                                                    <source src="{{ $item['url'] }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            </div>
                                         @endif
                                     </div>
                                 @empty

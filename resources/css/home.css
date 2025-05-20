@@ -145,55 +145,6 @@ a {
 }
 
 
-
-.stories-section {
-    margin-bottom: 20px;
-}
-
-.reel-container {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 10px; /* Tạo khoảng cách giữa các story */
-    overflow: hidden;
-    position: relative;
-}
-
-.reel-wrapper {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    overflow: hidden;
-    scroll-behavior: smooth;
-}
-
-.reel-item {
-    width: 120px;
-    height: 210px;
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-
-    /* Viền nhỏ bao quanh */
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-    /* Shadow trắng vào bên trong */
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
-
-    /* Đảm bảo viền và shadow không bị ảnh hưởng bởi hover */
-    &:hover {
-        transform: scale(1.05);
-        border-color: rgba(255, 255, 255, 0.8); /* Tăng độ đậm của viền khi hover */
-        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.5); /* Tăng độ đậm của shadow khi hover */
-    }
-}
-
-.reel-item:hover {
-    transform: scale(1.05);
-}
-
 .story-avatar {
     width: 35px;
     height: 35px;
@@ -214,35 +165,6 @@ a {
     font-size: 14px;
     font-weight: bold;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
-}
-
-
-.reel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: white;
-    font-size: 24px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s;
-    z-index: 10;
-}
-
-.reel-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-.reel-btn.prev {
-    left: 5px;
-}
-
-.reel-btn.next {
-    right: 5px;
 }
 
 
@@ -297,63 +219,197 @@ a {
     font-size: 14px;
 }
 
-.post-media {
-    margin-bottom: 10px;
-}
-
-.post-image {
-    max-width: 100%;
-    border-radius: 8px;
-}
-
-.post-media {
+.post-media-container {
     display: grid;
-    gap: 5px;
-}
-
-/* 1 ảnh hoặc video */
-.post-media.single {
-    display: block;
-}
-
-.post-media.single img,
-.post-media.single video {
+    gap: 4px;
+    margin: 15px 0;
     width: 100%;
     border-radius: 8px;
+    overflow: hidden;
 }
 
-/* 2 ảnh hoặc video */
-.post-media.two {
+/* Layout cho 1 phương tiện */
+.post-media-container.media-single {
+    display: block;
+    max-height: 500px;
+}
+
+.post-media-container.media-single .media-item {
+    height: 100%;
+    max-height: 500px;
+}
+
+.post-media-container.media-single img,
+.post-media-container.media-single video {
+    max-height: 500px;
+    width: 100%;
+    object-fit: contain;
+}
+
+/* Layout cho 2 phương tiện */
+.post-media-container.media-two {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 300px;
+}
+
+/* Layout cho 3 phương tiện */
+.post-media-container.media-three {
+    grid-template-areas:
+        "main main"
+        "sub1 sub2";
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 280px 140px;
 }
 
-/* 3 ảnh hoặc video */
-.post-media.three {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
+.post-media-container.media-three .media-item:nth-child(1) {
+    grid-area: main;
 }
 
-.post-media.three img:nth-child(1),
-.post-media.three video:nth-child(1) {
-    grid-column: span 2;
+.post-media-container.media-three .media-item:nth-child(2) {
+    grid-area: sub1;
 }
 
-/* 4 ảnh hoặc video */
-.post-media.four {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+.post-media-container.media-three .media-item:nth-child(3) {
+    grid-area: sub2;
 }
 
-.post-media img,
-.post-media video {
+/* Layout cho 4 phương tiện */
+.post-media-container.media-four {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 200px);
+}
+
+/* Layout cho 5 phương tiện hoặc nhiều hơn */
+.post-media-container.media-five {
+    grid-template-areas:
+        "main main sub1"
+        "main main sub2"
+        "sub3 sub4 sub5";
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 180px 180px 180px;
+}
+
+.post-media-container.media-five .media-item:nth-child(1) {
+    grid-area: main;
+}
+
+.post-media-container.media-five .media-item:nth-child(2) {
+    grid-area: sub1;
+}
+
+.post-media-container.media-five .media-item:nth-child(3) {
+    grid-area: sub2;
+}
+
+.post-media-container.media-five .media-item:nth-child(4) {
+    grid-area: sub3;
+}
+
+.post-media-container.media-five .media-item:nth-child(5) {
+    grid-area: sub4;
+}
+
+.post-media-container.media-five .media-item:nth-child(6) {
+    grid-area: sub5;
+}
+
+/* Phần tử media */
+.media-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #f0f2f5;
+}
+
+/* Hiệu ứng cho hình ảnh và video */
+.post-image,
+.post-video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    transition: transform 0.3s ease;
 }
 
-.post-options {
-    position: relative;
+/* Hiệu ứng hover */
+.media-item:hover .post-image,
+.media-item:hover .post-video {
+    transform: scale(1.03);
+}
+
+/* Overlay cho video */
+.media-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.media-item:hover .media-overlay {
+    opacity: 1;
+}
+
+.media-overlay i {
+    color: white;
+    font-size: 48px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Hiển thị "+X" khi có nhiều hơn 5 ảnh */
+.more-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.more-overlay span {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Đánh dấu item là video */
+.video-item::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 5;
+}
+
+/* Thêm bóng đổ nhẹ */
+.media-item {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* CSS cho shared post container */
+.shared-post {
+    background-color: #f7f8fa;
+    border: 1px solid #ebedf0;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.shared-post .post-media-container {
+    margin: 10px 0 5px;
 }
 
 /* Định dạng dropdown */

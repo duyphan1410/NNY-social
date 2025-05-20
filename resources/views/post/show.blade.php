@@ -10,6 +10,35 @@
     @vite(['resources/js/detail.js'])
 @endpush
 
+@php
+    // Tách riêng xử lý hình ảnh và video
+    $images = collect($post->images ?? []);
+    $videos = collect($post->videos ?? []);
+
+    // Giới hạn số lượng theo yêu cầu
+    $imagesToShow = $images->take(5);
+    $videosToShow = $videos->take(3);
+
+    // Đếm số lượng thực tế
+    $imageCount = $imagesToShow->count();
+    $videoCount = $videosToShow->count();
+    $totalMediaCount = $imageCount + $videoCount;
+
+    // Xác định class cho layout dựa trên số lượng phương tiện
+    $layoutClass = '';
+    if ($totalMediaCount == 1) {
+        $layoutClass = 'media-single';
+    } elseif ($totalMediaCount == 2) {
+        $layoutClass = 'media-two';
+    } elseif ($totalMediaCount == 3) {
+        $layoutClass = 'media-three';
+    } elseif ($totalMediaCount == 4) {
+        $layoutClass = 'media-four';
+    } elseif ($totalMediaCount >= 5) {
+        $layoutClass = 'media-five';
+    }
+@endphp
+
 @section('content')
     <div class="container">
         <div class="post col-9">
@@ -115,29 +144,34 @@
                     @endif
                 </div>
             @else
-                @php
-                    $originalMedia = collect([]);
-                    if ($post->images) {
-                        $originalMedia = $originalMedia->merge($post->images);
-                    }
-                    if ($post->videos) {
-                        $originalMedia = $originalMedia->merge($post->videos);
-                    }
-                    $originalMediaCount = $originalMedia->count();
-                    $originalMediaClass = $originalMediaCount == 1 ? 'single' : ($originalMediaCount == 2 ? 'two' : ($originalMediaCount == 3 ? 'three' : 'four'));
-                @endphp
-
-                @if ($originalMediaCount > 0)
-                    <div class="post-media {{ $originalMediaClass }}">
-                        @foreach ($originalMedia as $item)
-                            @if (isset($item->image_url))
-                                <img class="post-image" src="{{ $item->image_url }}" alt="Original Post Image">
-                            @elseif (isset($item->video_url))
+                <!-- Hiển thị phương tiện -->
+                @if ($totalMediaCount > 0)
+                    <div class="post-media-container {{ $layoutClass }}">
+                        <!-- Hiển thị video (ưu tiên hiển thị trước) -->
+                        @foreach ($videosToShow as $index => $video)
+                            <div class="media-item video-item">
                                 <video class="post-video" controls>
-                                    <source src="{{ $item->video_url }}" type="video/mp4">
+                                    <source src="{{ $video->video_url }}" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
-                            @endif
+                                <div class="media-overlay">
+                                    <i class="fas fa-play-circle"></i>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <!-- Hiển thị hình ảnh -->
+                        @foreach ($imagesToShow as $index => $image)
+                            <div class="media-item image-item">
+                                <img class="post-image" src="{{ $image->image_url }}" alt="Post Image {{ $index + 1 }}">
+
+                                <!-- Nếu là ảnh cuối cùng và còn ảnh chưa hiển thị -->
+                                @if ($index == 4 && $images->count() > 5)
+                                    <div class="more-overlay">
+                                        <span>+{{ $images->count() - 5 }}</span>
+                                    </div>
+                                @endif
+                            </div>
                         @endforeach
                     </div>
                 @endif

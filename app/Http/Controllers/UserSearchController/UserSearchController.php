@@ -16,9 +16,8 @@ class UserSearchController extends Controller
             return response()->json([]);
         }
 
+
         $users = User::where('first_name', 'like', "%{$query}%")
-            ->orWhere('last_name', 'like', "%{$query}%")
-            ->orWhere('email', 'like', "%{$query}%")
             ->limit(10)
             ->get();
 

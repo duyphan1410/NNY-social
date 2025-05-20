@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Events\NewNotificationEvent;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
@@ -24,38 +25,63 @@ class CommentController extends Controller
             'content' => $request->input('content'),
         ]);
 
-        // Lấy người tạo bài viết
         $postOwner = Post::findOrFail($postId)->user;
         $commenter = Auth::user();
         $commenterFullName = trim($commenter->first_name . ' ' . $commenter->last_name);
-        $postDetailUrl = route('post.show', ['id' => $postId]) . '#comments-' . $postId; // Link đến bình luận
+        $postDetailUrl = route('post.show', ['id' => $postId]) . '#comments-' . $comment->id;
 
-        // Kiểm tra xem bình luận có phải là trả lời hay không (dựa trên ký tự '@' ở đầu)
-        if (preg_match('/@\[.*?\]\(user:(\d+)\)/', $request->input('content'), $matches)) {
-            $mentionedUserId = $matches[1];
+        $content = $request->input('content');
 
-            if ($mentionedUserId != $commenter->id) {
-                $repliedToUser = User::find($mentionedUserId);
+        // ===== ✅ PHÂN TÍCH CÁC MENTION =====
+        preg_match_all('/@\[(.*?)\]\(user:(\d+)\)/', $content, $mentionMatches, PREG_SET_ORDER);
 
-                if ($repliedToUser) {
-                    $message = $commenterFullName . ' đã trả lời bình luận của bạn trên bài viết.';
-                    event(new NewNotificationEvent($repliedToUser->id, [
+        $mentionedUserIds = [];
+
+        foreach ($mentionMatches as $match) {
+            $mentionedUserId = (int) $match[2];
+
+            // Tránh gửi thông báo cho chính mình
+            if ($mentionedUserId !== $commenter->id && !in_array($mentionedUserId, $mentionedUserIds)) {
+                $mentionedUser = User::find($mentionedUserId);
+
+                if ($mentionedUser) {
+                    $message = "{$commenterFullName} đã nhắc đến bạn trong một bình luận.";
+                    event(new NewNotificationEvent($mentionedUserId, [
+                        'message' => $message,
+                        'url' => $postDetailUrl,
+                        'type' => 'mention_comment',
+                    ]));
+
+                    $mentionedUserIds[] = $mentionedUserId;
+                }
+            }
+        }
+
+        // ===== ✅ THÔNG BÁO REPLY (nếu là reply) =====
+        if (count($mentionMatches) > 0) {
+            $firstMentionId = (int) $mentionMatches[0][2];
+
+            if ($firstMentionId !== $commenter->id) {
+                $repliedToUser = User::find($firstMentionId);
+                if ($repliedToUser && !in_array($firstMentionId, $mentionedUserIds)) {
+                    $message = "{$commenterFullName} đã trả lời bình luận của bạn.";
+                    event(new NewNotificationEvent($firstMentionId, [
                         'message' => $message,
                         'url' => $postDetailUrl,
                         'type' => 'reply_comment',
                     ]));
                 }
             }
-        } else {
-            // Gửi thông báo đến chủ bài viết nếu không phải là trả lời và người bình luận không phải là chủ bài viết
-            if ($postOwner->id !== $commenter->id) {
-                $message = $commenterFullName . ' đã bình luận bài viết của bạn.';
-                event(new NewNotificationEvent($postOwner->id, [
-                    'message' => $message,
-                    'url' => $postDetailUrl,
-                    'type' => 'new_comment',
-                ]));
-            }
+        }
+
+        // ===== ✅ THÔNG BÁO CHO CHỦ BÀI VIẾT =====
+        if ($postOwner->id !== $commenter->id && !in_array($postOwner->id, $mentionedUserIds)) {
+            $message = "{$commenterFullName} đã bình luận bài viết của bạn.";
+            event(new NewNotificationEvent($postOwner->id, [
+                'message' => $message,
+                'url' => $postDetailUrl,
+                'type' => 'new_comment',
+            ]));
         }
 
         return back()->with('success', 'Bình luận đã được thêm.');

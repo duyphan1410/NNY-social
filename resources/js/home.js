@@ -1,29 +1,266 @@
 let currentPosition = 0;
 
-function scrollReel(direction) {
-    const reelWrapper = document.querySelector('.reel-wrapper');
-    const reelItems = document.querySelectorAll('.reel-item');
 
-    if (!reelWrapper || reelItems.length === 0) return;
 
-    const reelItemWidth = reelItems[0].offsetWidth + 10; // Khoảng cách giữa các reel
-    const reelContainerWidth = document.querySelector('.reel-container').offsetWidth;
-    const reelWrapperWidth = reelItems.length * reelItemWidth;
+document.addEventListener('DOMContentLoaded', function() {
+    // Tạo modal xem ảnh/video phóng to
+    const body = document.querySelector('body');
 
-    const maxPosition = Math.max(0, Math.floor((reelWrapperWidth - reelContainerWidth) / reelItemWidth));
+    if (!document.querySelector('.media-lightbox')) {
+        const lightbox = document.createElement('div');
+        lightbox.className = 'media-lightbox';
+        lightbox.innerHTML = `
+            <div class="lightbox-content">
+                <span class="lightbox-close">&times;</span>
+                <div class="lightbox-media-container">
+                    <!-- Sẽ chứa ảnh hoặc video tùy theo loại media -->
+                </div>
+                <div class="lightbox-nav">
+                    <button class="lightbox-prev">&lt;</button>
+                    <span class="lightbox-counter">1/5</span>
+                    <button class="lightbox-next">&gt;</button>
+                </div>
+            </div>
+        `;
+        body.appendChild(lightbox);
 
-    if (direction === 1 && currentPosition < maxPosition) {
-        currentPosition++;
-    } else if (direction === -1 && currentPosition > 0) {
-        currentPosition--;
+        // Thêm CSS cho lightbox
+        const style = document.createElement('style');
+        style.textContent = `
+            .media-lightbox {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.9);
+                z-index: 1000;
+                overflow: hidden;
+            }
+
+            .lightbox-content {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .lightbox-media-container {
+                max-height: 85vh;
+                max-width: 85vw;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .lightbox-image, .lightbox-video {
+                max-height: 85vh;
+                max-width: 85vw;
+                object-fit: contain;
+            }
+
+            .lightbox-close {
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                color: white;
+                font-size: 40px;
+                cursor: pointer;
+                z-index: 1010;
+            }
+
+            .lightbox-nav {
+                position: absolute;
+                bottom: 30px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .lightbox-prev, .lightbox-next {
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                font-size: 20px;
+                cursor: pointer;
+            }
+
+            .lightbox-counter {
+                color: white;
+                font-size: 16px;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Biến lưu trữ
+        let currentMedia = [];
+        let currentIndex = 0;
+
+        // Xử lý click vào ảnh hoặc video overlay
+        document.addEventListener('click', function(e) {
+            let targetElem = null;
+            let mediaType = null;
+
+            // Kiểm tra xem đã click vào ảnh, overlay của video hoặc vùng quanh video
+            if (e.target.classList.contains('post-image')) {
+                targetElem = e.target;
+                mediaType = 'image';
+            } else if (e.target.classList.contains('media-overlay') || e.target.classList.contains('fa-play-circle')) {
+                // Click vào overlay hoặc icon play
+                targetElem = e.target.closest('.media-item.video-item');
+                mediaType = 'video';
+            } else if (e.target.classList.contains('image-item')) {
+                // Click vào container của ảnh
+                targetElem = e.target.querySelector('.post-image');
+                mediaType = 'image';
+            } else if (e.target.classList.contains('video-item')) {
+                // Click vào container của video
+                targetElem = e.target;
+                mediaType = 'video';
+            }
+
+            if (targetElem) {
+                e.preventDefault();
+
+                // Lấy tất cả media trong post
+                const mediaContainer = targetElem.closest('.post-media-container');
+
+                // Lấy tất cả các item media (cả ảnh và video)
+                const allMediaItems = Array.from(mediaContainer.querySelectorAll('.media-item'));
+
+                // Lưu thông tin từng media (loại và đường dẫn)
+                currentMedia = allMediaItems.map(item => {
+                    if (item.classList.contains('image-item')) {
+                        const img = item.querySelector('.post-image');
+                        return { type: 'image', src: img.src };
+                    } else if (item.classList.contains('video-item')) {
+                        const video = item.querySelector('video');
+                        return { type: 'video', src: video.querySelector('source').src || video.src };
+                    }
+                    return null;
+                }).filter(item => item !== null);
+
+                // Tìm index của media được click
+                let clickedIndex = 0;
+                if (mediaType === 'image') {
+                    const imageItems = Array.from(mediaContainer.querySelectorAll('.image-item'));
+                    const imageItem = targetElem.closest('.image-item') || targetElem;
+                    clickedIndex = allMediaItems.indexOf(imageItem);
+                } else if (mediaType === 'video') {
+                    const videoItem = targetElem.closest('.video-item') || targetElem;
+                    clickedIndex = allMediaItems.indexOf(videoItem);
+                }
+
+                currentIndex = clickedIndex;
+
+                // Hiển thị media trong lightbox
+                openMediaInLightbox(currentMedia[currentIndex], currentIndex);
+            }
+        });
+
+        // Hàm hiển thị media trong lightbox
+        function openMediaInLightbox(media, index) {
+            const lightbox = document.querySelector('.media-lightbox');
+            const mediaContainer = document.querySelector('.lightbox-media-container');
+            const counter = document.querySelector('.lightbox-counter');
+
+            // Xóa nội dung cũ
+            mediaContainer.innerHTML = '';
+
+            // Thêm media mới vào container
+            if (media.type === 'image') {
+                const img = document.createElement('img');
+                img.className = 'lightbox-image';
+                img.src = media.src;
+                mediaContainer.appendChild(img);
+            } else {
+                const video = document.createElement('video');
+                video.className = 'lightbox-video';
+                video.src = media.src;
+                video.controls = true;
+                video.autoplay = true;
+                mediaContainer.appendChild(video);
+            }
+
+            counter.textContent = `${index + 1}/${currentMedia.length}`;
+            lightbox.style.display = 'block';
+
+            // Vô hiệu hóa scroll trên body
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Đóng lightbox
+        document.querySelector('.lightbox-close').addEventListener('click', function() {
+            const lightbox = document.querySelector('.media-lightbox');
+            const videos = lightbox.querySelectorAll('video');
+
+            // Dừng tất cả video đang chạy
+            videos.forEach(video => {
+                video.pause();
+            });
+
+            lightbox.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+
+        // Nút prev
+        document.querySelector('.lightbox-prev').addEventListener('click', function() {
+            currentIndex = (currentIndex - 1 + currentMedia.length) % currentMedia.length;
+            openMediaInLightbox(currentMedia[currentIndex], currentIndex);
+        });
+
+        // Nút next
+        document.querySelector('.lightbox-next').addEventListener('click', function() {
+            currentIndex = (currentIndex + 1) % currentMedia.length;
+            openMediaInLightbox(currentMedia[currentIndex], currentIndex);
+        });
+
+        // Đóng khi click ra ngoài
+        document.querySelector('.media-lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                const videos = this.querySelectorAll('video');
+
+                // Dừng tất cả video đang chạy
+                videos.forEach(video => {
+                    video.pause();
+                });
+
+                this.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Phím tắt
+        document.addEventListener('keydown', function(e) {
+            const lightbox = document.querySelector('.media-lightbox');
+            if (lightbox.style.display === 'block') {
+                if (e.key === 'Escape') {
+                    const videos = lightbox.querySelectorAll('video');
+
+                    // Dừng tất cả video đang chạy
+                    videos.forEach(video => {
+                        video.pause();
+                    });
+
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = '';
+                } else if (e.key === 'ArrowLeft') {
+                    document.querySelector('.lightbox-prev').click();
+                } else if (e.key === 'ArrowRight') {
+                    document.querySelector('.lightbox-next').click();
+                }
+            }
+        });
     }
-
-    reelWrapper.style.transform = `translateX(${-currentPosition * reelItemWidth}px)`;
-
-    // Cập nhật trạng thái nút bấm
-    document.querySelector('.reel-btn.prev').disabled = currentPosition === 0;
-    document.querySelector('.reel-btn.next').disabled = currentPosition >= maxPosition;
-}
+});
 
 window.openShareForm = function(postId) {
     const form = document.getElementById(`share-form-${postId}`);

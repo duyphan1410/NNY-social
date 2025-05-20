@@ -1,5 +1,5 @@
 // detail.js
-
+let activeTextarea = null;
 document.addEventListener("DOMContentLoaded", function () {
     // Xử lý dropdown
     document.querySelectorAll(".dropdown-btn").forEach(button => {
@@ -39,8 +39,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const replyButtons = document.querySelectorAll('.reply-btn');
     const commentForms = document.querySelectorAll('.comment-form');
 
-    // Lưu trữ reference cho textarea đang hoạt động
-    let activeTextarea = null;
+    // Khởi tạo mentionMap cho mỗi textarea
+    document.querySelectorAll('.comment-form textarea').forEach(textarea => {
+        // Khởi tạo mentionMap để lưu trữ ID người dùng
+        textarea.mentionMap = {};
+    });
 
     replyButtons.forEach(button => {
         button.addEventListener('click', function () {
@@ -61,12 +64,32 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Chèn @Tên người dùng
-            textarea.value = `@${authorName} `;
-            textarea.focus();
+            const mentionText = `@${authorName}`;
+            const fullText = `${mentionText} `;
+            textarea.value = fullText;
+
+            // Thiết lập vị trí bắt đầu mention là 0
+            const currentMentionStart = 0;
+
+            // Khởi tạo mentionMap nếu chưa có
+            if (!textarea.mentionMap) {
+                textarea.mentionMap = {};
+            }
+
+            // Lưu trữ ID của người dùng trong mentionMap
+            textarea.mentionMap[currentMentionStart] = {
+                display: mentionText,
+                storage: `@[${authorName}](user:${userId})`,
+                start: 0,
+                end: mentionText.length
+            };
+
 
             // Gắn dữ liệu mention nếu cần dùng sau
             textarea.setAttribute('data-mention-name', authorName);
             textarea.setAttribute('data-mention-id', userId);
+
+            textarea.selectionStart = textarea.selectionEnd = fullText.length;
 
             // Nếu bạn có logic xử lý mention autocomplete thì gọi lại ở đây
             if (typeof checkAndTriggerMentionLogic === 'function') {
@@ -78,6 +101,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Tự động resize textarea và xử lý mention
     document.querySelectorAll('.comment-form textarea').forEach(textarea => {
+        // Khởi tạo mentionMap nếu chưa có
+        if (!textarea.mentionMap) {
+            textarea.mentionMap = {};
+        }
+
         textarea.addEventListener('input', function() {
             // Resize textarea
             this.style.height = 'auto';
@@ -186,20 +214,27 @@ function checkAndTriggerMentionLogic(textarea) {
     const atIndex = text.lastIndexOf('@', cursorPosition - 1);
 
     if (atIndex !== -1) {
-        const query = text.substring(atIndex + 1, cursorPosition);
-        // Kiểm tra xem query có chứa khoảng trắng hoặc không hợp lệ không
-        if (query.includes(' ') || query.includes('\n')) {
+        // Kiểm tra xem @ có ở đầu văn bản hoặc có khoảng trắng phía trước không
+        const isValidAt = atIndex === 0 || (atIndex > 0 && /\s/.test(text[atIndex - 1]));
+
+        if (isValidAt) {
+            const query = text.substring(atIndex + 1, cursorPosition);
+            // Kiểm tra xem query có chứa khoảng trắng hoặc không hợp lệ không
+            if (query.includes('\n')) {
+                hideMentionSuggestions();
+                return;
+            }
+
+            currentMentionQuery = query;
+            currentMentionStart = atIndex;
+
+            clearTimeout(mentionTimeout);
+            mentionTimeout = setTimeout(() => {
+                fetchMentions(query, textarea);
+            }, 300); // Debounce 300ms
+        } else {
             hideMentionSuggestions();
-            return;
         }
-
-        currentMentionQuery = query;
-        currentMentionStart = atIndex;
-
-        clearTimeout(mentionTimeout);
-        mentionTimeout = setTimeout(() => {
-            fetchMentions(query, textarea);
-        }, 300); // Debounce 300ms
     } else {
         hideMentionSuggestions();
     }
@@ -256,13 +291,23 @@ function showMentionSuggestions(users, textarea) {
             const text = textarea.value;
             const beforeMention = text.substring(0, currentMentionStart);
             const afterMention = text.substring(textarea.selectionEnd);
+
             const mentionText = `@${selectedName}`;
             const newText = `${beforeMention}${mentionText} ${afterMention}`;
 
             textarea.value = newText;
 
-            // Lưu tên và id
-            textarea.mentionMap[selectedName] = selectedId;
+            if (!textarea.mentionMap) {
+                textarea.mentionMap = {};
+            }
+
+            // Tạo một đối tượng để lưu chi tiết về mention
+            textarea.mentionMap[currentMentionStart] = {
+                display: mentionText,
+                storage: `@[${selectedName}](user:${selectedId})`,
+                start: currentMentionStart,
+                end: currentMentionStart + mentionText.length
+            };
 
             const newCursorPosition = beforeMention.length + mentionText.length + 1;
             textarea.selectionStart = textarea.selectionEnd = newCursorPosition;
@@ -274,15 +319,18 @@ function showMentionSuggestions(users, textarea) {
         suggestBox.appendChild(li);
     });
 
-    // Vị trí hiển thị gợi ý
-    const textareaRect = textarea.getBoundingClientRect();
-    const bodyRect = document.body.getBoundingClientRect();
+    // Định vị phía trên textarea
+    const rect = textarea.getBoundingClientRect();
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
-    suggestBox.style.top = `${textareaRect.bottom - bodyRect.top + window.scrollY}px`;
-    suggestBox.style.left = `${textareaRect.left - bodyRect.left + window.scrollX}px`;
-    suggestBox.style.width = `${textareaRect.width}px`;
+    // Tính toán chiều cao của suggestBox sau khi render
+    document.body.appendChild(suggestBox);
+    const suggestBoxHeight = suggestBox.offsetHeight;
 
-    document.body.appendChild(suggestBox); // Đặt suggest box vào body để nó không bị cắt bởi overflow của cha
+    // Cập nhật vị trí
+    suggestBox.style.left = `${rect.left + window.scrollX}px`;
+    suggestBox.style.top = `${rect.top + scrollTop - suggestBoxHeight - 4}px`; // cách textarea 4px
+    suggestBox.style.width = `${rect.width}px`;
 }
 
 // Hàm gửi yêu cầu AJAX tìm kiếm người dùng
@@ -293,12 +341,12 @@ function fetchMentions(query, textarea) {
     }
 
     // Endpoint API tìm kiếm người dùng
-    fetch('http://localhost:8000/api/users/search?q=h', {
+    fetch(`http://localhost:8000/api/users/search?q=${encodeURIComponent(query)}`, {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',  // Để Laravel nhận diện AJAX request
             'Accept': 'application/json'           // Yêu cầu response dạng JSON
         },
-               // Gửi kèm cookie xác thực
+        credentials: 'include'  // Gửi kèm cookie xác thực
     })
         .then(response => {
             if (!response.ok) {
@@ -319,24 +367,31 @@ function fetchMentions(query, textarea) {
 
 // Hàm xử lý mention trước khi submit form
 function processMentionsBeforeSubmit(textarea) {
-    // Lấy nội dung hiện tại
-    let content = textarea.value.trim();
+    let content = textarea.value;
+    const map = textarea.mentionMap || {};
 
-    // Xử lý các mentions có sẵn từ reply button (data attributes)
-    const mentionName = textarea.getAttribute('data-mention-name');
-    const mentionId = textarea.getAttribute('data-mention-id');
+    // Sắp xếp các mention theo vị trí bắt đầu giảm dần (để không làm sai offset)
+    const mentions = Object.values(map).sort((a, b) => b.start - a.start);
 
-    if (mentionName && mentionId) {
-        // Tìm và thay thế @Username với format chuẩn
-        const mentionRegex = new RegExp(`@${mentionName}\\b`);
-        if (mentionRegex.test(content)) {
-            content = content.replace(mentionRegex, `@[${mentionName}](user:${mentionId})`);
-        }
+    mentions.forEach(m => {
+        content = content.slice(0, m.start) + m.storage + content.slice(m.end);
+    });
 
-        // Xóa data attributes sau khi đã xử lý
-        textarea.removeAttribute('data-mention-name');
-        textarea.removeAttribute('data-mention-id');
-    }
-
-    return content;
+    textarea.mentionMap = {};
+    return content.trim();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#comments-')) {
+        const target = document.querySelector(hash);
+        if (target) {
+            const offset = 100; // Khoảng cách từ top (pixels)
+            const elementPosition = target.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({
+                top: elementPosition - offset,
+                behavior: 'smooth'
+            });
+        }
+    }
+});

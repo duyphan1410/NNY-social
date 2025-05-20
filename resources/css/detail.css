@@ -396,6 +396,7 @@ a {
     max-height: 12rem; /* max-h-48 (12rem = 12 * 16px = 192px) */
     overflow-y: auto; /* Cho phép cuộn nếu danh sách quá dài */
     width: 100%; /* Đảm bảo chiều rộng bằng textarea */
+    margin-bottom: 20px;
 }
 
 #mention-suggestions li {
