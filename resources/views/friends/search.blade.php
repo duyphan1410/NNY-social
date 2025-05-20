@@ -20,9 +20,9 @@
                 <button type="submit">Tìm kiếm</button>
             </form>
             @if(isset($users) && count($users) > 0)
-                <ul>
+                <ul class="friend-ul">
                     @foreach ($users as $user)
-                        <li>
+                        <li class="friend-li">
                             <div class="friend-info">
                                 <a href="{{ route('profile.show', $user->id) }}" class="friend-link">
                                     <img src="{{ $user->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
@@ -30,7 +30,9 @@
                                 </a>
                             </div>
                             <div>
-                                @if(in_array($user->id, $pendingIds))
+                                @if($friends->contains('id', $user->id))
+                                    <button class="friend-btn" disabled>Đã là bạn bè</button>
+                                @elseif(in_array($user->id, $pendingIds))
                                     <form action="{{ route('friend.cancelRequest') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="receiver_id" value="{{ $user->id }}">
@@ -58,9 +60,9 @@
         <div class="friend-requests">
             <h2>Lời mời kết bạn đã gửi</h2>
             @if($pendingRequests->isNotEmpty())
-                <ul>
+                <ul class="friend-ul">
                     @foreach($pendingRequests as $request)
-                        <li>
+                        <li class="friend-li">
                             <div class="friend-info">
                                 <a href="{{ route('profile.show', $request->receiver->id) }}" class="friend-link">
                                     <img src="{{ $request->receiver->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">

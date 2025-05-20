@@ -49,60 +49,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function reels()
-    {
-        return $this->hasMany(Reel::class);
-    }
-
-    /**
-     * Lấy tất cả các reel mà người dùng đã thích
-     */
-    public function likedReels()
-    {
-        return $this->belongsToMany(Reel::class, 'reel_likes')
-            ->withTimestamps();
-    }
-
-    /**
-     * Lấy tất cả bình luận của người dùng trên reels
-     */
-    public function reelComments()
-    {
-        return $this->hasMany(ReelComment::class);
-    }
-
-    /**
-     * Lấy tất cả bộ sưu tập reel của người dùng
-     */
-    public function reelCollections()
-    {
-        return $this->hasMany(ReelCollection::class);
-    }
-
-    /**
-     * Lấy tất cả âm thanh gốc do người dùng tạo ra
-     */
-    public function originalAudios()
-    {
-        return $this->hasMany(Audio::class, 'original_user_id');
-    }
-
-    /**
-     * Lấy tất cả lượt xem reel của người dùng
-     */
-    public function reelViews()
-    {
-        return $this->hasMany(ReelView::class);
-    }
-
-    /**
-     * Lấy tất cả lượt chia sẻ reel của người dùng
-     */
-    public function reelShares()
-    {
-        return $this->hasMany(ReelShare::class);
-    }
-
     public function getFullNameAttribute()
     {
         return trim($this->first_name . ' ' . $this->last_name);
@@ -138,5 +84,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id')
             ->withTimestamps();
     }
+
+
 
 }

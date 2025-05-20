@@ -22,9 +22,10 @@ class LoginController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember');
 
         // Thử xác thực thông tin
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $remember)) {
 
             $user = Auth::user();
 

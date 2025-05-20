@@ -23,4 +23,14 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class);
     }
+
+    public function getParsedContentAttribute()
+    {
+        return preg_replace(
+            '/@\[(.*?)\]\(user:\d+\)/',
+            '<a href="/profile/$2" class="mention">@$1</a>',
+            e($this->content)
+        );
+    }
+
 }

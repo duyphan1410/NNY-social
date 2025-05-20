@@ -65,6 +65,7 @@ Route::prefix('post')->name('post.')->group(function () {
         Route::post('/{id}/comment', [CommentController::class, 'store'])->name('comment.store');
         //Xóa bình luận
         Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy');
+
     });
     //Ds liked
     Route::get('/{post}/likes', [PostController::class, 'getLikes'])->name('likes');
@@ -117,16 +118,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/settings', [\App\Http\Controllers\Account\SettingsController::class, 'update'])->name('account.settings.update');
 });
 
-
+//Route thông báo
 Route::middleware(['auth'])->group(function() {
+    // Index - đây là route để xem tất cả thông báo
+    Route::get('/notifications', [NotificationController::class, 'getAllNotifications'])->name('notifications.index');
+    // Các route khác
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnread'])->name('notifications.unread');
+    // Xử lí đã đọc
     Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead']);
+    // Lấy số thông báo chưa đọc
     Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount']);
-    // Lấy tất cả thông báo
-    Route::get('/notifications', [NotificationController::class, 'getAllNotifications']);
     // Xóa một thông báo
-    Route::delete('/notifications/{id}', [NotificationController::class, 'deleteNotification']);
-
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
 

@@ -65,21 +65,25 @@
                                             <div class="notification-content">
                                                 <a href="{{ $notification->url }}">
                                                     <div class="notification-message">{{ $notification->message }}</div>
-                                                    <div class="notification-time">{{ $notification->created_at->diffForHumans() }}</div>
+                                                    <div class="notification-time text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</div>
                                                 </a>
                                             </div>
                                             <div class="notification-actions">
-                                                <button class="action-btn" data-id="{{ $notification->id }}">Xử lý</button>
+                                                <button class="action-btn-nof text-sm text-blue-600 hover:underline" data-id="{{ $notification->id }}">Xử lý</button>
                                             </div>
                                         </div>
                                     </li>
-
                                 @empty
                                     <li class="text-center p-2 text-gray-400">Không có thông báo nào</li>
                                 @endforelse
                             </ul>
-                            <button id="mark-all-read" class="w-full text-blue-600 hover:underline p-2">Đánh dấu tất cả đã đọc</button>
+
+                            <div class="flex flex-col border-t">
+                                <button id="mark-all-read" class="w-full text-blue-600 hover:underline p-2 text-sm">Đánh dấu tất cả đã đọc</button>
+                                <a href="{{ route('notifications.index') }}" id="display-all" class="w-full text-center text-blue-600 p-2 text-sm border-t">Xem tất cả</a>
+                            </div>
                         </div>
+
                     </div>
 
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

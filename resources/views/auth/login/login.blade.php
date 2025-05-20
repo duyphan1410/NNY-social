@@ -3,8 +3,8 @@
 @section('content')
     <div class="auth-container">
         <div class="left-side">
-            <h1>Connect With The World</h1>
-            <p>Join our community and connect with people from around the globe. Share your stories, ideas, and experiences.</p>
+            <h1>Mở rộng kết nối</h1>
+            <p>Kết nối với những người bạn từ khắp nơi trên thế giới, chia sẻ những câu chuyện, ý tưởng và trải nghiệm của bạn.</p>
         </div>
 
         <div class="right-side">
@@ -12,7 +12,7 @@
                 <img height="32" src="{{ asset('img/logo.png') }}" alt="Logo">
             </div>
 
-            <p class="welcome-text">Welcome to NNY, your social netword to<br>meaningful connections</p>
+            <p class="welcome-text">Chào mừng bạn đến với mạng xã hội NNY,<br>nơi kết nối những giá trị.</p>
 
             <form method="POST" action="{{ route('login') }}" class="login-form">
                 @csrf

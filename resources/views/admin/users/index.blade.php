@@ -23,7 +23,7 @@
                     </li>
                     <li class="admin-nav-item">
                         <a href="{{ route('admin.posts') }}" class="admin-nav-link">
-                            <i class="bi bi-bar-chart-line"></i>
+                            <i class="bi bi-file-earmark-text"></i>
                             <span class="admin-nav-text">Quản lý bài đăng</span>
 
 
@@ -31,7 +31,7 @@
                     </li>
                     <li class="admin-nav-item">
                         <a href="{{ route('admin.statistics') }}" class="admin-nav-link">
-                            <i class="bi bi-file-earmark-text"></i>
+                            <i class="bi bi-bar-chart-line"></i>
                             <span class="admin-nav-text">Thống kê</span>
 
                         </a>

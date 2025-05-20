@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 // Chỉ xử lý khi click vào phần nội dung, không phải action button
-                if (!e.target.closest('.action-btn')) {
+                if (!e.target.closest('.action-btn-nof')) {
                     const notificationId = this.dataset.id;
 
                     // Đánh dấu đã đọc

@@ -17,11 +17,11 @@
             @if($friends->isEmpty())
                 <p class="empty-text">Bạn chưa có bạn bè nào.</p>
             @else
-                <ul>
+                <ul class="friend-ul">
                     @foreach($friends as $friend)
-                        <li>
+                        <li class="friend-li">
                             <div class="friend-info">
-                                <a href="{{ route('profile.show', $friend->id) }}">
+                                <a href="{{ route('profile.show', $friend->id) }}"  class="friend-link">
                                     <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
                                     <span>{{ $friend->first_name }} {{ $friend->last_name }}</span>
                                 </a>
@@ -52,11 +52,11 @@
             @if($pendingRequests->isEmpty())
                 <p class="empty-text">Không có lời mời kết bạn nào.</p>
             @else
-                <ul>
+                <ul class="friend-ul">
                     @foreach($pendingRequests as $request)
-                        <li>
+                        <li class="friend-li">
                             <div class="friend-info">
-                                <a href="{{ route('profile.show', $friend->id) }}">
+                                <a href="{{ route('profile.show', $request->sender->id) }}"  class="friend-link">
                                     <img src="{{ $request->sender->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
                                     <span>{{ $request->sender->first_name }} {{ $request->sender->last_name }}</span>
                                 </a>

@@ -3,13 +3,11 @@
 @push('styles')
     @vite(['resources/css/home.css'])
     @vite(['resources/css/detail.css'])
-    @vite(['resources/css/app.css'])
 @endpush
 
 @push('scripts')
     @vite(['resources/js/home.js'])
     @vite(['resources/js/detail.js'])
-    @vite(['resources/js/app.js'])
 @endpush
 
 @section('content')
@@ -50,14 +48,8 @@
                                     <button type="submit" class="delete-btn">
                                         <i class="fas fa-trash"></i> Xóa
                                     </button>
-
                                 </form>
                             </li>
-                            {{--                                                    <li>--}}
-                            {{--                                                        <button class="hide-post-btn" data-post-id="{{ $post->id }}">--}}
-                            {{--                                                            <i class="fas fa-eye-slash"></i> Ẩn bài viết--}}
-                            {{--                                                        </button>--}}
-                            {{--                                                    </li>--}}
                         @else
                             <li>
                                 <button class="report-post-btn" data-post-id="{{ $post->id }}">
@@ -70,7 +62,8 @@
             </div>
 
             <div class="post-content">
-                <p class="post-text">{{ $post->content }}</p> </div>
+                <p class="post-text">{{ $post->content }}</p>
+            </div>
 
             @if ($post->sharedPost)
                 @php
@@ -198,27 +191,35 @@
                                     : route('profile.show', $comment->user->id);
                             @endphp
                             <div class="comment">
-                                <div class="user-info">
+                                <div class="comment-avatar-container">
                                     <a href="{{ $profileRoute }}">
                                         <img class="comment-avatar" src="{{ $comment->user->avatar ?? '/default-avatar.png' }}" alt="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">
-                                        <div class="user-details">
-                                            <span class="comment-author">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</span>
-                                            <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
-                                        </div>
                                     </a>
                                 </div>
-                                <p class="comment-content">{{ $comment->content }}</p>
-                                <div class="comment-actions">
-                                    @if (auth()->check() && !$isOwner)
-                                        <button class="reply-btn" data-author="{{ $comment->user->first_name }} {{ $comment->user->last_name }}">Trả lời</button>
-                                    @endif
-                                    @if ($isOwner)
-                                        <form method="POST" action="{{ route('post.comment.destroy', ['id' => $comment->id]) }}" style="display: inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">Xóa</button>
-                                        </form>
-                                    @endif
+                                <div class="comment-content-container">
+                                    <div class="comment-bubble">
+                                        <a href="{{ $profileRoute }}" class="comment-author">{{ $comment->user->first_name }} {{ $comment->user->last_name }}</a>
+                                        <div class="comment-text">{{ $comment->content }}</div>
+                                    </div>
+                                    <div class="comment-actions-row">
+                                        <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
+                                        @if (auth()->check() && !$isOwner)
+                                            <button
+                                                class="reply-btn"
+                                                data-author="{{ $comment->user->first_name }} {{ $comment->user->last_name }}"
+                                                data-user-id="{{ $comment->user->id }}"
+                                            >
+                                                Trả lời
+                                            </button>
+                                        @endif
+                                        @if ($isOwner)
+                                            <form method="POST" action="{{ route('post.comment.destroy', ['id' => $comment->id]) }}" class="inline-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="comment-delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này?')">Xóa</button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -226,10 +227,22 @@
 
                     <form method="POST" action="{{ route('post.comment.store', ['id' => $post->id]) }}" class="comment-form">
                         @csrf
-                        <textarea name="content" rows="2" required placeholder="Viết bình luận..."></textarea>
-                        <button type="submit" class="comment-submit-btn">Gửi</button>
+                        <div class="comment-input-container">
+                            @if(auth()->check())
+                                <img class="comment-form-avatar" src="{{ auth()->user()->avatar ?? '/default-avatar.png' }}" alt="{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}">
+                            @else
+                                <img class="comment-form-avatar" src="/default-avatar.png" alt="Guest">
+                            @endif
+                            <div class="comment-input-wrapper">
+                                <textarea class="comment-input" name="content" rows="1" required placeholder="Viết bình luận..."></textarea>
+                                <button type="submit" class="comment-submit-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
+        </div>
     </div>
 @endsection

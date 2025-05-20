@@ -1,3 +1,4 @@
+/* app.css*/
 :root {
     --primary-color: #1a3c7b;
     --secondary-color: #4171d6;
@@ -13,6 +14,475 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    max-width: 64rem; /* Equivalent to max-w-5xl */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bg-white {
+    background-color: #F5F5F5;
+}
+
+.shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+/* Ảnh bìa + Avatar */
+.relative {
+    position: relative;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-64 {
+    height: 16rem;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.bottom-4 {
+    bottom: 1rem;
+}
+
+.right-4 {
+    right: 1rem;
+}
+
+.bg-white { /* Repeated, but kept for context */
+    background-color: #f5f5f5;
+}
+
+.px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.py-1 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.shadow { /* Repeated, but kept for context */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.hover\:bg-gray-100:hover {
+    background-color: #f7fafc;
+}
+
+.transition {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.fas { /* Assuming Font Awesome is used */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+.mr-1 {
+    margin-right: 0.25rem;
+}
+
+.-bottom-16 {
+    bottom: -4rem;
+}
+
+.left-1\/2 {
+    left: 50%;
+}
+
+.transform {
+    transform: translate(var(--translate-x), var(--translate-y), var(--translate-z)) rotate(var(--rotate)) skewX(var(--skew-x)) skewY(var(--skew-y)) scaleX(var(--scale-x)) scaleY(var(--scale-y));
+    --translate-x: -50%;
+    --translate-y: 0;
+    --translate-z: 0;
+    --rotate: 0;
+    --skew-x: 0;
+    --skew-y: 0;
+    --scale-x: 1;
+    --scale-y: 1;
+}
+
+.w-32 {
+    width: 8rem;
+}
+
+.h-32 {
+    height: 8rem;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.border-4 {
+    border-width: 4px;
+}
+
+.border-white {
+    border-color: #fff;
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.bottom-0 {
+    bottom: 0;
+}
+
+.right-0 {
+    right: 0;
+}
+
+.bg-gray-100 {
+    background-color: #f7fafc;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.border {
+    border-width: 1px;
+    border-style: solid;
+}
+
+.text-gray-600 {
+    color: #718096;
+}
+
+.hover\:bg-gray-200:hover {
+    background-color: #edf2f7;
+}
+
+/* Tên và email */
+.pt-20 {
+    padding-top: 5rem;
+}
+
+.px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.mt-3 {
+    margin-top: 0.75rem;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.bg-blue-600 {
+    background-color: #2563eb;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.py-1 { /* Repeated, but kept for context */
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
+}
+
+.fa-pencil-alt:before {
+    content: "\f044";
+}
+
+/* Tabs */
+.border-b {
+    border-bottom-width: 1px;
+    border-color: #e0e6ed;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-8 {
+    gap: 2rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.pb-2 {
+    padding-bottom: 0.5rem;
+}
+
+.border-b-2 {
+    border-bottom-width: 2px;
+}
+
+.text-blue-600 { /* Repeated, but kept for context */
+    color: #2563eb;
+}
+
+.hover\:text-blue-600:hover {
+    color: #2563eb;
+}
+
+/* Nội dung chia 2 cột */
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+.px-4 { /* Repeated, but kept for context */
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+    .md\:px-8 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+.py-6 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Cột trái */
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1.5rem;
+}
+
+.bg-gray-50 {
+    background-color: #f9fafb;
+}
+
+.p-4 { /* Repeated, but kept for context */
+    padding: 1rem;
+}
+
+.rounded { /* Repeated, but kept for context */
+    border-radius: 0.25rem;
+}
+
+.flex { /* Repeated, but kept for context */
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.mb-3 {
+    margin-bottom: 0.75rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-blue-600 { /* Repeated, but kept for context */
+    color: #2563eb;
+}
+
+.text-sm { /* Repeated, but kept for context */
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.hover\:underline:hover {
+    text-decoration: underline;
+}
+
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.5rem;
+}
+
+.inline-block { /* Repeated, but kept for context */
+    display: inline-block;
+}
+
+.w-24 {
+    width: 6rem;
+}
+
+.font-medium { /* Repeated, but kept for context */
+    font-weight: 500;
+}
+
+/* Cột phải (bài viết) */
+@media (min-width: 768px) {
+    .md\:col-span-2 {
+        grid-column: span 2 / span 2;
+    }
+}
+
+.space-y-6 > :not([hidden]) ~ :not([hidden]) { /* Repeated, but kept for context */
+    margin-top: 1.5rem;
+}
+
+.bg-white { /* Repeated, but kept for context */
+    background-color: #F5F5F5;
+}
+
+.shadow { /* Repeated, but kept for context */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.rounded-lg { /* Repeated, but kept for context */
+    border-radius: 0.5rem;
+}
+
+.p-6 {
+    padding: 1.5rem;
+}
+
+.text-center { /* Repeated, but kept for context */
+    text-align: center;
+}
+
+.text-gray-300 {
+    color: #d1d5db;
+}
+
+.text-5xl {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.mb-3 { /* Repeated, but kept for context */
+    margin-bottom: 0.75rem;
+}
+
+.text-gray-600 { /* Repeated, but kept for context */
+    color: #718096;
+}
+
+.text-gray-500 {
+    color: #a0aec0;
+}
+
+.text-sm { /* Repeated, but kept for context */
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+/* Avatar animation on hover */
+.absolute img.rounded-full {
+    transition: transform 0.3s ease;
+}
+
+.absolute:hover img.rounded-full {
+    transform: scale(1.05);
+}
+
+/* Tab navigation */
+.border-b a {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.border-b a:not(.border-blue-600):after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+.border-b a:not(.border-blue-600):hover:after {
+    width: 100%;
 }
 
 body {
@@ -292,6 +762,12 @@ main {
     font-weight: 600;
 }
 
+#notification-dropdown::-webkit-scrollbar {
+    display: none;
+    width: 0; /* Đảm bảo chiều rộng của thanh cuộn là 0 */
+    height: 0; /* Đảm bảo chiều cao của thanh cuộn là 0 */
+}
+
 #notification-btn {
     position: relative;
     display: inline-flex;
@@ -330,7 +806,7 @@ main {
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     z-index: 50;
-    max-height: 360px;
+    max-height: 400px;
     overflow-y: auto;
 }
 
@@ -344,6 +820,11 @@ main {
     list-style-type: none;
     margin: 0;
     padding: 0;
+}
+
+#notification-list a{
+    text-decoration: none;
+    color: inherit;
 }
 
 #notification-list li {
@@ -375,6 +856,21 @@ main {
     background-color: #e2e8f0;
 }
 
+#display-all {
+    background-color: #f9fafb;
+    padding: 12px;
+    border: 0px solid #e5e7eb;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#display-all:hover {
+    background-color: #e2e8f0;
+}
+
 /* Optional: for better responsiveness */
 @media (max-width: 768px) {
     #notification-dropdown {
@@ -389,7 +885,7 @@ main {
 
 /* Style cho thông báo chưa đọc */
 .notification-item.unread {
-    background-color: #f5f5dc ;
+    background-color: #EFF6FF;
 }
 
 /* Style cho flex container trong notification */
@@ -416,6 +912,18 @@ main {
     font-size: 11px;
     color: #6b7280;
 }
+
+.action-btn-nof {
+    padding: 5px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    border: none;
+}
+.action-btn-nof:hover {
+    background-color: #2563eb;
+    color: white;
+}
+
 
 /* Responsive Styles */
 @media (max-width: 992px) {

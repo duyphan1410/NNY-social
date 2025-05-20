@@ -1,0 +1,559 @@
+
+/**
+ * notification.css - Enhanced styles for notification page
+ */
+
+:root {
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --primary-light: #eff6ff;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --success: #10b981;
+    --success-hover: #059669;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --border-radius: 0.5rem;
+    --transition: all 0.2s ease;
+}
+
+/* Card styles for notification containers */
+.nf-container {
+    max-width: 44rem;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.nf-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.nf-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nf-title-icon {
+    color: var(--primary-color);
+}
+
+/* Filter buttons container */
+.nf-filter {
+    display: flex;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--gray-200);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Button styles */
+.nf-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.nf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.nf-btn:active {
+    transform: translateY(0);
+}
+
+/* Filter button styles */
+.nf-btn-filter {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    position: relative;
+    overflow: hidden;
+}
+
+.nf-btn-filter:hover {
+    background-color: var(--gray-200);
+}
+
+.nf-btn-filter.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.nf-btn-filter.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Mark all read button */
+.nf-btn-mark-all {
+    background-color: var(--success);
+    color: white;
+    margin-left: auto;
+}
+
+.nf-btn-mark-all:hover {
+    background-color: var(--success-hover);
+}
+
+.nf-btn-mark-all:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* Notification list */
+.nf-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    background-color: white;
+}
+
+/* Individual notification item */
+.nf-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.nf-item:last-child {
+    border-bottom: none;
+}
+
+.nf-item:hover {
+    background-color: var(--gray-50);
+}
+
+/* Unread notification styling */
+.nf-unread {
+    background-color: var(--primary-light);
+}
+
+.nf-unread::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: var(--primary-color);
+}
+
+/* Notification content */
+.nf-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.nf-message {
+    color: var(--gray-800);
+    font-weight: 500;
+    text-decoration: none;
+    transition: var(--transition);
+    position: relative;
+    display: inline-block;
+}
+
+.nf-message:hover {
+    color: var(--primary-color);
+}
+
+.nf-message::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.nf-message:hover::after {
+    width: 100%;
+}
+
+.nf-time {
+    font-size: 0.8125rem;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.nf-time-icon {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+/* Actions container */
+.nf-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Delete button */
+.nf-btn-delete {
+    color: white;
+    background-color: var(--danger);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.nf-btn-delete:hover {
+    background-color: var(--danger-hover);
+    transform: translateY(-1px);
+}
+
+.nf-btn-delete:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* Empty state */
+.nf-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--gray-500);
+    background-color: var(--gray-50);
+}
+
+.nf-empty-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    color: var(--gray-400);
+}
+
+.nf-empty-text {
+    font-size: 1.125rem;
+    margin: 0;
+}
+
+/* Loading indicator */
+.nf-loading {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: var(--gray-500);
+    display: none;
+}
+
+.nf-loading.visible {
+    display: block;
+}
+
+.nf-loader {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--gray-200);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: nf-spin 1s linear infinite;
+}
+
+@keyframes nf-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success notification */
+.nf-toast {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    z-index: 50;
+    max-width: 24rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nf-toast-success {
+    background-color: var(--success);
+    color: white;
+}
+
+.nf-toast.hiding {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.nf-toast-icon {
+    flex-shrink: 0;
+}
+
+.nf-toast-message {
+    font-weight: 500;
+}
+
+/* Pagination for Laravel's default pagination */
+.nf-pagination {
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+
+}
+
+/* Container for pagination elements */
+.nf-pagination nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+/* Results text (p tag in Laravel pagination) */
+.nf-pagination nav > div:first-child > p {
+    margin-bottom: 0.75rem;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+
+}
+
+/* Flex container for pagination links */
+.nf-pagination nav > div:last-child {
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+}
+
+/* All pagination links and spans */
+.nf-pagination nav > div:last-child > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    background-color: white;
+    color: var(--gray-700);
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+}
+
+/* Active page link style */
+.nf-pagination nav > div:last-child > span.bg-blue-500 {
+    background-color: #4287f5 !important;
+    color: white !important;
+    border-color: #4287f5;
+    box-shadow: 0 2px 5px rgba(66, 135, 245, 0.3);
+}
+
+/* Hover effect for links */
+.nf-pagination nav > div:last-child > a:hover {
+    background-color: var(--gray-100);
+    z-index: 2;
+}
+
+/* Previous/Next text links */
+.nf-pagination nav > div:last-child > a:first-child,
+.nf-pagination nav > div:last-child > a:last-child {
+    min-width: 6rem;
+}
+
+/* Disabled pagination items */
+.nf-pagination nav > div:last-child > span.text-gray-500 {
+    color: var(--gray-400) !important;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* SVG icons in pagination buttons */
+.nf-pagination nav svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Support for Tailwind pagination selectors */
+.nf-pagination .relative.z-0.inline-flex.shadow-sm.rounded-md {
+    display: flex;
+    gap: 0.5rem;
+    box-shadow: none;
+}
+
+.nf-pagination nav > span.relative.inline-flex.items-center.px-4.py-2,
+.nf-pagination nav > a.relative.inline-flex.items-center.px-4.py-2 {
+    height: 2.5rem;
+    min-width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    font-weight: 500;
+}
+
+/* Blue background for active item */
+.nf-pagination .bg-blue-50,
+.nf-pagination .bg-blue-500,
+.nf-pagination .bg-primary {
+    background-color: #4287f5 !important;
+    color: white !important;
+    border-color: #4287f5;
+    box-shadow: 0 2px 5px rgba(66, 135, 245, 0.3);
+}
+
+/* Text color adjustments */
+.nf-pagination .text-gray-500 {
+    color: var(--gray-400) !important;
+}
+
+.nf-pagination .text-white {
+    color: white !important;
+}
+
+/* Adjustments for different Laravel pagination versions */
+.nf-pagination .pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+}
+
+.nf-pagination .page-item {
+    list-style: none;
+}
+
+.nf-pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.375rem;
+    background-color: white;
+    border: 1px solid var(--gray-200);
+    color: var(--gray-700);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.nf-pagination .page-item.active .page-link {
+    background-color: #4287f5;
+    color: white;
+    border-color: #4287f5;
+    box-shadow: 0 2px 5px rgba(66, 135, 245, 0.3);
+}
+
+.nf-pagination .page-item.disabled .page-link {
+    color: var(--gray-400);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Laravel 8+ pagination specific selectors */
+.nf-pagination nav[role="navigation"] {
+    width: 100%;
+}
+
+.nf-pagination p.text-sm.text-gray-700.leading-5 {
+    margin-bottom: 0.75rem;
+    color: var(--gray-600) !important;
+    font-size: 0.9rem !important;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .nf-container {
+        margin: 0;
+        padding: 1rem;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .nf-filter {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .nf-btn-mark-all {
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+
+    .nf-item {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .nf-actions {
+        align-self: stretch;
+    }
+
+    .nf-btn-delete {
+        flex: 1;
+        justify-content: center;
+    }
+}

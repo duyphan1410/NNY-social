@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Friends;
 
+use App\Events\NewNotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Friend;
 use App\Models\FriendRequest;
@@ -77,6 +78,16 @@ class FriendController extends Controller
             'status' => 'pending'
         ]);
 
+        $sender = Auth::user();
+        $message = $sender->first_name . ' ' . $sender->last_name . ' đã gửi cho bạn một lời mời kết bạn.';
+        $url = route('friend.index');
+
+        event(new NewNotificationEvent($receiverId, [
+            'message' => $message,
+            'url' => $url,
+            'type' => 'friend_request',
+        ]));
+
         return redirect()->back()->with('success', 'Lời mời đã được gửi.');
     }
 
@@ -101,6 +112,17 @@ class FriendController extends Controller
             'user_id'   => min(Auth::id(), $friendRequest->sender_id),
             'friend_id' => max(Auth::id(), $friendRequest->sender_id)
         ]);
+
+        $receiver = Auth::user(); // người vừa chấp nhận
+        $sender = User::find($friendRequest->sender_id);
+        $message = $receiver->first_name . ' ' . $receiver->last_name . ' đã chấp nhận lời mời kết bạn của bạn.';
+        $url = route('friend.index');
+
+        event(new NewNotificationEvent($sender->id, [
+            'message' => $message,
+            'url' => $url,
+            'type' => 'friend_accept',
+        ]));
 
 
         // Cập nhật trạng thái thành "accepted"
@@ -127,6 +149,18 @@ class FriendController extends Controller
         }
 
         $friendRequest->update(['status' => 'rejected']);
+
+        $receiver = Auth::user(); // người từ chối
+        $sender = User::find($friendRequest->sender_id);
+        $message = $receiver->first_name . ' ' . $receiver->last_name . ' đã từ chối lời mời kết bạn của bạn.';
+        $url = route('profile.show', ['user' => $receiver->id]);
+
+        event(new NewNotificationEvent($sender->id, [
+            'message' => $message,
+            'url' => $url,
+            'type' => 'friend_reject',
+        ]));
+
 
         session()->flash('friend_rejected', Auth::user()->first_name . ' ' . Auth::user()->last_name . ' đã từ chối lời mời kết bạn của bạn.');
 
@@ -158,6 +192,18 @@ class FriendController extends Controller
         $friend = User::find($friendId);
         $friendName = $friend ? $friend->name : 'người dùng này';
 
+
+        $self = Auth::user();
+        $message = $friendName->name . ' đã hủy kết bạn với bạn.';
+        $url = route('profile.show', ['user' => $friend->id]);
+
+
+        event(new NewNotificationEvent($friendId, [
+            'message' => $message,
+            'url' => $url,
+            'type' => 'unfriend',
+        ]));
+
         // Xóa quan hệ bạn bè
         $friendship->delete();
 
@@ -168,6 +214,8 @@ class FriendController extends Controller
             $query->where('sender_id', $friendId)
                 ->where('receiver_id', $userId);
         })->delete();
+
+
 
         return redirect()->back()->with('success_unfriend', "Đã hủy kết bạn với {$friendName} thành công");
     }
@@ -203,12 +251,23 @@ class FriendController extends Controller
         $pendingIds = $pendingRequests->pluck('receiver_id')->toArray();
         $rejectedIds = $sentRequests->where('status', 'rejected')->pluck('receiver_id')->toArray();
 
+        // Lấy danh sách bạn bè hiện tại
+        $friends = Friend::where('user_id', Auth::id())
+            ->orWhere('friend_id', Auth::id())
+            ->with(['user', 'friend'])
+            ->get()
+            ->map(function ($friend) {
+                return $friend->user_id === Auth::id() ? $friend->friend : $friend->user;
+            });
+
         // Nếu chưa tìm kiếm, chỉ trả về danh sách lời mời đã gửi
         if (!$query) {
             $users = User::where('id', '!=', $userId)
                 ->limit(20) // Giới hạn số lượng người dùng hiển thị khi không tìm kiếm
                 ->get();
-            return view('friends.search', compact('pendingRequests', 'pendingIds', 'rejectedIds', 'users'));
+            return view('friends.search', compact(
+                'users', 'pendingRequests', 'pendingIds', 'rejectedIds', 'friends'
+            ));
         }
 
         // Tìm kiếm tất cả người dùng khớp với từ khóa
@@ -219,7 +278,9 @@ class FriendController extends Controller
             })
             ->get();
 
-        return view('friends.search', compact('users', 'pendingRequests', 'pendingIds', 'rejectedIds'));
+        return view('friends.search', compact(
+            'users', 'pendingRequests', 'pendingIds', 'rejectedIds', 'friends'
+        ));
     }
 
 

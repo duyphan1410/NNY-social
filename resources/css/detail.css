@@ -1,3 +1,5 @@
+/*detail.css*/
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f0f2f5;
@@ -89,75 +91,7 @@ a {
     position: relative;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
 
-.dropdown-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 100%;
-    background: white;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    list-style: none;
-    padding: 10px;
-    min-width: 150px;
-    z-index: 10;
-}
-
-.dropdown-menu li {
-    padding: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.dropdown-menu li button,
-.dropdown-menu li a {
-    display: block;
-    width: 100%;
-    text-align: left;
-    padding: 8px 12px;
-}
-
-.dropdown-menu li {
-    padding: 0; /* Loại bỏ padding mặc định của li */
-}
-
-.dropdown-menu li:hover {
-    background: #f0f0f0;
-}
-
-/* Khi dropdown được mở */
-.dropdown.active .dropdown-menu {
-    display: block;
-}
-
-.delete-form {
-    margin: 0; /* Loại bỏ margin mặc định của form */
-    width: 100%;
-}
-
-.delete-form .delete-btn {
-    width: 100%;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    padding: 8px 12px;
-    font: 16px Inter,sans-serif;
-}
 
 /* Nội dung bài đăng */
 .post-content {
@@ -280,80 +214,216 @@ a {
     border-bottom-right-radius: 5px; /* Bo tròn góc dưới bên phải (nếu .post có border-radius) */
 }
 
-.comment-form {
+/* Phần CSS cho bình luận - Phong cách Facebook */
+.comment {
     display: flex;
-    gap: 10px; /* Khoảng cách giữa textarea và button */
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+}
+
+.comment-avatar-container {
+    margin-top: 8px;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-content-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-bubble {
+    background-color: #f0f2f5;
+    border-radius: 18px;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.comment-text {
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.comment-actions-row {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    padding-left: 12px;
+}
+
+.comment-time {
+    color: #65676B;
+    margin-right: 12px;
+}
+
+.reply-btn, .comment-delete-btn {
+    background: none;
+    border: none;
+    color: #65676B;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    margin-right: 12px;
+}
+
+.reply-btn:hover, .comment-delete-btn:hover {
+    text-decoration: underline;
+}
+
+.inline-form {
+    display: inline-block;
+}
+
+/* Phần CSS cho form bình luận */
+.comment-form {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e4e6eb;
+}
+
+.comment-input-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.comment-form-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.comment-input-wrapper {
+    position: relative;
+    flex-grow: 1;
+    background-color: #f0f2f5;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 .comment-form textarea {
-    flex-grow: 1; /* Để textarea chiếm phần lớn không gian */
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    resize: vertical; /* Cho phép người dùng kéo dọc textarea */
-    font-size: 0.9em;
-}
-
-.comment-form button.comment-submit-btn {
-    background-color: #1877f2; /* Màu nút gửi bình luận (tùy chọn) */
-    color: #fff;
+    width: 100%;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    background-color: transparent;
+    resize: none;
+    padding: 8px 40px 8px 12px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+}
+
+.comment-submit-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #1877f2;
     cursor: pointer;
-    font-size: 0.9em;
+    padding: 4px;
+    font-size: 16px;
+    transition: color 0.2s ease;
 }
 
-.comment-form button.comment-submit-btn:hover {
-    background-color: #145ec1;
+.comment-submit-btn i {
+    font-size: 16px;
 }
 
-.comment-list {
-    margin-top: 10px;
+.comment-submit-btn:hover {
+    color: #166fe5;
 }
 
-.comment {
-    display: flex;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee; /* Đường kẻ phân tách giữa các bình luận (tùy chọn) */
+.comment-bubble, .reply-btn, .comment-delete-btn {
+    transition: all 0.2s ease;
 }
 
-.comment:last-child {
-    border-bottom: none; /* Loại bỏ border dưới bình luận cuối cùng */
+
+/* Thêm hover effect cho bình luận */
+.comment-bubble:hover {
+    background-color: #e4e6eb;
 }
 
-.comment .user-info {
+/* Mention styling */
+.mention {
+    color: #385898;
+    font-weight: 100;
+    text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .comment-actions-row {
+        flex-wrap: wrap;
+    }
+
+    .comment-time {
+        margin-bottom: 4px;
+    }
+}
+
+/* Trong file CSS của bạn (ví dụ: app.css hoặc detail.css) */
+
+#mention-suggestions {
+    /* Đặt vị trí, kích thước, và kiểu hiển thị */
+    position: absolute; /* Quan trọng để nó nổi lên trên các phần tử khác */
+    z-index: 10; /* Đảm bảo nó luôn ở trên cùng */
+    background-color: white;
+    border: 1px solid #e2e8f0; /* border-gray-300 */
+    border-radius: 0.375rem; /* rounded */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
+    max-height: 12rem; /* max-h-48 (12rem = 12 * 16px = 192px) */
+    overflow-y: auto; /* Cho phép cuộn nếu danh sách quá dài */
+    width: 100%; /* Đảm bảo chiều rộng bằng textarea */
+}
+
+#mention-suggestions li {
+    padding: 0.5rem; /* p-2 */
+    cursor: pointer;
+    color: #1a202c; /* text-gray-800 */
     display: flex;
     align-items: center;
-    margin-right: 10px;
 }
 
-.comment .comment-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 8px;
+#mention-suggestions li:hover {
+    background-color: #f7fafc; /* hover:bg-gray-100 */
 }
 
-.comment .user-details {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.85em;
+#mention-suggestions li img {
+    width: 1.5rem; /* w-6 */
+    height: 1.5rem; /* h-6 */
+    border-radius: 9999px; /* rounded-full */
+    margin-right: 0.5rem; /* mr-2 */
 }
 
-.comment .comment-author {
-    font-weight: bold;
+/* Kiểu cho mention đã được highlight trong comment */
+.comment-text .mention {
+    color: #3b82f6; /* text-blue-600 */
+    font-weight: 600;
+    text-decoration: none;
 }
 
-.comment .comment-time {
-    color: #777;
-}
-
-.comment .comment-content {
-    flex-grow: 1;
-    font-size: 0.9em;
-    line-height: 1.4;
+.comment-text .mention:hover {
+    text-decoration: underline;
 }

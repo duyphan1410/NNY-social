@@ -3,8 +3,8 @@
 @section('content')
     <div class="auth-container">
         <div class="left-side">
-            <h1>Connect With The World</h1>
-            <p>Join our community and connect with people from around the globe. Share your stories, ideas, and experiences.</p>
+            <h1>Mở rộng kết nối</h1>
+            <p>Kết nối với những người bạn từ khắp nơi trên thế giới, chia sẻ những câu chuyện, ý tưởng và trải nghiệm của bạn.</p>
         </div>
 
         <div class="right-side">
@@ -12,24 +12,24 @@
                 <img height="32" src="{{ asset('img/logo.png') }}" alt="Logo">
             </div>
 
-            <p class="welcome-text">Welcome to NNY, your social network to<br>meaningful connections</p>
+            <p class="welcome-text">Chào mừng bạn đến với mạng xã hội NNY,<br>nơi kết nối những giá trị.</p>
 
             <form method="POST" action="{{ route('register') }}" class="login-form">
                 @csrf
 
                 <div class="form-row">
                     <div class="form-group half-width">
-                        <label for="first_name">First name</label>
+                        <label for="first_name">Tên</label>
                         <input id="first_name" type="text" class="form-control" name="first_name" required>
                     </div>
                     <div class="form-group half-width">
-                        <label for="last_name">Last name</label>
+                        <label for="last_name">Họ</label>
                         <input id="last_name" type="text" class="form-control" name="last_name" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">Tên tài khoản</label>
                     <input id="username" type="text"
                            class="form-control @error('username') is-invalid @enderror"
                            name="username" value="{{ old('name') }}" required autocomplete="username" autofocus>
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email Address</label>
+                    <label for="email">Địa chỉ email</label>
                     <input id="email" type="email"
                            class="form-control @error('email') is-invalid @enderror"
                            name="email" value="{{ old('email') }}" required autocomplete="email">
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">Mật khẩu</label>
                     <input id="password" type="password"
                            class="form-control @error('password') is-invalid @enderror"
                            name="password" required autocomplete="new-password">
@@ -59,14 +59,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password-confirm">Confirm Password</label>
+                    <label for="password-confirm">Nhập lại mật khẩu</label>
                     <input id="password-confirm" type="password"
                            class="form-control"
                            name="password_confirmation" required autocomplete="new-password">
                 </div>
 
                 <button type="submit" class="sign-in-button">
-                    Register
+                    Đăng ký
                 </button>
 
                 <p class="sign-up-text">
