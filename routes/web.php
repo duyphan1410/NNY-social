@@ -6,6 +6,7 @@ use App\Http\Controllers\Friends\FriendController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
+use App\Http\Controllers\Post\UserSearchController\UserSearchController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Home\HomeController;
