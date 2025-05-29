@@ -7,6 +7,11 @@ A modern image-sharing social network built with **Laravel 10**, **Vite**, and *
 ![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 
+[Homepage Screenshot]
+[Profile Page Screenshot] 
+[Post Creation Screenshot]
+[Admin Dashboard Screenshot]
+
 ## 🚀 Features
 
 ### 👥 User Management
