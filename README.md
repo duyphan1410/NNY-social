@@ -184,7 +184,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) fi
 
 **Duy Phan**
 - GitHub: [@duyphan1410](https://github.com/duyphan1410)
-- Email: [your-email@example.com]
 
 ## 🙏 Acknowledgments
 
