@@ -73,14 +73,6 @@ Seeder will create sample users automatically. If not, you can register manually
 
 ---
 
-## 🔐 Important Notes
-
-* **Do not include your `.env` file** when submitting the project.
-* Including `vendor/` or `node_modules/` is optional (based on submission rules and size limit).
-* Frontend uses Vite, so make sure assets are built before running the server.
-
----
-
 ## 📁 Project Structure
 
 ```
