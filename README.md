@@ -7,10 +7,19 @@ A modern image-sharing social network built with **Laravel 10**, **Vite**, and *
 ![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 
-[Homepage Screenshot]
-[Profile Page Screenshot] 
-[Post Creation Screenshot]
-[Admin Dashboard Screenshot]
+## 📸 Screenshots
+
+### Homepage
+![Homepage](screenshots/homepage.png)
+
+### User Profile
+![Profile Page](screenshots/profile.png)
+
+### Create Post
+![Post Creation](screenshots/create-post.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png
 
 ## 🚀 Features
 
@@ -151,15 +160,35 @@ Seeder will create sample users automatically. If not, you can register manually
 
 ---
 
-## 👤 Author
+## 📄 License
 
-**Duy Phan** – [GitHub Profile](https://github.com/duyphan1410)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
 
 ---
 
-## 📄 License
+## 👨‍💻 Author
 
-This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
+**Duy Phan**
+- GitHub: [@duyphan1410](https://github.com/duyphan1410)
+- Email: [your-email@example.com]
 
+## 🙏 Acknowledgments
+
+- [Laravel](https://laravel.com/) - The web framework
+- [Cloudinary](https://cloudinary.com/) - Media management
+- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS
+- [Pusher](https://pusher.com/) - Real-time features
+
+## 📊 Project Status
+
+- ✅ Core functionality completed
+- ✅ User authentication & profiles
+- ✅ Media upload & optimization
+- ✅ Social interactions (like, comment)
+- ✅ Admin dashboard
+
+---
+
+⭐ **If you find this project helpful, please give it a star!** ⭐
 
 
