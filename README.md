@@ -144,18 +144,32 @@ Seeder will create sample users automatically. If not, you can register manually
 ## 📁 Project Structure
 
 ```
+NNY-social/
 ├── app/
+│   ├── Http/Controllers/    # Application controllers
+│   ├── Models/             # Eloquent models
+│   ├── Middleware/         # Custom middleware
+│   └── Services/           # Business logic services
 ├── config/
+│   ├── database.php        # Database configuration
+│   └── cloudinary.php      # Cloudinary settings
 ├── database/
-├── public/
+│   ├── migrations/         # Database migrations
+│   └── seeders/            # Sample data seeders
+├── public/                 # Web server document root
 ├── resources/
+│   ├── views/              # Blade templates
+│   ├── js/                 # JavaScript files
+│   └── css/                # Stylesheets
 ├── routes/
-├── storage/
-├── .env.example
-├── composer.json
-├── package.json
-├── vite.config.js
-└── README.md
+│   ├── web.php             # Web routes
+│   └── api.php             # API routes
+├── storage/                # File storage
+├── .env.example            # Environment template
+├── composer.json           # PHP dependencies
+├── package.json            # Node.js dependencies
+├── vite.config.js          # Vite configuration
+└── README.md               # This file
 ```
 
 ---
