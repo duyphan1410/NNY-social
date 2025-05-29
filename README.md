@@ -19,7 +19,7 @@ A modern image-sharing social network built with **Laravel 10**, **Vite**, and *
 ![Post Creation](screenshots/create-post.png)
 
 ### Admin Dashboard
-![Admin Dashboard](screenshots/admin-dashboard.png
+![Admin Dashboard](screenshots/admin-dashboard.png)
 
 ## 🚀 Features
 
