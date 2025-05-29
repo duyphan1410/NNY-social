@@ -1,17 +1,33 @@
-# 🕸️ NNY Social Network
+# 📱 NNY Social Network
 
-A modern image-based social network built with **Laravel 10**, **Vite**, and **MySQL**. Users can register, log in, post content (images/videos), interact via likes and comments, manage profiles, and more. It also includes an admin dashboard for managing users and posts.
+A modern image-sharing social network built with **Laravel 10**, **Vite**, and **MySQL**. Users can register, post content (images/videos), like, comment, and manage profiles. The system also includes an admin dashboard for moderation and analytics.
 
-## 📦 Tech Stack
+## 🛠️ Tech Stack
 
-- PHP 8.1+, Laravel 10
-- MySQL
-- Vite (for frontend assets)
-- TailwindCSS
-- Cloudinary (for media storage)
-- Firebase (notifications)
-- Pusher (real-time features)
+- **Backend**: PHP 8.1+, Laravel 10
+- **Frontend**: Vite, TailwindCSS
+- **Database**: MySQL
+- **Media**: Cloudinary (images/videos)
+- **Notifications**: Firebase
+- **Real-time**: Pusher
 
+---
+
+## ☁️ Cloudinary Integration
+
+This project uses [Cloudinary](https://cloudinary.com/) for secure and optimized media storage.
+
+- Images are uploaded and converted to `.webp` for performance.
+- Videos are automatically compressed and resized if needed.
+- Media links are stored and delivered via Cloudinary CDN.
+
+You must configure the following environment variables in `.env`:
+
+```env
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 ---
 
 ## 🚀 Getting Started
