@@ -29,11 +29,6 @@ A modern image-sharing social network built with **Laravel 10**, **Vite**, and *
 - **Analytics** - User engagement insights
 - **Content Moderation** - Manage reported content
 
-### 📱 User Experience
-- **Responsive Design** - Perfect on all devices
-- **Fast Loading** - Optimized with Vite and TailwindCSS
-- **Modern UI** - Clean and intuitive interface
-
 ## 🛠️ Tech Stack
 
 | Category | Technology |
