@@ -2,15 +2,59 @@
 
 A modern image-sharing social network built with **Laravel 10**, **Vite**, and **MySQL**. Users can register, post content (images/videos), like, comment, and manage profiles. The system also includes an admin dashboard for moderation and analytics.
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Laravel](https://img.shields.io/badge/Laravel-10-red.svg)
+![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
+
+## 🚀 Features
+
+### 👥 User Management
+- **Registration & Authentication** - Secure user signup/login
+- **Profile Management** - Customizable user profiles
+- **Follow System** - Connect with other users
+
+### 📱 Content Sharing  
+- **Media Upload** - Share images and videos via Cloudinary
+- **Auto Optimization** - Images converted to .webp, videos compressed
+- **CDN Delivery** - Fast media loading worldwide
+
+### 💬 Social Interaction
+- **Like System** - Express appreciation for posts
+- **Comments** - Engage in conversations
+- **Real-time Notifications** - Instant updates via Pusher
+
+### 🛡️ Administration
+- **Admin Dashboard** - Complete moderation tools
+- **Analytics** - User engagement insights
+- **Content Moderation** - Manage reported content
+
+### 📱 User Experience
+- **Responsive Design** - Perfect on all devices
+- **Fast Loading** - Optimized with Vite and TailwindCSS
+- **Modern UI** - Clean and intuitive interface
+
 ## 🛠️ Tech Stack
 
-- **Backend**: PHP 8.1+, Laravel 10
-- **Frontend**: Vite, TailwindCSS
-- **Database**: MySQL
-- **Media**: Cloudinary (images/videos)
-- **Real-time**: Pusher
+| Category | Technology |
+|----------|------------|
+| **Backend** | PHP 8.1+, Laravel 10 |
+| **Frontend** | Vite, TailwindCSS, JavaScript |
+| **Database** | MySQL 8.0+ |
+| **Media Storage** | Cloudinary |
+| **Real-time** | Pusher |
+| **Authentication** | Laravel Sanctum |
+| **Email** | Laravel Mail |
 
----
+## 📋 Prerequisites
+
+Before installation, ensure you have:
+
+- **PHP 8.1+** with extensions: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
+- **Composer** (latest version)
+- **Node.js 18+** and npm
+- **MySQL 8.0+**
+- **Git**
 
 ## ☁️ Cloudinary Integration
 
