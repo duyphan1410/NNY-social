@@ -8,7 +8,6 @@ A modern image-sharing social network built with **Laravel 10**, **Vite**, and *
 - **Frontend**: Vite, TailwindCSS
 - **Database**: MySQL
 - **Media**: Cloudinary (images/videos)
-- **Notifications**: Firebase
 - **Real-time**: Pusher
 
 ---
