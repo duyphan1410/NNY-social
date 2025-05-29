@@ -1,8 +1,3 @@
-Dưới đây là phiên bản tiếng Anh đã viết lại hoàn toàn file `README.md` cho dự án **NNY Social Network**, thay thế nội dung mặc định của Laravel và phù hợp để nộp trường:
-
----
-
-````markdown
 # 🕸️ NNY Social Network
 
 A modern image-based social network built with **Laravel 10**, **Vite**, and **MySQL**. Users can register, log in, post content (images/videos), interact via likes and comments, manage profiles, and more. It also includes an admin dashboard for managing users and posts.
