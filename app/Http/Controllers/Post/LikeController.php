@@ -23,8 +23,17 @@ class LikeController extends Controller
         if ($like) {
             \Log::info('Đã tìm thấy like, tiến hành xóa.');
             $like->delete();
-            // ... xóa notification ...
-            \Log::info('Đã xóa like.');
+
+            // Xóa notification like tương ứng
+            $postOwner = Post::findOrFail($postId)->user;
+            if ($postOwner->id !== $user->id) {
+                Notification::where('user_id', $postOwner->id)
+                    ->where('type', 'like_post')
+                    ->where('data->post_id', $postId) // Nếu bạn lưu post_id trong data
+                    ->delete();
+            }
+
+            \Log::info('Đã xóa like và notification.');
             $liked = false;
         } else {
             \Log::info('Chưa tìm thấy like, tiến hành tạo.');
@@ -34,35 +43,31 @@ class LikeController extends Controller
             ]);
             \Log::info('Đã tạo like.');
 
-            // Kiểm tra và tạo thông báo
-            $existingNotification = Notification::where('user_id', $user->id)
-                ->where('type', 'like_post')->first();
+            // Tạo thông báo cho chủ bài viết
+            $postOwner = Post::findOrFail($postId)->user;
 
-            if (!$existingNotification) {
-                \Log::info('Chưa có thông báo, tiến hành tạo thông báo.');
-                $postOwner = Post::findOrFail($postId)->user;;
+            if ($postOwner->id !== $user->id) {
+                \Log::info('Người thích không phải chủ bài viết, tiến hành tạo thông báo.');
+
                 $fullName = trim($user->first_name . ' ' . $user->last_name);
                 $message = $fullName . ' đã thích bài viết của bạn.';
                 $postUrl = '/social-network/public/post/' . $postId . '/detail';
 
-                if ($postOwner->id !== $user->id) {
-                    \Log::info('Người thích không phải chủ bài viết, dispatching event.');
-                    try {
-                        event(new NewNotificationEvent($postOwner->id, [
-                            'message' => $message,
-                            'url' => $postUrl,
-                            'type' => 'like_post',
-                        ]));
-                        \Log::info('Đã dispatch event thành công.');
-                    } catch (\Exception $e) {
-                        \Log::error('Lỗi khi dispatch event: ' . $e->getMessage());
-                    }
-                } else {
-                    \Log::info('Người thích là chủ bài viết, không tạo thông báo.');
+                try {
+                    event(new NewNotificationEvent($postOwner->id, [
+                        'message' => $message,
+                        'url' => $postUrl,
+                        'type' => 'like_post',
+                        'post_id' => $postId, // Thêm post_id để phân biệt
+                    ]));
+                    \Log::info('Đã dispatch event thành công.');
+                } catch (\Exception $e) {
+                    \Log::error('Lỗi khi dispatch event: ' . $e->getMessage());
                 }
             } else {
-                \Log::info('Đã có thông báo trước đó.');
+                \Log::info('Người thích là chủ bài viết, không tạo thông báo.');
             }
+
             $liked = true;
         }
 

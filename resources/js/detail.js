@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener('click', function () {
             const authorName = this.dataset.author;
             const userId = this.dataset.userId;
+            const parentId = this.dataset.commentId;
 
             // Lấy form chung bên dưới comment-list
             const commonForm = document.querySelector('.comment-form');
@@ -61,6 +62,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!textarea) {
                 console.error('Không tìm thấy textarea trong form comment');
                 return;
+            }
+
+            const parentInput = commonForm.querySelector('input[name="parent_comment_id"]');
+            if (parentInput) {
+                parentInput.value = parentId; // Gán giá trị parent_id vào input ẩn
             }
 
             // Chèn @Tên người dùng
@@ -169,7 +175,7 @@ function highlightMentionsInComments() {
     document.querySelectorAll('.comment-text').forEach(comment => {
         const content = comment.innerHTML;
         const mentionPattern = /\@\[(.+?)\]\(user:(\d+)\)/g;
-        const baseUrl = window.location.origin;
+        const baseUrl = window.location.origin + '/social-network/public';
         const newContent = content.replace(mentionPattern, `<a href="${baseUrl}/profile/$2" class="mention">@$1</a>`);
 
         if (newContent !== content) {

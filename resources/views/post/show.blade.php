@@ -242,6 +242,7 @@
                                                 class="reply-btn"
                                                 data-author="{{ $comment->user->first_name }} {{ $comment->user->last_name }}"
                                                 data-user-id="{{ $comment->user->id }}"
+                                                data-comment-id="{{ $comment->id }}"
                                             >
                                                 Trả lời
                                             </button>
@@ -269,6 +270,7 @@
                             @endif
                             <div class="comment-input-wrapper">
                                 <textarea class="comment-input" name="content" rows="1" required placeholder="Viết bình luận..."></textarea>
+                                <input type="hidden" name="parent_comment_id" id="parent_comment_id" value="">
                                 <button type="submit" class="comment-submit-btn">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>

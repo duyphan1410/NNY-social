@@ -190,11 +190,11 @@ class FriendController extends Controller
 
         // Lấy tên
         $friend = User::find($friendId);
-        $friendName = $friend ? $friend->name : 'người dùng này';
+        $friendName = $friend->first_name . ' ' . $friend->last_name . ' người dùng này';
 
 
         $self = Auth::user();
-        $message = $friendName->name . ' đã hủy kết bạn với bạn.';
+        $message = $self->first_name . ' ' . $self->last_name . ' đã hủy kết bạn với bạn.';
         $url = route('profile.show', ['user' => $friend->id]);
 
 
