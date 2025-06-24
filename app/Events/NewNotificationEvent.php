@@ -44,6 +44,17 @@ class NewNotificationEvent implements ShouldBroadcast
         return new PrivateChannel('App.Models.User.' . $this->userId);
     }
 
+    public function broadcastWith()
+    {
+        return [
+            'id' => $this->data['id'] ?? null,
+            'message' => $this->data['message'] ?? '',
+            'url' => $this->data['url'] ?? null,
+            'type' => $this->data['type'] ?? 'info',
+        ];
+    }
+
+
     public function broadcastAs()
     {
         return 'notification.received';

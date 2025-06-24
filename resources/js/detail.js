@@ -65,8 +65,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const parentInput = commonForm.querySelector('input[name="parent_comment_id"]');
+
             if (parentInput) {
                 parentInput.value = parentId; // Gán giá trị parent_id vào input ẩn
+                console.log("Gán parent_comment_id:", parentInput.value);
             }
 
             // Chèn @Tên người dùng

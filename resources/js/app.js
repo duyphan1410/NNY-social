@@ -6,6 +6,8 @@ import Pusher from 'pusher-js';
 window.Alpine = Alpine;
 Alpine.start();
 
+const baseUrl = window.location.origin + '/social-network/public';
+
 // Echo config
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -16,11 +18,15 @@ window.Echo = new Echo({
     forceTLS: false,
     disableStats: true,
     cluster: 'mt1',
+    authEndpoint: baseUrl + '/broadcasting/auth', // ✅ thêm dòng này
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        }
+    }
 });
 
 console.log("✅ app.js đã load");
-
-const baseUrl = window.location.origin + '/social-network/public';
 
 // Khi trang được tải
 document.addEventListener('DOMContentLoaded', () => {
@@ -91,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Cập nhật số lượng thông báo
                 updateNotificationCount();
+
+
             });
         });
     }
@@ -174,12 +182,46 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Lỗi khi lấy số lượng thông báo:', error));
     }
 
-
-
     // Khởi tạo các sự kiện
     attachNotificationEvents();
     attachActionButtonEvents();
 
     // Lấy số lượng thông báo chưa đọc ban đầu
     updateNotificationCount();
+
+    const userId = document.querySelector('meta[name="user-id"]').content;
+
+    window.Echo.private(`App.Models.User.${userId}`)
+        .listen('.notification.received', (e) => {
+            console.log('📬 Nhận được thông báo mới từ websocket:', e);
+
+            // Tạo thông báo mới
+            const list = document.getElementById('notification-list');
+            const li = document.createElement('li');
+            li.className = 'notification-item unread';
+            li.dataset.id = e.id;
+
+            li.innerHTML = `
+            <div class="notification-container">
+                <div class="notification-content">
+                    <a href="${e.url || '#'}">
+                        <div class="notification-message">${e.message}</div>
+                        <div class="notification-time text-xs text-gray-500">vừa xong</div>
+                    </a>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn-nof text-sm text-blue-600 hover:underline" data-id="${e.id}">Xử lý</button>
+                </div>
+            </div>
+        `;
+
+            list.prepend(li);
+
+            // Cập nhật số lượng
+            updateNotificationCount();
+            attachNotificationEvents();
+            attachActionButtonEvents();
+        });
 });
+
+

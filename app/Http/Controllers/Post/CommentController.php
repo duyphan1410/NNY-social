@@ -24,6 +24,7 @@ class CommentController extends Controller
             'post_id' => $postId,
             'content' => $request->input('content'),
             'parent_comment_id' => $request->input('parent_comment_id'),
+
         ]);
 
 
@@ -31,37 +32,36 @@ class CommentController extends Controller
         $commenter = Auth::user();
         $commenterFullName = trim($commenter->first_name . ' ' . $commenter->last_name);
         $postDetailUrl = route('post.show', ['id' => $postId]) . '#comments-' . $comment->id;
+        $parentId = $request->input('parent_comment_id');
         $content = $request->input('content');
+        $mentionMatches = []; // kết quả của preg_match_all
 
         // ===== ✅ PHÂN TÍCH CÁC MENTION =====
         preg_match_all('/@\[(.*?)\]\(user:(\d+)\)/', $content, $mentionMatches, PREG_SET_ORDER);
         $notifiedUserIds = []; // Track tất cả user đã được thông báo
 
-        // ===== ✅ XỬ LÝ REPLY TRƯỚC (mention đầu tiên = reply) =====
-        if (count($mentionMatches) > 0) {
-            $firstMentionId = (int) $mentionMatches[0][2];
-            if ($firstMentionId !== $commenter->id) {
-                $repliedToUser = User::find($firstMentionId);
-                if ($repliedToUser) {
-                    $message = "{$commenterFullName} đã trả lời bình luận của bạn.";
-                    event(new NewNotificationEvent($firstMentionId, [
-                        'message' => $message,
-                        'url' => $postDetailUrl,
-                        'type' => 'reply_comment',
-                    ]));
-                    $notifiedUserIds[] = $firstMentionId; // Đánh dấu đã thông báo
-                }
+        // ===== ✅ XỬ LÝ REPLY TRƯỚC =====
+        if ($parentId) {
+            $parentComment = Comment::find($parentId);
+            if ($parentComment && $parentComment->user_id !== $commenter->id) {
+                $repliedUser = $parentComment->user;
+
+                $message = "{$commenterFullName} đã trả lời bình luận của bạn.";
+                event(new NewNotificationEvent($repliedUser->id, [
+                    'message' => $message,
+                    'url' => $postDetailUrl,
+                    'type' => 'reply_comment',
+                ]));
+
+                $notifiedUserIds[] = $repliedUser->id;
             }
         }
 
-        // ===== ✅ XỬ LÝ CÁC MENTION CÒN LẠI (bỏ qua mention đầu tiên) =====
-        foreach ($mentionMatches as $index => $match) {
+
+        // ===== ✅ XỬ LÝ CÁC MENTION =====
+        foreach ($mentionMatches as $match) {
             $mentionedUserId = (int) $match[2];
 
-            // Bỏ qua mention đầu tiên (đã xử lý như reply)
-            if ($index === 0) continue;
-
-            // Tránh gửi thông báo cho chính mình và user đã được thông báo
             if ($mentionedUserId !== $commenter->id && !in_array($mentionedUserId, $notifiedUserIds)) {
                 $mentionedUser = User::find($mentionedUserId);
                 if ($mentionedUser) {
@@ -71,10 +71,12 @@ class CommentController extends Controller
                         'url' => $postDetailUrl,
                         'type' => 'mention_comment',
                     ]));
+
                     $notifiedUserIds[] = $mentionedUserId;
                 }
             }
         }
+
 
         // ===== ✅ THÔNG BÁO CHO CHỦ BÀI VIẾT =====
         if ($postOwner->id !== $commenter->id && !in_array($postOwner->id, $notifiedUserIds)) {

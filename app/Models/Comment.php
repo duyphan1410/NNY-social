@@ -10,7 +10,7 @@ class Comment extends Model
     use HasFactory;
 
     protected $table = 'comments'; // Chỉ định bảng trong database
-    protected $fillable = ['user_id', 'post_id', 'content']; // Các cột có thể được gán dữ liệu
+    protected $fillable = ['user_id', 'post_id', 'content','parent_comment_id']; // Các cột có thể được gán dữ liệu
 
     // Quan hệ với User
     public function user()

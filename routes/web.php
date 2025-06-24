@@ -10,6 +10,7 @@ use App\Http\Controllers\Post\UserSearchController\UserSearchController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Home\HomeController;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
@@ -143,6 +144,7 @@ Route::fallback(function () {
     return response()->json(['message' => 'Route không tồn tại'], 404);
 });
 
+Broadcast::routes(['middleware' => ['auth']]);
 
 require __DIR__.'/auth.php';
 
