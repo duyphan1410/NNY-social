@@ -25,11 +25,14 @@
                                 @forelse ($videos as $item)
                                     <div class="post-media-container album-item-flex">
                                         @if ($item['type'] === 'video')
-                                            <div class="media-item video-item">
+                                            <div class="media-item video-item" data-post-id="{{ $item['post_id'] ?? '' }}">
                                                 <video class="post-video w-full h-48 object-cover rounded-md shadow-sm" controls>
                                                     <source src="{{ $item['url'] }}" type="video/mp4">
                                                     Your browser does not support the video tag.
                                                 </video>
+                                                <div class="media-overlay">
+                                                    <i class="fas fa-play-circle"></i>
+                                                </div>
                                             </div>
                                         @endif
                                     </div>

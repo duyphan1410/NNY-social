@@ -39,14 +39,18 @@ class ImageController extends Controller
                         'quality' => 'auto:good'
                     ]
                 ]);
-                $imageUrls[] = $uploadResponse['secure_url'];
-                Log::info('Upload successful (multiple)', ['url' => end($imageUrls), 'originalName' => $image->getClientOriginalName()]);
+                $imageItems[] = [
+                    'url' => $uploadResponse['secure_url'],
+                    'public_id' => $uploadResponse['public_id'],
+                ];
+
+                Log::info('Upload successful (multiple)', ['url' => $uploadResponse['secure_url'], 'originalName' => $image->getClientOriginalName()]);
             }
             Log::info('uploadMultiple returning URLs:', ['imageUrls' => $imageUrls]);
-            return $imageUrls;
+            return $imageItems;
         } catch (\Exception $e) {
             \Log::error('Error in uploadMultiple:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return [];
+            return response()->json(['error' => 'Upload failed', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -67,10 +71,14 @@ class ImageController extends Controller
             ]);
             $imageUrl = $uploadResponse['secure_url'];
             Log::info('Upload successful (avatar):', ['url' => $imageUrl, 'originalName' => $file->getClientOriginalName()]);
-            return [$imageUrl]; // Trả về một mảng chứa URL duy nhất để nhất quán
+            return [
+                'url' => $imageUrl,
+                'public_id' => $uploadResponse['public_id'],
+            ];
+            // Trả về một mảng chứa URL duy nhất để nhất quán
         } catch (\Exception $e) {
             \Log::error('Error in uploadAvatar:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return [];
+            return response()->json(['error' => 'Upload failed', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -91,10 +99,14 @@ class ImageController extends Controller
             ]);
             $coverUrl = $uploadResponse['secure_url'];
             Log::info('Upload successful (cover):', ['url' => $coverUrl, 'originalName' => $file->getClientOriginalName()]);
-            return $coverUrl;
+            return [
+                'url' => $coverUrl,
+                'public_id' => $uploadResponse['public_id'],
+            ];
+
         } catch (\Exception $e) {
             \Log::error('Error in uploadCover:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return null; // Hoặc xử lý lỗi khác
+            return response()->json(['error' => 'Upload failed', 'message' => $e->getMessage()], 500);
         }
     }
 }

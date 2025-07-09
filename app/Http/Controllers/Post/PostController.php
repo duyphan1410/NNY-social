@@ -25,14 +25,13 @@ class PostController extends Controller
         return view('post.create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         try {
             // Validate dữ liệu đầu vào
             $validatedData = $request->validate([
-                'content'   => 'required|max:2000',
-                'images.*'  => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
-                'videos.*'  => 'mimes:mp4,avi,mov|max:20480'
+                'content' => 'required|max:5000',
+                'image-data' => 'nullable|json',
+                'video-data' => 'nullable|json'
             ]);
 
             // Tạo bài đăng mới
@@ -41,40 +40,44 @@ class PostController extends Controller
             $post->content = $validatedData['content'];
             $post->save();
 
-            // Xử lý upload ảnh
-            if ($request->hasFile('images')) {
+            // Xử lý ảnh đã upload
+            if (!empty($validatedData['image-data'])) {
+                $imageData = json_decode($validatedData['image-data'], true);
 
-                $imageController = new ImageController();
-                $imageUrls = $imageController->uploadMultiple($request->file('images'));
-
-                if (empty($imageUrls) || !is_array($imageUrls)) {
-
-                    return redirect()->back()->with('error', 'Lỗi: Không upload được ảnh nào.');
-                }
-
-                foreach ($imageUrls as $url) {
-                    PostImage::create([
-                        'post_id'   => $post->id,
-                        'image_url' => $url
-                    ]);
+                if (is_array($imageData)) {
+                    foreach ($imageData as $item) {
+                        if (isset($item['url']) && isset($item['public_id'])) {
+                            PostImage::create([
+                                'post_id' => $post->id,
+                                'image_url' => $item['url'],
+                                'public_id' => $item['public_id'],
+                            ]);
+                        }
+                    }
                 }
             }
 
-            // Xử lý upload video
-            if ($request->hasFile('videos')) {
-                $videoUrls = $this->uploadMedia($request->file('videos'), 'post_videos', 'video');
-                foreach ($videoUrls as $url) {
-                    PostVideo::create([
-                        'post_id'   => $post->id,
-                        'video_url' => $url
-                    ]);
+            // Xử lý video đã upload
+            if (!empty($validatedData['video-data'])) {
+                $videoData = json_decode($validatedData['video-data'], true);
+
+                if (is_array($videoData)) {
+                    foreach ($videoData as $item) {
+                        if (isset($item['url']) && isset($item['public_id'])) {
+                            PostVideo::create([
+                                'post_id' => $post->id,
+                                'video_url' => $item['url'],
+                                'public_id' => $item['public_id'],
+                            ]);
+                        }
+                    }
                 }
             }
 
             $postOwner = Auth::user();
             $fullName = trim($postOwner->first_name . ' ' . $postOwner->last_name);
             $message = $fullName . ' vừa đăng một bài viết mới.';
-            $postUrl = '/social-network/public/post/' . $post->id . '/detail'; // Sử dụng $post->id
+            $postUrl = '/social-network/public/post/' . $post->id . '/detail';
 
             // Lấy danh sách bạn bè của người đăng bài
             $friends = Friend::where('user_id', Auth::id())
@@ -84,16 +87,34 @@ class PostController extends Controller
                 ->map(function ($friend) {
                     return $friend->user_id === Auth::id() ? $friend->friend : $friend->user;
                 });
+
             foreach ($friends as $friend) {
                 event(new NewNotificationEvent($friend->id, [
                     'message' => $message,
                     'url' => $postUrl,
-                    'type' => 'create_post', // Thêm loại thông báo
+                    'type' => 'create_post',
                 ]));
             }
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'redirect' => route('home'),
+                    'message' => 'Bài đăng đã được tạo thành công'
+                ]);
+            }
+
             return redirect()->route('home')->with('success', 'Bài đăng đã được tạo thành công');
+
+
         } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Lỗi khi tạo bài đăng: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()->with('error', 'Lỗi khi tạo bài đăng: ' . $e->getMessage());
         }
     }
@@ -112,99 +133,145 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-//        dd($request->all());
-
         if (!$post || !$post->exists) {
-            return redirect()->back()->with('error', 'Bài đăng không tồn tại');
+            $message = 'Bài đăng không tồn tại';
+            return $request->expectsJson()
+                ? response()->json(['status' => 'error', 'message' => $message], 404)
+                : redirect()->back()->with('error', $message);
         }
 
-        DB::beginTransaction(); // Đảm bảo ko lỗi giữa chừng
+        DB::beginTransaction();
 
         try {
-            // Validate dữ liệu đầu vào
             $validatedData = $request->validate([
                 'content'       => 'required|max:2000',
-                'images.*'      => 'image|mimes:webp,jpeg,png,jpg,gif|max:2048',
-                'videos.*'      => 'mimes:mp4,avi,mov|max:20480',
-                'remove_images' => 'nullable|string', // Thêm nullable
-                'remove_videos' => 'nullable|string',  // Mảng chứa ID video cần xóa
+                'image-data' => 'nullable|json',
+                'video-data' => 'nullable|json',
+                'remove_images' => 'nullable|string',
+                'remove_videos' => 'nullable|string',
             ]);
 
-            // CẬP NHẬT
             $post->content = $validatedData['content'];
             $post->save();
 
-            $removeImages = json_decode($request->remove_images, true) ?? [];
-            $removeVideos = json_decode($request->remove_videos, true) ?? [];
+            $removeImages = $request->filled('remove_images')
+                ? explode(',', $request->remove_images)
+                : [];
+
+            $removeVideos = $request->filled('remove_videos')
+                ? explode(',', $request->remove_videos)
+                : [];
 
 
-            // XÓA ẢNH nếu có
+            // XÓA ẢNH
             if (!empty($removeImages)) {
                 foreach ($removeImages as $imageId) {
                     $image = PostImage::find($imageId);
                     if ($image) {
-                        $publicId = "post_images/" . pathinfo($image->image_url, PATHINFO_FILENAME);
-
-                        // Xóa ảnh trên Cloudinary
+                        $publicId = $image->public_id;
                         if (!$this->deleteFromCloudinary($publicId, 'image')) {
                             \Log::error("Không thể xóa ảnh trên Cloudinary: $publicId");
                         }
-
-                        // Xóa trong database
                         $image->delete();
                     }
                 }
             }
 
-            // XÓA VIDEO CŨ nếu có
+            // XÓA VIDEO
             if (!empty($removeVideos)) {
                 foreach ($removeVideos as $videoId) {
                     $video = PostVideo::find($videoId);
                     if ($video) {
-                        $publicId = "post_videos/" . pathinfo($video->video_url, PATHINFO_FILENAME);
-
+                        $publicId = $video->public_id;
                         if (!$this->deleteFromCloudinary($publicId, 'video')) {
                             \Log::error("Không thể xóa video trên Cloudinary: $publicId");
                         }
-
                         $video->delete();
                     }
                 }
             }
 
-            // THÊM ẢNH MỚI
-            if ($request->hasFile('images')) {
-                $imageController = new ImageController();
-                $imageUrls = $imageController->uploadMultiple($request->file('images'));
+//            // THÊM ẢNH MỚI
+//            if ($request->hasFile('images')) {
+//                $imageController = new ImageController();
+//                $imageItems = $imageController->uploadMultiple($request->file('images'));
+//                foreach ($imageItems as $item) {
+//                    PostImage::create([
+//                        'post_id'   => $post->id,
+//                        'image_url' => $item['url'],
+//                        'public_id' => $item['public_id']
+//                    ]);
+//                }
+//            }
+//
+//            // THÊM VIDEO MỚI
+//            if ($request->hasFile('videos')) {
+//                $videoItems = $this->uploadMedia($request->file('videos'), 'post_videos', 'video');
+//                foreach ($videoItems as $item) {
+//                    PostVideo::create([
+//                        'post_id'   => $post->id,
+//                        'video_url' => $item['url'],
+//                        'public_id' => $item['public_id']
+//                    ]);
+//                }
+//            }
 
-                foreach ($imageUrls as $url) {
-                    PostImage::create([
-                        'post_id'   => $post->id,
-                        'image_url' => $url
-                    ]);
+            // XỬ LÝ ẢNH MỚI TỪ CLOUDINARY (unsigned)
+            if (!empty($request->input('image-data'))) {
+                $imageData = json_decode($request->input('image-data'), true);
+                if (is_array($imageData)) {
+                    foreach ($imageData as $item) {
+                        if (isset($item['url']) && isset($item['public_id'])) {
+                            PostImage::create([
+                                'post_id' => $post->id,
+                                'image_url' => $item['url'],
+                                'public_id' => $item['public_id'],
+                            ]);
+                        }
+                    }
                 }
             }
 
-            // THÊM VIDEO MỚI
-            if ($request->hasFile('videos')) {
-                $videoUrls = $this->uploadMedia($request->file('videos'), 'post_videos', 'video');
-                foreach ($videoUrls as $url) {
-                    PostVideo::create([
-                        'post_id'   => $post->id,
-                        'video_url' => $url
-                    ]);
+            // XỬ LÝ VIDEO MỚI TỪ CLOUDINARY (unsigned)
+            if (!empty($request->input('video-data'))) {
+                $videoData = json_decode($request->input('video-data'), true);
+                if (is_array($videoData)) {
+                    foreach ($videoData as $item) {
+                        if (isset($item['url']) && isset($item['public_id'])) {
+                            PostVideo::create([
+                                'post_id' => $post->id,
+                                'video_url' => $item['url'],
+                                'public_id' => $item['public_id'],
+                            ]);
+                        }
+                    }
                 }
             }
 
-            DB::commit(); // Hoàn tất transaction
+            DB::commit();
+
+            // ✅ Trả về JSON nếu là request AJAX
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status'   => 'success',
+                    'message'  => 'Bài đăng đã được cập nhật',
+                    'redirect' => route('post.show', $post)
+                ]);
+            }
 
             return redirect()->route('post.show', $post)->with('success', 'Bài đăng đã được cập nhật');
         } catch (\Exception $e) {
-            DB::rollBack(); // Hoàn tác nếu có lỗi
+            DB::rollBack();
             \Log::error("Lỗi khi cập nhật bài đăng: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Lỗi khi cập nhật bài đăng: ' . $e->getMessage());
+
+            $message = 'Lỗi khi cập nhật bài đăng: ' . $e->getMessage();
+
+            return $request->expectsJson()
+                ? response()->json(['status' => 'error', 'message' => $message], 500)
+                : redirect()->back()->with('error', $message);
         }
     }
+
 
     public function destroy(Post $post)
     {
@@ -253,7 +320,7 @@ class PostController extends Controller
         ]);
 
         $uploadApi = new UploadApi();
-        $urls = [];
+        $mediaList = [];
 
         foreach ($files as $file) {
             $uploadResponse = $uploadApi->upload(
@@ -263,10 +330,13 @@ class PostController extends Controller
                     'resource_type' => $resourceType
                 ]
             );
-            $urls[] = $uploadResponse['secure_url'];
+            $mediaList[] = [
+                'url' => $uploadResponse['secure_url'],
+                'public_id' => $uploadResponse['public_id'], // Lưu cái này
+            ];
         }
 
-        return $urls;
+        return $mediaList;
     }
 
     //Hàm xóa ảnh/video trên Cloudinary

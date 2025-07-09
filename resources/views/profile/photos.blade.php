@@ -25,8 +25,10 @@
                                 @forelse ($photos as $item)
                                     <div class="post-media-container album-item-flex">
                                         @if ($item['type'] === 'photo')
-                                            <div class="media-item image-item">
-                                                <img class="post-image w-full h-48 object-cover rounded-md shadow-sm" src="{{ $item['url'] }}" alt="Original Post Image">
+                                            <div class="media-item image-item" data-post-id="{{ $item['post_id'] }}">
+                                                <img class="post-image w-full h-48 object-cover rounded-md shadow-sm"
+                                                     src="{{ $item['url'] }}"
+                                                     alt="Original Post Image">
                                             </div>
                                         @endif
                                     </div>

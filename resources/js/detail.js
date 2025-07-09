@@ -1,15 +1,6 @@
 // detail.js
 let activeTextarea = null;
 document.addEventListener("DOMContentLoaded", function () {
-    // Xử lý dropdown
-    document.querySelectorAll(".dropdown-btn").forEach(button => {
-        button.addEventListener("click", function (event) {
-            event.stopPropagation();
-            let parent = this.closest(".dropdown");
-            parent.classList.toggle("active");
-        });
-    });
-
     // Ẩn dropdown khi click ra ngoài
     document.addEventListener("click", function (event) {
         if (!event.target.closest(".dropdown-menu") && !event.target.closest(".delete-form")) {

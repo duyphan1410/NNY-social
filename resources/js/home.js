@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="lightbox-counter">1/5</span>
                     <button class="lightbox-next">&gt;</button>
                 </div>
+                <div class="lightbox-post-link" style="position:absolute; bottom:70px;">
+                    <a href="#" target="_blank" class="go-to-post-btn text-white underline text-sm">Xem bài đăng gốc</a>
+                </div>
             </div>
         `;
         body.appendChild(lightbox);
@@ -56,10 +59,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 justify-content: center;
             }
 
-            .lightbox-image, .lightbox-video {
+            .lightbox-image {
                 max-height: 85vh;
                 max-width: 85vw;
                 object-fit: contain;
+            }
+
+            .lightbox-video {
+                max-height: 85vh;
+                max-width: 85vw;
+                width: auto;
+                height: auto;
+                background-color: black;
+                border-radius: 8px;
             }
 
             .lightbox-close {
@@ -70,6 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 font-size: 40px;
                 cursor: pointer;
                 z-index: 1010;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .lightbox-nav {
@@ -97,6 +115,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 color: white;
                 font-size: 16px;
             }
+            .lightbox-post-link {
+                margin-bottom: 20px;
+                background-color: white;
+                border-radius: 4px;
+                z-index: 1010;
+            }
+
+            .go-to-post-btn {
+                background-color: rgba(0,0,0,0.6);
+                padding: 6px 12px;
+                border-radius: 4px;
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+            .go-to-post-btn:hover {
+                background-color: rgba(255,255,255,0.2);
+                color: black;
+            }
+            .lightbox-prev:hover,
+            .lightbox-next:hover,
+            .lightbox-close:hover {
+                background-color: rgba(255, 255, 255);
+                color: black;
+            }
+
         `;
         document.head.appendChild(style);
 
@@ -131,22 +176,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
 
                 // Lấy tất cả media trong post
-                const mediaContainer = targetElem.closest('.post-media-container');
+                let mediaContainer = targetElem.closest('.post-media-container');
+
+                if (window.location.pathname.includes('/profile')) {
+                    mediaContainer = document.querySelector('.album-grid-flex'); // đúng: nơi chứa toàn bộ ảnh
+                }
 
                 // Lấy tất cả các item media (cả ảnh và video)
-                const allMediaItems = Array.from(mediaContainer.querySelectorAll('.media-item'));
+                const allMediaItems = Array.from(
+                    (mediaContainer?.querySelectorAll('.media-item')) ??
+                    document.querySelectorAll('.media-item') // fallback nếu không có container
+                );
 
                 // Lưu thông tin từng media (loại và đường dẫn)
                 currentMedia = allMediaItems.map(item => {
-                    if (item.classList.contains('image-item')) {
-                        const img = item.querySelector('.post-image');
-                        return { type: 'image', src: img.src };
-                    } else if (item.classList.contains('video-item')) {
-                        const video = item.querySelector('video');
-                        return { type: 'video', src: video.querySelector('source').src || video.src };
-                    }
-                    return null;
-                }).filter(item => item !== null);
+                    let src = item.querySelector('img, source')?.src;
+                    let type = item.classList.contains('video-item') ? 'video' : 'image';
+                    let postId = item.dataset.postId || null;
+
+                    return { type, src, postId };
+                }).filter(Boolean);
 
                 // Tìm index của media được click
                 let clickedIndex = 0;
@@ -184,14 +233,40 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 const video = document.createElement('video');
                 video.className = 'lightbox-video';
-                video.src = media.src;
                 video.controls = true;
                 video.autoplay = true;
+                video.setAttribute('playsinline', '');
+                video.setAttribute('muted', ''); // iOS yêu cầu muted để autoplay
+
+                const source = document.createElement('source');
+                source.src = media.src;
+                source.type = 'video/mp4';
+
+                video.appendChild(source);
                 mediaContainer.appendChild(video);
+
+                video.load(); // Bắt buộc gọi load lại nếu thêm source bằng DOM
+                video.play().catch(err => {
+                    console.warn('Autoplay bị chặn:', err.message);
+                });
             }
 
             counter.textContent = `${index + 1}/${currentMedia.length}`;
             lightbox.style.display = 'block';
+
+            // ✅ Xử lý nút "Xem bài đăng gốc"
+            const postLink = document.querySelector('.go-to-post-btn');
+            if (postLink) {
+                const path = window.location.pathname;
+                const isInAlbumPage = path.includes('profile');
+
+                if (isInAlbumPage && media.postId) {
+                    postLink.href = `/social-network/public/post/${media.postId}/detail`;
+                    postLink.style.display = 'inline-block';
+                } else {
+                    postLink.style.display = 'none';
+                }
+            }
 
             // Vô hiệu hóa scroll trên body
             document.body.style.overflow = 'hidden';

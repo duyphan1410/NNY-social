@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CloudinaryController;
 use App\Http\Controllers\Friends\FriendController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Post\CommentController;
@@ -15,7 +16,8 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Events\NewNotificationEvent;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\VideoController;
 
@@ -145,6 +147,32 @@ Route::fallback(function () {
 });
 
 Broadcast::routes(['middleware' => ['auth']]);
+
+Route::post('/cloudinary/delete', function (Request $request) {
+    $publicId = $request->input('public_id');
+    $resourceType = $request->input('resource_type', 'image'); // hoặc 'video'
+
+    if (!$publicId) {
+        return response()->json(['error' => 'Thiếu public_id'], 400);
+    }
+
+    $cloudName = config('services.cloudinary.cloud_name');
+    $apiKey = config('services.cloudinary.api_key');
+    $apiSecret = config('services.cloudinary.api_secret');
+    $timestamp = time();
+
+    $stringToSign = "public_id={$publicId}&timestamp={$timestamp}{$apiSecret}";
+    $signature = sha1($stringToSign);
+
+    $response = Http::asForm()->post("https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/destroy", [
+        'public_id' => $publicId,
+        'timestamp' => $timestamp,
+        'api_key' => $apiKey,
+        'signature' => $signature
+    ]);
+
+    return response()->json($response->json());
+});
 
 require __DIR__.'/auth.php';
 

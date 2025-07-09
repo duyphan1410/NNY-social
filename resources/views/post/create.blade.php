@@ -16,9 +16,8 @@
         <div class="post-creation-card">
             <h1 class="text-center mb-4">Tạo Bài Đăng Mới</h1>
 
-            <form action="{{ route('post.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="post-form" action="{{ route('post.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
                 <div class="form-group">
                     <label for="content">Nội Dung Bài Đăng</label>
                     <textarea
@@ -72,6 +71,10 @@
                     </div>
                     @enderror
                 </div>
+                <!-- Hidden input để chứa dữ liệu ảnh và video đã upload -->
+                <input type="hidden" name="image-data" id="image-data">
+                <input type="hidden" name="video-data" id="video-data">
+
 
                 <div class="form-group text-center">
                     <button type="submit" class="btn btn-primary btn-lg">

@@ -57,6 +57,7 @@ class ProfileController extends Controller
                 'type' => 'photo',
                 'url' => $photos->image_url,
                 'created_at' => $photos->post->created_at,
+                'post_id' => $photos->post_id,
             ];
         });
 
@@ -99,11 +100,12 @@ class ProfileController extends Controller
     {
         $videos = PostVideo::whereHas('post', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->get()->map(function ($video) {
+        })->get()->map(function ($videos) {
             return [
                 'type' => 'video',
-                'url' => $video->video_url,
-                'created_at' => $video->post->created_at,
+                'url' => $videos->video_url,
+                'created_at' => $videos->post->created_at,
+                'post_id' => $videos->post_id,
             ];
         });
 
@@ -151,90 +153,86 @@ class ProfileController extends Controller
         return Redirect::route('profile.me')->with('status', 'profile-updated');
     }
 
+// -------------------- Avatar --------------------
     public function updateAvatar(Request $request)
     {
-        Log::info('Testing log in updateAvatar');
-
         $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $user = Auth::user();
 
         if ($request->hasFile('avatar')) {
-            $imageController = new ImageController();
-            Log::info('ImageController initialized');
-            $imageUrls = $imageController->uploadAvatar($request->file('avatar')); // Gọi uploadAvatar
+            $imageItem  = (new ImageController())->uploadAvatar($request->file('avatar'));
 
-            Log::info('ImageUrls after upload:', ['urls' => $imageUrls]);
-
-            if (empty($imageUrls) || !is_array($imageUrls) || empty($imageUrls[0])) {
-                return redirect()->back()->with('error', 'Lỗi: Không upload được ảnh avatar lên Cloudinary.');
+            // Nếu hàm upload trả về Response JSON lỗi
+            if (!is_array($imageItem) || empty($imageItem['url'])) {
+                return back()->with('error', 'Không upload được ảnh avatar lên Cloudinary.');
             }
 
-            $avatarUrl = $imageUrls[0]; // Lấy URL đầu tiên (và duy nhất) của avatar
+            $avatarUrl  = $imageItem['url'];
+            $publicId   = $imageItem['public_id'];
 
-            // Tạo bài đăng mới
-            $post = new Post();
-            $post->user_id = auth()->id();
-            $post->content = $user->first_name . ' ' . $user->last_name . ' đã đổi ảnh đại diện.';
-            $post->save();
-
-            // Lưu URL avatar vào post_images
-            PostImage::create([
-                'post_id' => $post->id,
-                'image_url' => $avatarUrl,
+            // Tạo post & post_images
+            $post = Post::create([
+                'user_id' => $user->id,
+                'content' => "{$user->first_name} {$user->last_name} đã đổi ảnh đại diện."
             ]);
 
-            // Cập nhật avatar của người dùng
+            PostImage::create([
+                'post_id'   => $post->id,
+                'image_url' => $avatarUrl,
+                'public_id' => $publicId,
+            ]);
+
+            // Lưu avatar mới
             $user->avatar = $avatarUrl;
             $user->save();
 
-            return Redirect::back()->with('success', 'Avatar đã được cập nhật và bài đăng đã được tạo thành công.');
+            return back()->with('success', 'Avatar đã được cập nhật.');
         }
 
-        return Redirect::back()->with('error', 'Có lỗi xảy ra khi tải lên avatar.');
+        return back()->with('error', 'Vui lòng chọn ảnh.');
     }
 
+// -------------------- Cover --------------------
     public function updateCover(Request $request)
     {
         $request->validate([
-            'cover_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'cover_photo' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
         ]);
 
         $user = Auth::user();
 
         if ($request->hasFile('cover_photo')) {
-            $imageController = new ImageController();
-            $coverUrl = $imageController->uploadCover($request->file('cover_photo'));
+            $imageItem = (new ImageController())->uploadCover($request->file('cover_photo'));
 
-            if ($coverUrl) {
-                // Cập nhật thông tin chi tiết người dùng
-                if ($user->detail) {
-                    $user->detail->cover_img_url = $coverUrl;
-                    $user->detail->save();
-
-                    // Tạo bài đăng thông báo sau khi cập nhật thành công
-                    $post = new Post();
-                    $post->user_id = auth()->id();
-                    $post->content = $user->first_name . ' ' . $user->last_name . ' đã đổi ảnh bìa.';
-                    $post->save();
-
-                    // Lưu URL ảnh bìa vào PostImage (tùy chọn)
-                    PostImage::create([
-                        'post_id' => $post->id,
-                        'image_url' => $coverUrl,
-                    ]);
-
-                    return Redirect::back()->with('success', 'Ảnh bìa đã được cập nhật thành công.');
-                } else {
-                    return Redirect::back()->with('error', 'Lỗi: Không tìm thấy thông tin chi tiết người dùng.');
-                }
-            } else {
-                return Redirect::back()->with('error', 'Lỗi: Không upload được ảnh bìa.');
+            if (!is_array($imageItem) || empty($imageItem['url'])) {
+                return back()->with('error', 'Không upload được ảnh bìa.');
             }
+
+            $coverUrl = $imageItem['url'];
+            $publicId = $imageItem['public_id'];
+
+            // Cập nhật profile detail
+            optional($user->detail)->update(['cover_img_url' => $coverUrl]);
+
+            // Tạo post
+            $post = Post::create([
+                'user_id' => $user->id,
+                'content' => "{$user->first_name} {$user->last_name} đã đổi ảnh bìa."
+            ]);
+
+            PostImage::create([
+                'post_id'   => $post->id,
+                'image_url' => $coverUrl,
+                'public_id' => $publicId,
+            ]);
+
+            return back()->with('success', 'Ảnh bìa đã được cập nhật.');
         }
 
-        return Redirect::back()->with('error', 'Vui lòng chọn một ảnh bìa để tải lên.');
+        return back()->with('error', 'Vui lòng chọn ảnh bìa.');
     }
+
 }

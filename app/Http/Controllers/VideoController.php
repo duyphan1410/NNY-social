@@ -31,11 +31,11 @@ class VideoController extends Controller
             );
 
             // Lấy URL an toàn của video
-            $videoUrl = $uploadResponse['secure_url'];
+            return response()->json([
+                'url' => $uploadResponse['secure_url'],
+                'public_id' => $uploadResponse['public_id'],
+            ]);
 
-            return redirect()->back()
-                ->with('success', 'Upload video thành công')
-                ->with('video_url', $videoUrl);
 
         } catch (\Exception $e) {
             return redirect()->back()

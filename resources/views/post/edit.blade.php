@@ -15,12 +15,15 @@
         <div class="post-creation-card">
             <h1 class="text-center mb-4">Chỉnh Sửa Bài Đăng</h1>
 
-            <form action="{{ route('post.update', $post) }}" method="POST" enctype="multipart/form-data">
+            <form id="post-form" action="{{ route('post.update', $post) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <input type="hidden" name="remove_images" id="remove_images">
                 <input type="hidden" name="remove_videos" id="remove_videos">
+                <input type="hidden" name="image-data" id="image-data">
+                <input type="hidden" name="video-data" id="video-data">
+
 
                 <div class="form-group">
                     <label for="content">Nội Dung Bài Đăng</label>
