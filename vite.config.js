@@ -19,8 +19,6 @@ export default defineConfig({
                 'resources/js/detail.js',
                 'resources/js/edit.js',
                 'resources/js/home.js',
-                // 'resources/js/reel.js',
-                // 'resources/css/reel.css',
                 'resources/sass/app.scss', // Đảm bảo file SCSS này tồn tại
             ],
             refresh: true,

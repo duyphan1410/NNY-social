@@ -1,7 +1,5 @@
 let currentPosition = 0;
 
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // Tạo modal xem ảnh/video phóng to
     const body = document.querySelector('body');

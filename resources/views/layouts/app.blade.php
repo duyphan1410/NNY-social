@@ -101,6 +101,19 @@
     <main>
         @yield('content')
     </main>
+
+    @auth
+
+        <script>
+            window.CURRENT_USER_ID = {{ auth()->id() }};
+        </script>
+
+        <div id="chat-popups-container"></div>
+
+        @vite(['resources/css/chat-popup.css', 'resources/js/chat-widget.js'])
+    @endauth
+
+
 </div>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

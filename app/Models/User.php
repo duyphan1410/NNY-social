@@ -85,6 +85,17 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    protected $appends = ['full_name'];
 
+    // Thêm vào app/Models/User.php
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class)->withTimestamps()->withPivot('last_read_at');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 
 }

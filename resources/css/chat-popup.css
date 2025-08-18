@@ -1,0 +1,224 @@
+/* very small CSS to mimic FB popup layout */
+#chat-popups-container {
+    position: fixed;
+    right: 20px;
+    bottom: 0;
+    z-index: 2000;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap-reverse; /* Để khi nhiều popup sẽ lên hàng trên */
+    max-width: calc(100vw - 40px); /* Giới hạn chiều rộng màn hình */
+}
+
+.chat-popup {
+    width: 320px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+
+.chat-header {
+    padding: 8px 12px;
+    background: #f5f6f7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-body {
+    height: 260px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 8px;
+    border-top: 1px solid #eee;
+    background: #fff;
+}
+
+.chat-input textarea {
+    flex: 1;
+    resize: none;
+    height: 40px;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-input textarea:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.chat-send-btn {
+    margin-left: 8px;
+    padding: 0 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.chat-send-btn:hover {
+    background: #0056b3;
+}
+
+.chat-send-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Tin nhắn - FIX: Cấu trúc wrapper */
+.message {
+    max-width: 80%;
+    margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.me {
+    align-self: flex-end;
+}
+
+.message.them {
+    align-self: flex-start;
+}
+
+.message-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.message.me .message-wrapper {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+.message.them .message-wrapper {
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 14px;
+    word-wrap: break-word;
+    position: relative;
+}
+
+.message.me .bubble {
+    background: #007bff;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.them .bubble {
+    background: #e4e6eb;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+/* Thông tin meta (time, seen) */
+.message .meta {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+    padding: 0 4px;
+}
+
+.message.me .meta {
+    text-align: right;
+}
+
+.message.them .meta {
+    text-align: left;
+}
+
+/* Nút xóa - FIX: Vị trí và style */
+.delete-btn {
+    opacity: 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    padding: 4px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px; /* Align với bubble */
+}
+
+.delete-btn:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+    opacity: 1 !important;
+    transform: scale(1.1);
+}
+
+.message:hover .delete-btn {
+    opacity: 0.6;
+}
+
+/* Badge tin mới */
+.badge-new {
+    background: #ff4444;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 16px;
+    text-align: center;
+}
+
+/* Scrollbar cho chat body */
+.chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .chat-popup {
+        width: 280px;
+    }
+
+    #chat-popups-container {
+        right: 10px;
+        max-width: calc(100vw - 20px);
+    }
+}

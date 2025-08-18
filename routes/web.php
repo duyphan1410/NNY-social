@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CloudinaryController;
 use App\Http\Controllers\Friends\FriendController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
@@ -146,8 +148,9 @@ Route::fallback(function () {
     return response()->json(['message' => 'Route không tồn tại'], 404);
 });
 
-Broadcast::routes(['middleware' => ['auth']]);
+Broadcast::routes(['middleware' => ['web', 'auth']]);
 
+//Route cho xóa img,video trên cloudinary
 Route::post('/cloudinary/delete', function (Request $request) {
     $publicId = $request->input('public_id');
     $resourceType = $request->input('resource_type', 'image'); // hoặc 'video'
@@ -173,6 +176,16 @@ Route::post('/cloudinary/delete', function (Request $request) {
 
     return response()->json($response->json());
 });
+
+//Route chat
+Route::middleware(['auth'])->group(function () {
+    Route::get('/messages/{userId}', [MessageController::class, 'index']);
+    Route::post('/messages', [MessageController::class, 'send'])->name('messages.send');
+    Route::patch('/messages/read/{userId}', [MessageController::class, 'markRead']);
+    Route::delete('/messages/{id}', [\App\Http\Controllers\MessageController::class, 'destroy']);
+
+});
+
 
 require __DIR__.'/auth.php';
 

@@ -8,6 +8,7 @@ Alpine.start();
 
 const baseUrl = window.location.origin + '/social-network/public';
 
+
 // Echo config
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -18,15 +19,25 @@ window.Echo = new Echo({
     forceTLS: false,
     disableStats: true,
     cluster: 'mt1',
-    authEndpoint: baseUrl + '/broadcasting/auth', // ✅ thêm dòng này
+    authEndpoint: baseUrl + '/broadcasting/auth',
     auth: {
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    }
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        },
+    },
 });
 
-console.log("✅ app.js đã load");
+// Test kết nối
+window.Echo.connector.pusher.connection.bind('connected', () => {
+    console.log('✅ Pusher connected successfully');
+});
+
+window.Echo.connector.pusher.connection.bind('error', (err) => {
+    console.error('❌ Pusher connection error:', err);
+});
+
+console.log("✅ app.js đã load với Echo config mới");
 
 // Khi trang được tải
 document.addEventListener('DOMContentLoaded', () => {

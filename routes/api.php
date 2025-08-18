@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserSearchController\UserSearchController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 
@@ -22,28 +24,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/users/search', [UserSearchController::class, 'search']);
 
-Route::post('/cloudinary/delete', function (Request $request) {
-    $publicId = $request->input('public_id');
-    $resourceType = $request->input('resource_type', 'image'); // hoặc 'video'
-
-    if (!$publicId) {
-        return response()->json(['error' => 'Thiếu public_id'], 400);
+Route::post('/broadcasting/auth', function (Request $request) {
+    if (auth()->check()) {
+        return Broadcast::auth($request);
     }
+    return response('Unauthorized', 401);
+})->middleware(['web', 'auth']);
 
-    $cloudName = config('services.cloudinary.cloud_name');
-    $apiKey = config('services.cloudinary.api_key');
-    $apiSecret = config('services.cloudinary.api_secret');
-    $timestamp = time();
 
-    $stringToSign = "public_id={$publicId}&timestamp={$timestamp}{$apiSecret}";
-    $signature = sha1($stringToSign);
-
-    $response = Http::asForm()->post("https://api.cloudinary.com/v1_1/{$cloudName}/{$resourceType}/destroy", [
-        'public_id' => $publicId,
-        'timestamp' => $timestamp,
-        'api_key' => $apiKey,
-        'signature' => $signature
-    ]);
-
-    return response()->json($response->json());
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    return response()->json(['message' => 'Logged out']);
 });
+
