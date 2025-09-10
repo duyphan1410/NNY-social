@@ -1,207 +1,134 @@
-# 📱 NNY Social Network
-
-A modern image-sharing social network built with **Laravel 10**, **Vite**, and **MySQL**. Users can register, post content (images/videos), like, comment, and manage profiles. The system also includes an admin dashboard for moderation and analytics.
-
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Laravel](https://img.shields.io/badge/Laravel-10-red.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
+# NNY Social
 
-## 📸 Screenshots
+**NNY Social** is a full-stack social networking platform focused on image/video sharing, real-time interactions, content and user management for both users and administrators.
 
-### Homepage
+---
+
+## 🚀 Features
+
+### 👤 User Management
+- **Registration & Authentication:** Secure user sign up and login with Laravel Sanctum.
+- **Profile Management:** Update avatar, cover photo, personal information, and social links.
+- **Friend System:** Send, accept, cancel, search for friends.
+- **Personal Messaging & Real-time Notifications.**
+
+### 🖼️ Content Sharing
+- **Create & Edit Posts:** Upload images/videos, share posts.
+- **Media Upload:** Images are automatically converted to webp, videos are compressed, all media stored on Cloudinary CDN.
+- **Smart Feed:** Prioritizes posts from friends, high engagement, and recency.
+
+### 💬 Social Interaction
+- **Like, Comment, Reply:** Engage with posts, reply/mention users in comments.
+- **Real-time Notifications:** Receive instant updates for likes, comments, friend requests, and chat messages.
+
+### 🛡️ Administration
+- **Admin Dashboard:** Manage users, posts, and moderate content.
+- **Analytics:** Track new users, posts, interactions, top users, banned accounts.
+- **Content Moderation:** Ban/unban users, manage reported posts.
+
+---
+
+## 🖼️ Screenshots
+
+### Homepage Feed
 ![Homepage](screenshots/homepage.png)
 
 ### User Profile
-![Profile Page](screenshots/profile.png)
+![Profile](screenshots/profile.png)
 
-### Create Post
-![Post Creation](screenshots/create-post.png)
+### Create/Edit Post
+![Create Post](screenshots/create-post.png)
+
+### Real-time Chat Popup
+![Chat Popup](screenshots/chat-popup.png)
+
+### Mention/Comment
+![Mention Comment](screenshots/mention-comment.png)
+
+### Notification/Notification Dropdown
+![Notification](screenshots/notification.png)
+![Notification](screenshots/notification-dropdown.png)
 
 ### Admin Dashboard
 ![Admin Dashboard](screenshots/admin-dashboard.png)
 
-## 🚀 Features
-
-### 👥 User Management
-- **Registration & Authentication** - Secure user signup/login
-- **Profile Management** - Customizable user profiles
-- **Follow System** - Connect with other users
-
-### 📱 Content Sharing  
-- **Media Upload** - Share images and videos via Cloudinary
-- **Auto Optimization** - Images converted to .webp, videos compressed
-- **CDN Delivery** - Fast media loading worldwide
-
-### 💬 Social Interaction
-- **Like System** - Express appreciation for posts
-- **Comments** - Engage in conversations
-- **Real-time Notifications** - Instant updates via Pusher
-
-### 🛡️ Administration
-- **Admin Dashboard** - Complete moderation tools
-- **Analytics** - User engagement insights
-- **Content Moderation** - Manage reported content
-
-## 🛠️ Tech Stack
-
-| Category | Technology |
-|----------|------------|
-| **Backend** | PHP 8.1+, Laravel 10 |
-| **Frontend** | Vite, TailwindCSS, JavaScript |
-| **Database** | MySQL 8.0+ |
-| **Media Storage** | Cloudinary |
-| **Real-time** | Pusher |
-| **Authentication** | Laravel Sanctum |
-| **Email** | Laravel Mail |
-
-## 📋 Prerequisites
-
-Before installation, ensure you have:
-
-- **PHP 8.1+** with extensions: BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
-- **Composer** (latest version)
-- **Node.js 18+** and npm
-- **MySQL 8.0+**
-- **Git**
-
-## ☁️ Cloudinary Integration
-
-This project uses [Cloudinary](https://cloudinary.com/) for secure and optimized media storage.
-
-- Images are uploaded and converted to `.webp` for performance.
-- Videos are automatically compressed and resized if needed.
-- Media links are stored and delivered via Cloudinary CDN.
-
-You must configure the following environment variables in `.env`:
-
-```env
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
 ---
 
-## 🚀 Getting Started
+## ⚙️ Tech Stack
 
-### 1. Clone the project
+| Category        | Technology                  |
+|-----------------|----------------------------|
+| **Backend**     | PHP 8.1+, Laravel 10       |
+| **Frontend**    | Vite, TailwindCSS, JS, Alpine.js |
+| **Database**    | MySQL 8.0+                 |
+| **Media**       | Cloudinary (CDN)           |
+| **Realtime**    | Laravel Websockets, Echo   |
+| **Authentication** | Laravel Sanctum         |
 
+---
+
+## ⬇️ Getting Started
+
+### 1. Clone & Install
 ```bash
 git clone https://github.com/duyphan1410/NNY-social.git
 cd NNY-social
-````
-
-### 2. Install dependencies
-
-```bash
 composer install
 npm install
 ```
 
-### 3. Setup environment file
-
+### 2. Setup Environment
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
+Configure these `.env` variables:  
+- `APP_URL`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`  
+- `CLOUDINARY_*`, `PUSHER_*`, `MAIL_*`
 
-Then configure the `.env` file with your own:
-
-* `APP_URL`
-* `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`
-* `CLOUDINARY_*`
-* `MAIL_*`
-* `PUSHER_*`
-
-### 4. Setup database
-
+### 3. Migrate Database & Seed Data
 ```bash
 php artisan migrate --seed
 ```
 
-### 5. Compile frontend assets
-
+### 4. Run Servers
 ```bash
-npm run build
+npm run dev          # Frontend Vite
+php artisan serve    # Backend API
+php artisan websockets:serve  # Websockets server
 ```
-
-### 6. Serve the application
-
-```bash
-php artisan serve
-```
-
-Visit the app at `http://127.0.0.1:8000`.
+Visit the app at `http://127.0.0.1:8000`
 
 ---
 
-## 🧪 Sample Accounts
+## 🛡️ Security & Performance
 
-Seeder will create sample users automatically. If not, you can register manually.
-
----
-
-## 📁 Project Structure
-
-```
-NNY-social/
-├── app/
-│   ├── Http/Controllers/    # Application controllers
-│   ├── Models/             # Eloquent models
-│   ├── Middleware/         # Custom middleware
-│   └── Services/           # Business logic services
-├── config/
-│   ├── database.php        # Database configuration
-│   └── cloudinary.php      # Cloudinary settings
-├── database/
-│   ├── migrations/         # Database migrations
-│   └── seeders/            # Sample data seeders
-├── public/                 # Web server document root
-├── resources/
-│   ├── views/              # Blade templates
-│   ├── js/                 # JavaScript files
-│   └── css/                # Stylesheets
-├── routes/
-│   ├── web.php             # Web routes
-│   └── api.php             # API routes
-├── storage/                # File storage
-├── .env.example            # Environment template
-├── composer.json           # PHP dependencies
-├── package.json            # Node.js dependencies
-├── vite.config.js          # Vite configuration
-└── README.md               # This file
-```
+- CSRF protection for all AJAX requests.
+- Middleware guards for all critical routes: `auth`, `admin`.
+- Websockets for scalable real-time features.
+- Media optimized and delivered via CDN.
+- Feed and heavy queries are cached for speed.
+- Anti-spam, XSS protection, rate limiting for sensitive APIs.
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
-
----
-
-## 👨‍💻 Author
-
-**Duy Phan**
-- GitHub: [@duyphan1410](https://github.com/duyphan1410)
-
-## 🙏 Acknowledgments
-
-- [Laravel](https://laravel.com/) - The web framework
-- [Cloudinary](https://cloudinary.com/) - Media management
-- [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS
-- [Pusher](https://pusher.com/) - Real-time features
-
-## 📊 Project Status
-
-- ✅ Core functionality completed
-- ✅ User authentication & profiles
-- ✅ Media upload & optimization
-- ✅ Social interactions (like, comment)
-- ✅ Admin dashboard
+## 📝 License
+MIT License. See [LICENSE](LICENSE.md).
 
 ---
 
-⭐ **If you find this project helpful, please give it a star!** ⭐
+## 🙋‍♂️ Author
+**Duy Phan**  
+GitHub: [@duyphan1410](https://github.com/duyphan1410)
 
+---
 
+## 📢 Acknowledgments
+- [Laravel](https://laravel.com/)
+- [Cloudinary](https://cloudinary.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Pusher](https://pusher.com/) / [Laravel Websockets](https://beyondco.de/docs/laravel-websockets)
