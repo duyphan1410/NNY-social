@@ -1,15 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\StatisticsController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ChatController;
-use App\Http\Controllers\CloudinaryController;
 use App\Http\Controllers\Friends\FriendController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Post\CommentController;
 use App\Http\Controllers\Post\LikeController;
-use App\Http\Controllers\Post\UserSearchController\UserSearchController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Home\HomeController;
@@ -26,6 +25,7 @@ use App\Http\Controllers\VideoController;
 // Route login
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
 Route::post('/login', [LoginController::class, 'login']);
+
 // Route logout
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -35,15 +35,16 @@ Route::post('register', [RegisterController::class, 'register']);
 
 //Route Admin
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.dashboard');
-    Route::post('/users/{id}/toggle-ban', [\App\Http\Controllers\Admin\UserController::class, 'toggleBan'])->name('admin.users.toggleBan');
+    Route::get('/dashboard', [UserController::class, 'index'])->name('admin.dashboard');
+    Route::post('/users/{id}/toggle-ban', [UserController::class, 'toggleBan'])->name('admin.users.toggleBan');
 
     // Quản lý bài đăng
-    Route::get('/posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('admin.posts');
-    Route::post('/posts/{id}/toggle-visibility', [\App\Http\Controllers\Admin\PostController::class, 'toggleVisibility'])->name('admin.posts.toggleVisibility');
-    Route::delete('/posts/{id}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::get('/posts', [PostController::class, 'index'])->name('admin.posts');
+    Route::post('/posts/{id}/toggle-visibility', [PostController::class, 'toggleVisibility'])->name('admin.posts.toggleVisibility');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+
     //Thống kê
-    Route::get('/statistics', [\App\Http\Controllers\Admin\StatisticsController::class, 'index'])->name('admin.statistics');
+    Route::get('/statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
 });
 
 
@@ -188,6 +189,4 @@ Route::middleware(['auth'])->group(function () {
 
 
 require __DIR__.'/auth.php';
-
-Auth::routes();
 
