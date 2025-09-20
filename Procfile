@@ -1,1 +1,1 @@
-web: sh -c "php artisan migrate --force && php artisan websockets:serve & vendor/bin/heroku-php-apache2 public/"
+web: sh -c "php artisan migrate --force && php artisan websockets:serve & php -S 0.0.0.0:8080 -t public"
