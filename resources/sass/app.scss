@@ -1,15 +1,15 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
-
-// Variables
-@import 'variables';
+// Variables - must be first
+@forward 'variables';
+@use 'variables';
 
 // Bootstrap
-@import 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap';
+
+// Fonts
+@import url('https://fonts.bunny.net/css?family=Nunito');
 
 // app.scss
 body {
     background-color: #f8fafc;
     font-family: 'Nunito', sans-serif;
 }
-

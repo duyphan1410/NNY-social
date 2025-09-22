@@ -23,7 +23,9 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\VideoController;
 
 // Route login
+Route::get('/', [HomeController::class, 'index'])->name('root')->middleware('auth');
 Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 // Route logout

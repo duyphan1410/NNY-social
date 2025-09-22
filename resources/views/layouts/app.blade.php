@@ -21,7 +21,6 @@
 
     {{-- Cho phép trang con thêm CSS/JS riêng --}}
     @stack('styles')
-    @stack('scripts')
 </head>
 <body>
 <div id="app">
@@ -132,5 +131,5 @@
         }
     });
 </script>
-
+@stack('scripts')
 </html>

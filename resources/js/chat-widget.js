@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         startListeningForMessages();
     }
 
-    document.querySelectorAll('.open-chat').forEach(el => {
+    document.querySelectorAll('.open-chat-btn').forEach(el => {
         el.addEventListener('click', function (e) {
             e.preventDefault();
             const userId = this.dataset.userId;

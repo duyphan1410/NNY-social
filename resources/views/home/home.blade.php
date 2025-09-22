@@ -133,10 +133,17 @@
                     @forelse ($friends as $friend)
                         <li>
                             <div class="friend-info">
-                                <a href="{{ route('profile.show', $friend->id) }}" class="open-chat" data-user-id="{{ $friend->id }}" data-user-name="{{ $friend->first_name }} {{ $friend->last_name }}">
-                                    <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
-                                    <span class="friend-name">{{ $friend->first_name }} {{ $friend->last_name }}</span>
-                                </a>
+                                <div class="friend-left">
+                                    <a href="{{ route('profile.show', $friend->id) }}">
+                                        <img src="{{ $friend->avatar ?? asset('images/default-avatar.png') }}" alt="Avatar" class="friend-avatar">
+                                        <span class="friend-name">{{ $friend->first_name }} {{ $friend->last_name }}</span>
+                                    </a>
+                                </div>
+                                <button class="open-chat-btn"
+                                        data-user-id="{{ $friend->id }}"
+                                        data-user-name="{{ $friend->first_name }} {{ $friend->last_name }}">
+                                    <i class="fa fa-comment"></i>
+                                </button>
                             </div>
                         </li>
                     @empty

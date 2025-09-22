@@ -10,6 +10,7 @@
 | the IoC container for the system binding all of the various parts.
 |
 */
+use Dotenv\Dotenv;
 
 $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
@@ -51,5 +52,9 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
+if (file_exists(base_path('.env.production')) && env('APP_ENV') === 'production') {
+    $dotenv = Dotenv::createImmutable(base_path(), '.env.production');
+    $dotenv->load();
+}
 
 return $app;

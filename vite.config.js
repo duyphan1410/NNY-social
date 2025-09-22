@@ -24,4 +24,13 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                quietDeps: true, // Tắt cảnh báo từ dependencies
+                silenceDeprecations: ['mixed-decls', 'import','legacy-js-api'], // Tắt cảnh báo cụ thể
+            },
+        },
+    },
+    base: '/',
 });
